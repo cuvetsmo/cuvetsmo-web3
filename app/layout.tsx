@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Thai, Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
+import { EcosystemBar } from "@/components/ecosystem-bar";
 import "./globals.css";
 
 const ibmPlexSansThai = IBM_Plex_Sans_Thai({
@@ -169,6 +170,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
+        <EcosystemBar current="web3" />
         <Providers>{children}</Providers>
       </body>
     </html>
