@@ -102,6 +102,50 @@ const themeInitScript = `
 })();
 `;
 
+// Organization schema teaches Google that web3.cuvetsmo.com is a
+// sub-organization of the main CUVETSMO. Helps the bare-word search
+// "cuvetsmo" return us, since the brand name appears as both the
+// organization name AND the alternateName variations. The parent
+// link points at the same @id used in cuvetsmo.com root JSON-LD so
+// Google merges the two graphs.
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://web3.cuvetsmo.com/#org",
+  name: "CUVETSMO Web3",
+  alternateName: [
+    "CUVETSMO Web3",
+    "cuvetsmo web3",
+    "Web3 CUVETSMO",
+    "web3.cuvetsmo.com",
+    "CUVETSMO Web3 Playground",
+    "CUVETSMO",
+    "cuvetsmo",
+  ],
+  url: "https://web3.cuvetsmo.com/",
+  logo: "https://web3.cuvetsmo.com/web3-logo.png",
+  image: "https://web3.cuvetsmo.com/og.png",
+  description:
+    "Web3 playground for Thai veterinary students at Chulalongkorn University. Learn, Play, Build, The Lab on Base testnet.",
+  parentOrganization: {
+    "@type": "Organization",
+    "@id": "https://cuvetsmo.com/#smo",
+    name: "CUVETSMO",
+    url: "https://cuvetsmo.com/",
+  },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://web3.cuvetsmo.com/#website",
+  name: "CUVETSMO Web3",
+  alternateName: ["cuvetsmo web3", "CUVETSMO Web3 Playground"],
+  url: "https://web3.cuvetsmo.com/",
+  inLanguage: ["th", "en"],
+  publisher: { "@id": "https://web3.cuvetsmo.com/#org" },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -115,6 +159,14 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>

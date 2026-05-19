@@ -1,7 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 
 /**
- * Site footer — 3 columns + disclaimer band.
+ * Site footer — 3 columns + brand watermark + disclaimer band.
  */
 
 const PROJECT_LINKS = [
@@ -29,10 +30,22 @@ const CONTACT_LINKS = [
 export function Footer() {
   return (
     <footer
-      className="mt-auto border-t border-[var(--color-border)] bg-[var(--color-card)]"
+      className="relative mt-auto border-t border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden"
       role="contentinfo"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      {/* Brand watermark — large infinity-loop mark fades behind the
+          content. Soft enough to read text over, big enough that visitors
+          register the logo without it shouting. */}
+      <Image
+        src="/web3-logo-mark.png"
+        alt=""
+        aria-hidden
+        width={520}
+        height={520}
+        className="pointer-events-none select-none absolute -right-24 -bottom-24 opacity-[0.04] dark:opacity-[0.07]"
+      />
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           <FooterColumn title="Project" links={PROJECT_LINKS} />
           <FooterColumn title="Tools" links={TOOL_LINKS} />
@@ -40,7 +53,16 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[var(--color-muted)]">
-          <p>Built by students, for students. Made in Bangkok.</p>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/web3-logo-mark.png"
+              alt="CUVETSMO Web3"
+              width={24}
+              height={24}
+              className="rounded-sm"
+            />
+            <p>Built by students, for students. Made in Bangkok.</p>
+          </div>
           <p className="font-mono">
             CUVETSMO Web3 — Base Sepolia testnet
           </p>
