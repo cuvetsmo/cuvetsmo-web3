@@ -133,18 +133,18 @@ export default function LandingPage() {
             </span>
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-xl mx-auto">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto">
             <Link
-              href="/learn/wallet-101"
+              href="/learn/zero-to-hero"
               className="btn-brand text-center flex-1 sm:flex-initial"
             >
-              เริ่มต้น Wallet 101
+              ไม่เคยรู้จัก Web3? เริ่มที่นี่
             </Link>
             <Link
-              href="/build/card"
+              href="/learn/wallet-101"
               className="btn-outline text-center flex-1 sm:flex-initial"
             >
-              Claim Vet SBT Card
+              ทำ Wallet 101 (5 นาที)
             </Link>
             <Link
               href="/about"
@@ -153,6 +153,10 @@ export default function LandingPage() {
               อ่าน Master Plan →
             </Link>
           </div>
+
+          <p className="mt-3 text-xs text-center text-[var(--color-muted)]">
+            อ่าน 3 นาที — ไม่ต้องสมัครอะไรเลย — ไม่ต้องมี wallet
+          </p>
 
           <p className="mt-10 text-xs sm:text-sm text-center text-[var(--color-muted)] flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
             <span className="inline-flex items-center gap-1.5">

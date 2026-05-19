@@ -67,14 +67,14 @@ export function GlossaryClient({ entries }: { entries: GlossaryEntry[] }) {
       {/* Header */}
       <header className="mb-8">
         <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-2">
-          Glossary · TH/EN
+          Glossary — TH / EN
         </p>
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3">
           พจนานุกรม Web3
         </h1>
         <p className="text-base text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          ศัพท์ web3 แบบสองภาษา · 25 คำที่ใช้บ่อยใน CUVETSMO platform — wallet,
-          NFT, SBT, DAO, gas, blockchain. แต่ละ entry มีคำอธิบายภาษาไทย พร้อมตัวอย่างบริบทสัตวแพทย์ (ถ้าเหมาะ).
+          ศัพท์ web3 แบบสองภาษา — {entries.length} คำที่ใช้บ่อยใน CUVETSMO platform.
+          แต่ละ entry มีคำอธิบายภาษาไทย พร้อมตัวอย่างบริบทสัตวแพทย์ที่เกี่ยวข้อง.
         </p>
       </header>
 

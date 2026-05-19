@@ -8,6 +8,14 @@ export const metadata = {
 
 const ROUTES = [
   {
+    href: "/learn/zero-to-hero",
+    title: "Zero to Hero",
+    sub: "3 นาที, เข้าใจ Web3 จาก 0",
+    desc: "ไม่เคยได้ยินคำว่า blockchain เลยก็เริ่มได้ — 5 ขั้นสั้นๆ พร้อม analogy",
+    badge: "เริ่มต้น",
+    badgeColor: "bg-purple-100 text-purple-700",
+  },
+  {
     href: "/learn/wallet-101",
     title: "Wallet 101",
     sub: "5 นาที, จาก 0 ถึงมี wallet แรก",
@@ -79,7 +87,8 @@ export default function LearnHubPage() {
       <aside className="rounded-2xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/15 p-6">
         <h3 className="font-semibold mb-2">เริ่มต้นยังไงดี?</h3>
         <ol className="list-decimal pl-5 space-y-1.5 text-sm text-[var(--color-text-muted)]">
-          <li>ทำ Wallet 101 ก่อน (5 นาที, ได้ wallet แรก)</li>
+          <li>ถ้ายังไม่เข้าใจ Web3 เลย — ทำ Zero to Hero ก่อน (3 นาที, อ่านอย่างเดียว)</li>
+          <li>จากนั้น Wallet 101 (5 นาที, ได้ wallet แรก)</li>
           <li>ลองทำ Quest 1-3 (sign, mint, vote)</li>
           <li>เปิด Glossary ทุกครั้งที่เจอศัพท์ไม่รู้</li>
           <li>พร้อมแล้วไปทำต่อที่ Build (Vet SBT Card)</li>

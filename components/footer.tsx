@@ -6,7 +6,9 @@ import Link from "next/link";
 
 const PROJECT_LINKS = [
   { href: "/about", label: "About" },
+  { href: "/faq", label: "FAQ" },
   { href: "/glossary", label: "Glossary (TH/EN)" },
+  { href: "/learn/zero-to-hero", label: "Zero to Hero" },
   { href: "/learn/wallet-101", label: "Wallet 101" },
 ];
 
@@ -46,8 +48,53 @@ export function Footer() {
 
         <div className="mt-4 p-3 rounded-md bg-[var(--color-brand-light)] text-[var(--color-brand)] text-xs leading-relaxed">
           <strong className="font-semibold">Disclaimer:</strong> educational
-          testnet. Not financial advice. Not an investment offering. ทุก asset
+          testnet, not financial advice, not an investment offering. ทุก asset
           ในระบบเป็น testnet มูลค่า 0 บาท ใช้สำหรับการเรียนรู้เท่านั้น.
+        </div>
+
+        {/* Powered-by partner logos */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--color-muted)]">
+          <span className="font-medium">Powered by</span>
+          <a
+            href="https://base.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-brand)]"
+          >
+            Base
+          </a>
+          <a
+            href="https://privy.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-brand)]"
+          >
+            Privy
+          </a>
+          <a
+            href="https://attest.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-brand)]"
+          >
+            EAS
+          </a>
+          <a
+            href="https://pinata.cloud"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-brand)]"
+          >
+            Pinata
+          </a>
+          <a
+            href="https://openzeppelin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-brand)]"
+          >
+            OpenZeppelin
+          </a>
         </div>
       </div>
     </footer>

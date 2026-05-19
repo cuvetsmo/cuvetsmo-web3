@@ -12,6 +12,7 @@ import { isAddress, shortAddress } from "@/lib/utils";
 import { DropZone } from "../_components/drop-zone";
 import { ContractPending } from "../_components/contract-pending";
 import { TxReceiptPanel } from "../_components/tx-receipt-panel";
+import { WhatJustHappened } from "@/components/what-just-happened";
 import { PLAY_ADDRESSES, isLive } from "../_lib/addresses";
 import { NFT_FACTORY_ABI, SBT_FACTORY_ABI } from "../_lib/abis";
 import {
@@ -53,6 +54,7 @@ export function MintForm() {
   >({ kind: "idle" });
 
   const [remaining, setRemaining] = useState<number>(DAILY_MINT_LIMIT);
+  const [wjhOpen, setWjhOpen] = useState(false);
 
   const userAddress = (user?.wallet?.address || walletAddress) as
     | Address
@@ -111,6 +113,7 @@ export function MintForm() {
         contract: targetContract,
         tokenId,
       });
+      setWjhOpen(true);
     } else if (receipt.isError) {
       setStatus({
         kind: "error",
@@ -416,6 +419,17 @@ export function MintForm() {
           txHash={status.hash}
           contractAddress={status.contract}
           tokenId={status.tokenId}
+        />
+      )}
+
+      {/* Educational overlay — explains what just happened on chain */}
+      {status.kind === "done" && (
+        <WhatJustHappened
+          open={wjhOpen}
+          onClose={() => setWjhOpen(false)}
+          action="mint"
+          txHash={status.hash}
+          chainId={84532}
         />
       )}
     </div>

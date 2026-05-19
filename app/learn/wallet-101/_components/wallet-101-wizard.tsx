@@ -22,6 +22,7 @@ import {
   FIRST_STEPS_SBT_ABI,
   isReady,
 } from "@/lib/contracts";
+import { WhatJustHappened } from "@/components/what-just-happened";
 
 /**
  * Wallet 101 — 5-step wizard
@@ -228,6 +229,7 @@ function FaucetStep({
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [result, setResult] = useState<FaucetResult | null>(null);
+  const [wjhOpen, setWjhOpen] = useState(false);
 
   async function drip() {
     if (!address) return;

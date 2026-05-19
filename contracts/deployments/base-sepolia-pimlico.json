@@ -1,7 +1,7 @@
 {
-  "_note": "Deployed 2026-05-19 via Pimlico-sponsored UserOps. See docs/PIMLICO_SPONSORED_DEPLOY.md.",
-  "_chainId": 84532,
-  "_deployer": "0x769B00bbBfA3d3100dd1e15D8563c82F569F4593",
+  "_note": "Deployed via Pimlico-sponsored UserOps. See docs/PIMLICO_SPONSORED_DEPLOY.md",
+  "_chainId": "84532",
+  "_deployerEoa": "0x769B00bbBfA3d3100dd1e15D8563c82F569F4593",
   "_smartAccount": "0x96165fB8E807532869986aAA3F4af62e2276c456",
   "_saltNamespace": "cuvetsmo-web3:v1",
   "_create2Factory": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
