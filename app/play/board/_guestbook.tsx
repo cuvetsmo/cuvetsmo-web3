@@ -24,8 +24,12 @@ interface Entry {
 
 const MESSAGE_MAX = 280;
 const HISTORY_LIMIT = 50;
+// 10000-block lookback gives ~5h history on Base (2s blocks).
+// Public Base RPC caps eth_getLogs at 2000 blocks per request, so we chunk.
 const LOOKBACK_BLOCKS = BigInt(10_000);
+const MAX_RANGE_PER_CALL = BigInt(1900);
 const ZERO_BIG = BigInt(0);
+const ONE_BIG = BigInt(1);
 
 export function Guestbook() {
   const { ready, authenticated, login } = usePrivy();
@@ -58,13 +62,32 @@ export function Guestbook() {
         const fromBlock =
           latest > LOOKBACK_BLOCKS ? latest - LOOKBACK_BLOCKS : ZERO_BIG;
 
-        const logs = await publicClient.getContractEvents({
-          address: PLAY_ADDRESSES.GUESTBOOK,
-          abi: GUESTBOOK_ABI,
-          eventName: "MessagePosted",
-          fromBlock,
-          toBlock: latest,
-        });
+        // Split the requested range into chunks no larger than MAX_RANGE_PER_CALL
+        // so public Base Sepolia RPC does not reject with "max block range 2000".
+        const ranges: { from: bigint; to: bigint }[] = [];
+        for (
+          let start = fromBlock;
+          start <= latest;
+          start += MAX_RANGE_PER_CALL + ONE_BIG
+        ) {
+          const end =
+            start + MAX_RANGE_PER_CALL > latest
+              ? latest
+              : start + MAX_RANGE_PER_CALL;
+          ranges.push({ from: start, to: end });
+        }
+        const logsChunks = await Promise.all(
+          ranges.map((r) =>
+            publicClient.getContractEvents({
+              address: PLAY_ADDRESSES.GUESTBOOK,
+              abi: GUESTBOOK_ABI,
+              eventName: "MessagePosted",
+              fromBlock: r.from,
+              toBlock: r.to,
+            }),
+          ),
+        );
+        const logs = logsChunks.flat();
 
         const list: Entry[] = logs
           .map((l) => {
