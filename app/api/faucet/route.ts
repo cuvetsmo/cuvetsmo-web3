@@ -1,34 +1,155 @@
 import { NextResponse } from "next/server";
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  isAddress,
+  parseEther,
+  type Hex,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
 
 /**
- * Faucet endpoint — placeholder.
+ * Faucet endpoint — drips 0.001 ETH on Base Sepolia to a user's address.
  *
- * Agent B implements:
- *   - rate limit (1 claim per address per 24h)
- *   - signature verification on POST body
- *   - server-side wallet sends ~0.01 ETH on Base Sepolia
+ * Rate limit (Day 1): in-memory Map keyed by lowercase address, 24h cooldown.
+ *   - Survives normal runtime, NOT process restarts. Good enough for MVP.
+ *   - Future: migrate to Supabase table (claims: address, last_claim_at).
  *
- * Use cuvetsmo-server wallet (private key in FAUCET_PRIVATE_KEY env, NEVER NEXT_PUBLIC_*).
+ * Server wallet: env FAUCET_PRIVATE_KEY (0x-prefixed). Server-only.
+ *
+ * If FAUCET_PRIVATE_KEY is missing/empty, returns a helpful 503 pointing
+ * users at the Coinbase public faucet so the flow still completes.
  *
  * Spec: master plan §6.4 Faucet
  */
+
+const DRIP_AMOUNT_ETH = "0.001";
+const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const COINBASE_FAUCET =
+  "https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet";
+
+// In-memory rate limit. globalThis so HMR in dev does not blow it away.
+const g = globalThis as unknown as { _faucetClaims?: Map<string, number> };
+const claims: Map<string, number> = (g._faucetClaims ??= new Map());
+
+const rpcUrl =
+  process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || "https://sepolia.base.org";
+
 export async function GET() {
+  const configured = !!process.env.FAUCET_PRIVATE_KEY;
   return NextResponse.json({
-    status: "placeholder",
+    status: "ready",
     pillar: "Learn",
-    agent: "Agent B",
-    spec: "master plan §6.4 Faucet",
     method: "POST",
-    note: "Wave 1 stub. Wave 2 wires up rate-limited Base Sepolia ETH dispenser.",
+    body: { address: "0x..." },
+    dripAmountEth: DRIP_AMOUNT_ETH,
+    cooldownHours: COOLDOWN_MS / 3_600_000,
+    serverWalletConfigured: configured,
+    fallbackFaucet: configured ? null : COINBASE_FAUCET,
   });
 }
 
-export async function POST() {
-  return NextResponse.json(
-    {
-      error: "faucet not yet implemented",
-      agent: "Agent B will implement in Wave 2",
-    },
-    { status: 501 },
-  );
+export async function POST(req: Request) {
+  let body: { address?: string } = {};
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON body" },
+      { status: 400 },
+    );
+  }
+
+  const address = body.address?.toString().trim();
+  if (!address || !isAddress(address)) {
+    return NextResponse.json(
+      { error: "Missing or invalid `address` (expected 0x... 40 hex)" },
+      { status: 400 },
+    );
+  }
+
+  const key = address.toLowerCase();
+  const last = claims.get(key);
+  const now = Date.now();
+  if (last && now - last < COOLDOWN_MS) {
+    const remainingMs = COOLDOWN_MS - (now - last);
+    return NextResponse.json(
+      {
+        error: "Rate limited",
+        remainingHours: Math.ceil(remainingMs / 3_600_000),
+        message: "1 drip per address per 24h. Try again later.",
+      },
+      { status: 429 },
+    );
+  }
+
+  const pkRaw = process.env.FAUCET_PRIVATE_KEY?.trim();
+  if (!pkRaw) {
+    return NextResponse.json(
+      {
+        error: "Faucet not configured yet",
+        message:
+          "Server wallet not funded. ใช้ Coinbase Base Sepolia public faucet ระหว่างนี้ก่อน.",
+        fallbackFaucet: COINBASE_FAUCET,
+      },
+      { status: 503 },
+    );
+  }
+
+  // Normalize hex
+  const pk: Hex = (pkRaw.startsWith("0x") ? pkRaw : `0x${pkRaw}`) as Hex;
+  if (pk.length !== 66) {
+    return NextResponse.json(
+      { error: "FAUCET_PRIVATE_KEY misconfigured (must be 32-byte hex)" },
+      { status: 500 },
+    );
+  }
+
+  try {
+    const account = privateKeyToAccount(pk);
+    const transport = http(rpcUrl);
+    const wallet = createWalletClient({
+      account,
+      chain: baseSepolia,
+      transport,
+    });
+    const pub = createPublicClient({ chain: baseSepolia, transport });
+
+    // Cheap sanity check — server wallet has at least 2× drip in balance.
+    const bal = await pub.getBalance({ address: account.address });
+    const drip = parseEther(DRIP_AMOUNT_ETH);
+    if (bal < drip * 2n) {
+      return NextResponse.json(
+        {
+          error: "Faucet wallet low on funds",
+          message:
+            "Server wallet ใกล้หมด ETH. ใช้ public faucet ก่อน — admin จะเติม.",
+          fallbackFaucet: COINBASE_FAUCET,
+        },
+        { status: 503 },
+      );
+    }
+
+    const txHash = await wallet.sendTransaction({
+      to: address as `0x${string}`,
+      value: drip,
+    });
+
+    claims.set(key, now);
+
+    return NextResponse.json({
+      success: true,
+      txHash,
+      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      dripAmountEth: DRIP_AMOUNT_ETH,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json(
+      { error: "Faucet send failed", message },
+      { status: 500 },
+    );
+  }
 }
