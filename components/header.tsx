@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { WalletButton } from "./wallet-button";
+import { ThemeToggle } from "./theme-toggle";
 
 /**
  * Top navigation.
@@ -64,7 +65,8 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ThemeToggle />
           <div className="hidden sm:block">
             <WalletButton />
           </div>

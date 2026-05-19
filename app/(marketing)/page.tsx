@@ -90,16 +90,7 @@ export default function LandingPage() {
   return (
     <main>
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden">
-        {/* gradient backdrop */}
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 50% 0%, rgba(3,105,161,0.18) 0%, rgba(3,105,161,0) 60%)",
-          }}
-        />
+      <section className="relative overflow-hidden aurora-bg">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-brand)]/40 to-transparent -z-10"

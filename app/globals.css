@@ -1,52 +1,112 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────
+   Cyber-dark theme — locked 2026-05-19.
+   - Base Blue #0000FF is the brand mark.
+   - Dark uses brighter brand variants for AA contrast on near-black.
+   - Toggle switches via [data-theme="light|dark"] on <html>. We fall
+     back to prefers-color-scheme on first paint before the user has
+     toggled anything (see ThemeToggle component).
+   ──────────────────────────────────────────────────────────────────── */
+
 :root {
-  --color-brand: #0369a1;
-  --color-brand-hover: #0c4a6e;
-  --color-brand-light: #e0f2fe;
-  --color-bg: #fafaf9;
-  --color-text: #1c1917;
-  --color-muted: #57534e;
-  --color-border: #e7e5e4;
+  /* Default = light. Inline script in layout.tsx may override with
+     data-theme="dark" before React hydrates. */
+  --color-bg: #ffffff;
+  --color-surface-2: #f4f4f8;
+  --color-text: #0a0a0f;
+  --color-muted: #52525b;
+  --color-border: #e4e4e7;
   --color-card: #ffffff;
-  --font-sans: var(--font-ibm-plex-sans-thai), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Base Blue palette.
+     --color-brand-mark = the literal #0000FF for logo positions.
+     --color-brand = the readable interactive color, varies per mode. */
+  --color-brand-mark: #0000ff;
+  --color-brand: #0000ff;
+  --color-brand-hover: #0000c8;
+  --color-brand-light: #e6e6ff;
+  --color-accent: #ff0420;              /* Optimism red, "Play" CTA only */
+
+  --aurora-blue: rgba(0, 0, 255, 0.16);
+  --aurora-violet: rgba(124, 58, 237, 0.16);
+
+  --font-sans:
+    var(--font-geist-sans),
+    var(--font-ibm-plex-sans-thai),
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0a0a0f;
+  --color-surface-2: #13131a;
+  --color-text: #fafafa;
+  --color-muted: #a1a1aa;
+  --color-border: #27272a;
+  --color-card: #13131a;
+
+  --color-brand-mark: #0000ff;          /* literal logo color stays the same */
+  --color-brand: #7373ff;               /* 4.6:1 on #0a0a0f — passes AA */
+  --color-brand-hover: #9999ff;
+  --color-brand-light: #1a1a4d;
+
+  --aurora-blue: rgba(0, 0, 255, 0.32);
+  --aurora-violet: rgba(124, 58, 237, 0.28);
+}
+
+/* First-paint fallback before localStorage choice loads */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0a0a0f;
+    --color-surface-2: #13131a;
+    --color-text: #fafafa;
+    --color-muted: #a1a1aa;
+    --color-border: #27272a;
+    --color-card: #13131a;
+
+    --color-brand-mark: #0000ff;
+    --color-brand: #7373ff;
+    --color-brand-hover: #9999ff;
+    --color-brand-light: #1a1a4d;
+
+    --aurora-blue: rgba(0, 0, 255, 0.32);
+    --aurora-violet: rgba(124, 58, 237, 0.28);
+  }
 }
 
 @theme inline {
   --color-background: var(--color-bg);
   --color-foreground: var(--color-text);
   --color-brand: var(--color-brand);
+  --color-brand: var(--color-brand);
   --color-brand-hover: var(--color-brand-hover);
   --color-brand-light: var(--color-brand-light);
+  --color-accent: var(--color-accent);
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
   --color-card: var(--color-card);
+  --color-surface-2: var(--color-surface-2);
   --font-sans: var(--font-sans);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0c0a09;
-    --color-text: #fafaf9;
-    --color-muted: #a8a29e;
-    --color-border: #292524;
-    --color-card: #1c1917;
-    --color-brand-light: #082f49;
-  }
+  --font-mono: var(--font-mono);
 }
 
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
+  color-scheme: light dark;
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-feature-settings: "kern" 1, "liga" 1;
+  font-feature-settings: "kern" 1, "liga" 1, "ss01" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a {
@@ -58,18 +118,24 @@ button {
   font-family: inherit;
 }
 
-/* Brand utility classes */
+/* ─── Brand utilities ───────────────────────────────────────────────── */
+
 .btn-brand {
   background: var(--color-brand);
   color: #ffffff;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  transition: background 0.15s ease;
+  letter-spacing: -0.01em;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
 .btn-brand:hover {
   background: var(--color-brand-hover);
+}
+
+.btn-brand:active {
+  transform: translateY(1px);
 }
 
 .btn-outline {
@@ -97,10 +163,43 @@ button {
 
 .card:hover {
   border-color: var(--color-brand);
-  box-shadow: 0 4px 14px -4px rgba(3, 105, 161, 0.12);
+  box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--color-brand) 22%, transparent);
 }
 
-/* Subtle reveal animations used across landing + content pages */
+/* ─── Aurora hero background ────────────────────────────────────────── */
+
+.aurora-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.aurora-bg::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 70%;
+  background:
+    radial-gradient(60% 80% at 30% 20%, var(--aurora-blue), transparent 70%),
+    radial-gradient(50% 70% at 70% 35%, var(--aurora-violet), transparent 70%);
+  filter: blur(48px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aurora-bg::before {
+    animation: aurora-drift 18s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes aurora-drift {
+  0%   { transform: translate3d(0,  0,    0) scale(1); }
+  50%  { transform: translate3d(-2%, -2%, 0) scale(1.05); }
+  100% { transform: translate3d(2%, 1%,   0) scale(0.98); }
+}
+
+/* ─── Reveal animations (kept from prior theme) ─────────────────────── */
+
 @keyframes cuvet-fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -112,18 +211,17 @@ button {
 }
 
 @keyframes cuvet-pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(3, 105, 161, 0.35); }
-  70%  { box-shadow: 0 0 0 8px rgba(3, 105, 161, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(3, 105, 161, 0); }
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 35%, transparent); }
+  70%  { box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-brand) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 0%, transparent); }
 }
 
-.animate-fade-up   { animation: cuvet-fade-up 0.4s ease-out both; }
-.animate-fade-in   { animation: cuvet-fade-in 0.4s ease-out both; }
+.animate-fade-up    { animation: cuvet-fade-up 0.4s ease-out both; }
+.animate-fade-in    { animation: cuvet-fade-in 0.4s ease-out both; }
 .animate-pulse-ring { animation: cuvet-pulse-ring 2s ease-in-out infinite; }
 
-/* gradient-text utility for hero accents */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-brand) 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--color-brand) 0%, #7c3aed 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -136,4 +234,5 @@ button {
   .animate-pulse-ring {
     animation: none !important;
   }
+  body { transition: none; }
 }
