@@ -96,7 +96,7 @@ export default function LabHubPage() {
         <p className="font-semibold text-amber-900 mb-1">🧪 Educational testnet</p>
         <p className="text-amber-800 leading-relaxed">
           ทุก contract ที่ deploy จาก The Lab อยู่บน Base Sepolia testnet
-          ของ user-created ไม่ได้รับการ audit หรือ endorse จาก web3.cuvetsmo.com
+          ของ user-created ไม่ได้รับการ audit หรือ endorse จาก CUVETSMO Web3
           ใช้สำหรับเรียนรู้และทดลองเท่านั้น ห้ามใช้กับ asset ที่มีค่าจริง
         </p>
       </aside>

@@ -4,7 +4,7 @@ import { PageBuilder } from "./_builder";
 export const metadata: Metadata = {
   title: "Page Builder",
   description:
-    "สร้าง DApp page ของตัวเอง · drag & drop components · save แล้ว share ลิงก์ได้.",
+    "สร้าง DApp page ของตัวเอง — drag & drop components, save แล้ว share ลิงก์ได้.",
 };
 
 export default function PageBuilderPage() {
@@ -15,9 +15,9 @@ export default function PageBuilderPage() {
           🧱 Page Builder
         </h2>
         <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-          สร้างหน้า DApp ของคุณแบบ no-code · drag component จากด้านซ้ายมา drop
-          ในเฟรม · ตั้งค่า contract address ที่ผูก · save → ได้ JSON config
-          เก็บไว้ · ปล่อย public page ใน Wave 3.
+          สร้างหน้า DApp ของคุณแบบ no-code — drag component จากด้านซ้ายมา drop
+          ในเฟรม, ตั้งค่า contract address ที่ผูก, save → ได้ JSON config
+          เก็บไว้. ปล่อย public page ใน Wave 3.
         </p>
       </header>
       <PageBuilder />

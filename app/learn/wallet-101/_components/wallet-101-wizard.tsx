@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 
@@ -248,6 +248,7 @@ function FaucetStep({
           explorerUrl: data.explorerUrl,
         });
         setStatus("success");
+        setWjhOpen(true);
       } else {
         setResult({
           ok: false,
@@ -355,6 +356,16 @@ function FaucetStep({
           ขั้นถัดไป → Mint ตัวแรก
         </Button>
       </CardFooter>
+      {status === "success" && result?.ok && (
+        <WhatJustHappened
+          open={wjhOpen}
+          onClose={() => setWjhOpen(false)}
+          action="send"
+          txHash={result.txHash}
+          chainId={84532}
+          summary="รับ test ETH สำเร็จ"
+        />
+      )}
     </Card>
   );
 }
@@ -383,6 +394,12 @@ function MintStep({
 
   const { isLoading: confirming, isSuccess: confirmed } =
     useWaitForTransactionReceipt({ hash: txHash });
+
+  const [wjhOpen, setWjhOpen] = useState(false);
+  // Open WJH overlay once when confirmed flips true
+  useEffect(() => {
+    if (confirmed && txHash) setWjhOpen(true);
+  }, [confirmed, txHash]);
 
   function claim() {
     if (!ready) return;
@@ -477,6 +494,16 @@ function MintStep({
           {showReady ? "ขั้นถัดไป → เสร็จ" : "ข้ามไปก่อน"}
         </Button>
       </CardFooter>
+      {confirmed && txHash && (
+        <WhatJustHappened
+          open={wjhOpen}
+          onClose={() => setWjhOpen(false)}
+          action="mint"
+          txHash={txHash}
+          chainId={84532}
+          summary="คุณ mint SBT ตัวแรกของชีวิตแล้ว"
+        />
+      )}
     </Card>
   );
 }

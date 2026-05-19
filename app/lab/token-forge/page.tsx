@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { TokenForgeForm } from "./_form";
+import { LabModeSwitcher } from "@/components/lab-mode-switcher";
+import { TOKEN_FACTORY_SOURCE } from "../_lib/contract-sources";
 
 export const metadata: Metadata = {
   title: "Token Forge",
@@ -15,23 +17,31 @@ export default function TokenForgePage() {
           🪙 Token Forge
         </h2>
         <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-          สร้าง ERC-20 token ของคุณเอง · ใส่ชื่อ · symbol · supply ·
-          กด deploy · ได้ contract address ที่ verify ได้บน BaseScan.
-          เหมาะกับชมรม · meme coin · governance token · reward point.
+          สร้าง ERC-20 token ของคุณเอง — ใส่ชื่อ, symbol, supply, กด deploy.
+          ได้ contract address ที่ verify ได้บน BaseScan.
+          เหมาะกับชมรม, meme coin, governance token, reward point.
         </p>
       </header>
 
-      <TokenForgeForm />
+      <LabModeSwitcher
+        sourceTitle="TokenFactory.sol"
+        sourceCode={TOKEN_FACTORY_SOURCE}
+        githubUrl="https://github.com/cuvetsmo/cuvetsmo-web3/blob/main/contracts/src/TokenFactory.sol"
+        remixUrl="https://remix.ethereum.org/#url=https://github.com/cuvetsmo/cuvetsmo-web3/blob/main/contracts/src/TokenFactory.sol"
+        contractIntro="โรงงานออก ERC-20 ใหม่ผ่าน EIP-1167 minimal proxy — deploy ถูกกว่าธรรมดา ~40 เท่า. มี rate limit 5 token/wallet/24h กัน spam."
+      >
+        <TokenForgeForm />
+      </LabModeSwitcher>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-3">
         <Tip emoji="🎯" title="Use case ของชมรม">
-          ออก reward token ให้สมาชิกตอบคำถาม · เก็บไว้แลก stickers ปลายปี
+          ออก reward token ให้สมาชิกตอบคำถาม เก็บไว้แลก stickers ปลายปี
         </Tip>
         <Tip emoji="🧪" title="ทดลอง tokenomics">
-          ลองออก token + กระจายให้เพื่อน · เห็น flow ของ transfer/burn จริง
+          ลองออก token แล้วกระจายให้เพื่อน เห็น flow ของ transfer/burn จริง
         </Tip>
         <Tip emoji="🎓" title="โปรเจกต์เรียน">
-          เอาไปอ้างเป็นผลงาน Web3 · contract verify ได้ · public on BaseScan
+          เอาไปอ้างเป็นผลงาน Web3 — contract verify ได้ public on BaseScan
         </Tip>
       </section>
     </main>

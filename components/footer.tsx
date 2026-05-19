@@ -42,7 +42,7 @@ export function Footer() {
         <div className="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[var(--color-muted)]">
           <p>Built by students, for students. Made in Bangkok.</p>
           <p className="font-mono">
-            web3.cuvetsmo.com — Base Sepolia testnet
+            CUVETSMO Web3 — Base Sepolia testnet
           </p>
         </div>
 

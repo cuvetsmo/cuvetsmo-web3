@@ -1,6 +1,6 @@
 /**
  * Coinbase Developer Platform (CDP) Paymaster + Coinbase Smart Wallet
- * integration for web3.cuvetsmo.com
+ * integration for CUVETSMO Web3
  *
  * Wave 2F · Free Base mainnet path.
  *
@@ -13,7 +13,7 @@
  *      Lives at keys.coinbase.com. Built-in support via wagmi's
  *      `coinbaseWallet` connector with `preference: 'smartWalletOnly'`.
  *
- * Combined, a vet student lands at web3.cuvetsmo.com, taps "Connect with
+ * Combined, a vet student lands at CUVETSMO Web3, taps "Connect with
  * Coinbase Smart Wallet", logs in with their phone's passkey, and can attest
  * credentials on Base mainnet with $0 gas — no seed phrase, no MetaMask.
  *
@@ -259,7 +259,7 @@ export async function getStubPaymasterData(
  */
 export function getCoinbaseSmartWalletConnector() {
   return coinbaseWallet({
-    appName: "web3.cuvetsmo.com",
+    appName: "CUVETSMO Web3",
     appLogoUrl: "https://web3.cuvetsmo.com/smo-logo.png",
     preference: { options: "smartWalletOnly" },
   });

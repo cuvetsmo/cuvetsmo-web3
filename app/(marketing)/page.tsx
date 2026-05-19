@@ -19,14 +19,14 @@ import { Stat } from "./_components/stat";
 export const metadata: Metadata = {
   title: {
     absolute:
-      "web3.cuvetsmo.com — Web3 Playground สำหรับนิสิตสัตวแพทย์ จุฬาฯ",
+      "CUVETSMO Web3 — Web3 Playground สำหรับนิสิตสัตวแพทย์ จุฬาฯ",
   },
   description:
-    "เรียนรู้ ทดลอง สร้าง — Web3 playground และ creation platform สำหรับนิสิตคณะสัตวแพทย์ จุฬาฯ. ครบทั้ง 4 เสาหลัก: Learn · Play · Build · The Lab.",
+    "เรียนรู้ ทดลอง สร้าง — Web3 playground และ creation platform สำหรับนิสิตคณะสัตวแพทย์ จุฬาฯ. ครบทั้ง 4 เสาหลัก: Learn, Play, Build, The Lab.",
   openGraph: {
     url: "https://web3.cuvetsmo.com",
     title:
-      "web3.cuvetsmo.com — Web3 Playground for Thai Vet Students",
+      "CUVETSMO Web3 — Web3 Playground for Thai Vet Students",
     description:
       "Learn, Play, Build, The Lab. Educational testnet by students, for students.",
     images: [
@@ -34,15 +34,15 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "web3.cuvetsmo.com — 4 pillars: Learn · Play · Build · The Lab",
+        alt: "CUVETSMO Web3 — 4 pillars: Learn · Play · Build · The Lab",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "web3.cuvetsmo.com — Web3 Playground for Thai Vet Students",
+    title: "CUVETSMO Web3 — Web3 Playground for Thai Vet Students",
     description:
-      "Learn · Play · Build · The Lab. Built on Base · educational testnet.",
+      "Learn, Play, Build, The Lab. Built on Base, educational testnet.",
     images: ["/og.png"],
   },
 };
@@ -52,7 +52,7 @@ const PILLARS = [
     title: "Learn",
     titleTh: "เรียนรู้",
     icon: "📚",
-    description: "เรียนรู้ web3 แบบไม่กลัวเสียเงิน · Wallet 101, quests, glossary",
+    description: "เรียนรู้ web3 แบบไม่กลัวเสียเงิน — Wallet 101, quests, glossary",
     href: "/learn",
     accent: "from-sky-500/10 to-sky-700/10",
     border: "border-sky-700/20",
@@ -61,7 +61,7 @@ const PILLARS = [
     title: "Play",
     titleTh: "ทดลองเล่น",
     icon: "🎮",
-    description: "ทดลอง mint NFT · sign message · vote บน testnet ฟรี",
+    description: "ทดลอง mint NFT, sign message, vote บน testnet ฟรี",
     href: "/play",
     accent: "from-emerald-500/10 to-emerald-700/10",
     border: "border-emerald-700/20",
@@ -70,7 +70,7 @@ const PILLARS = [
     title: "Build",
     titleTh: "สร้าง",
     icon: "🛠️",
-    description: "Claim Vet SBT Card · Profile · Badge collection ของตัวเอง",
+    description: "Claim Vet SBT Card, Profile, Badge collection ของตัวเอง",
     href: "/build",
     accent: "from-amber-500/10 to-amber-700/10",
     border: "border-amber-700/20",
@@ -79,7 +79,7 @@ const PILLARS = [
     title: "The Lab",
     titleTh: "ห้องแล็บ",
     icon: "🧪",
-    description: "สร้าง token, NFT, DAO ของตัวเองภายใน 30 วินาที · ไม่ต้องเขียน code",
+    description: "สร้าง token, NFT, DAO ของตัวเองภายใน 30 วินาที ไม่ต้องเขียน code",
     href: "/lab",
     accent: "from-purple-500/10 to-purple-700/10",
     border: "border-purple-700/20",
@@ -158,22 +158,22 @@ export default function LandingPage() {
             อ่าน 3 นาที — ไม่ต้องสมัครอะไรเลย — ไม่ต้องมี wallet
           </p>
 
-          <p className="mt-10 text-xs sm:text-sm text-center text-[var(--color-muted)] flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+          <p className="mt-10 text-xs sm:text-sm text-center text-[var(--color-muted)] flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
             <span className="inline-flex items-center gap-1.5">
               <span
                 aria-hidden
-                className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
               />
               Built on Base
             </span>
-            <span aria-hidden className="opacity-50">
-              ·
+            <span aria-hidden className="opacity-30">
+              —
             </span>
-            <span>powered by CUVETSMO</span>
-            <span aria-hidden className="opacity-50">
-              ·
+            <span>Powered by CUVETSMO</span>
+            <span aria-hidden className="opacity-30">
+              —
             </span>
-            <span>educational testnet</span>
+            <span>Educational testnet</span>
           </p>
         </div>
       </section>
@@ -185,15 +185,14 @@ export default function LandingPage() {
       >
         <div className="mb-10 text-center">
           <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-2">
-            4 เสาหลัก · 4 Pillars
+            4 เสาหลัก — 4 Pillars
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Learn · Play · Build · The Lab
           </h2>
-          <p className="mt-3 text-[var(--color-muted)] max-w-2xl mx-auto text-sm sm:text-base">
+          <p className="mt-3 text-[var(--color-muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             แต่ละเสาหลักออกแบบให้เสริมกัน — เริ่มจากเรียน
-            ไปทดลอง สร้าง credentials ของตัวเอง แล้วจบที่
-            สร้าง asset ของกลุ่มเอง
+            ไปทดลอง สร้าง credentials ของตัวเอง แล้วจบที่สร้าง asset ของกลุ่มเอง.
           </p>
         </div>
 

@@ -1,6 +1,6 @@
 # MAINNET_FREE_PATH.md
 
-> How `web3.cuvetsmo.com` runs on **Base mainnet for ~$0** — by leveraging
+> How `CUVETSMO Web3` runs on **Base mainnet for ~$0** — by leveraging
 > EAS (Ethereum Attestation Service) + Coinbase Developer Platform (CDP)
 > Paymaster + Coinbase Smart Wallet.
 >
@@ -311,7 +311,7 @@ credential.
   rotated, the schemas don't change UIDs (they're already on chain), only
   the future-attestation issuer changes.
 - **CDP project key** in `NEXT_PUBLIC_*` is public-by-design, but CDP rate
-  limits per Origin. Bind to `web3.cuvetsmo.com` before mainnet.
+  limits per Origin. Bind to `CUVETSMO Web3` before mainnet.
 - **Revocable schemas** (VET_CARD, BADGE) let us undo mistakes. Revoke
   events are public and indexed by EAS. Use sparingly — revoking is a
   social signal of "we got it wrong".

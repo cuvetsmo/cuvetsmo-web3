@@ -133,13 +133,13 @@ export function IlSimulator() {
           ทำไม LP ขาดทุนตอนราคาวิ่ง?
         </p>
         <p className="text-[var(--color-muted)]">
-          AMM rebalance pool อัตโนมัติ · เมื่อ PUP แพงขึ้น arbitrageur มาดึง PUP
+          AMM rebalance pool อัตโนมัติ — เมื่อ PUP แพงขึ้น arbitrageur มาดึง PUP
           ออก ทิ้ง MEOW ไว้. คุณจึงมี PUP น้อยลงเทียบกับตอนที่ HODL.
           IL จะ &quot;impermanent&quot; ก็ต่อเมื่อราคากลับมาเท่าเดิม.
         </p>
         <p className="mt-2 text-[var(--color-muted)]">
-          IL ที่ {HODL_VALUE} MEOW เริ่ม: ที่ 2× ราคา ≈ -5.7% · ที่ 4× ≈ -20%
-          · ที่ 0.5× ≈ -5.7%.
+          IL ที่ {HODL_VALUE} MEOW เริ่ม: ที่ 2× ราคา ≈ -5.7%, ที่ 4× ≈ -20%,
+          ที่ 0.5× ≈ -5.7%.
         </p>
       </div>
     </div>

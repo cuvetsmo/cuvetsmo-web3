@@ -1,5 +1,5 @@
 /**
- * EAS schema registration helper · web3.cuvetsmo.com
+ * EAS schema registration helper · CUVETSMO Web3
  *
  * Wave 2F · Free Base mainnet path.
  *

@@ -118,7 +118,7 @@ export function ProfilePanel() {
         <CardHeader>
           <CardTitle>Login เพื่อดู profile ของคุณ</CardTitle>
           <CardDescription>
-            Profile รวม wallet · Vet SBT Card · Badge collection · XP ของคุณ
+            Profile รวม wallet, Vet SBT Card, Badge collection, และ XP ของคุณ
             ในหน้าเดียว.
           </CardDescription>
         </CardHeader>
@@ -163,8 +163,8 @@ export function ProfilePanel() {
               shortAddress(address)}
           </CardTitle>
           <CardDescription>
-            web3.cuvetsmo.com profile · {ownedQuests.length} / {QUESTS.length}{" "}
-            quests · {totalXp} XP
+            CUVETSMO Web3 profile — {ownedQuests.length} / {QUESTS.length}{" "}
+            quests, {totalXp} XP
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -259,7 +259,7 @@ export function ProfilePanel() {
             </Badge>
           </div>
           <CardDescription>
-            แต่ละ badge = 1 quest. {badgeContractReady ? "On-chain truth via BadgeRegistry." : "Local progress · on-chain badges mint หลัง contract live."}
+            แต่ละ badge = 1 quest. {badgeContractReady ? "On-chain truth via BadgeRegistry." : "Local progress — on-chain badges mint หลัง contract live."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -290,7 +290,7 @@ export function ProfilePanel() {
                     {q.badge}
                   </p>
                   <p className="text-[10px] text-[var(--color-muted)] leading-tight">
-                    #{q.id} · {owned ? "Owned" : "Locked"}
+                    #{q.id} — {owned ? "Owned" : "Locked"}
                   </p>
                 </div>
               );

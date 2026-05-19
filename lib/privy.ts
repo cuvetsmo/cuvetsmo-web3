@@ -2,7 +2,7 @@ import type { PrivyClientConfig } from "@privy-io/react-auth";
 import { baseSepolia } from "viem/chains";
 
 /**
- * Privy configuration for web3.cuvetsmo.com
+ * Privy configuration for CUVETSMO Web3
  *
  * - Embedded wallets created automatically for users-without-wallets
  *   so a vet student can sign in with email + immediately have a wallet.

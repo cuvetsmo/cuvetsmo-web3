@@ -96,7 +96,7 @@ export function SbtMakerForm() {
         image: imageIpfs,
         attributes: [
           { trait_type: "Type", value: "Soulbound" },
-          { trait_type: "Issued via", value: "web3.cuvetsmo.com — SBT Maker" },
+          { trait_type: "Issued via", value: "CUVETSMO Web3 — SBT Maker" },
         ],
       };
       const metaPin = await pinJSON(metadata);

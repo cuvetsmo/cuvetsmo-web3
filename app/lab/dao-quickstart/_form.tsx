@@ -27,7 +27,7 @@ export function DaoQuickstartForm() {
           title="Snapshot mode"
           tag="Recommended"
           tagTone="success"
-          description="Off-chain voting · ฟรี · ไม่ต้อง deploy contract · เหมาะกับชมรม"
+          description="Off-chain voting, ฟรี, ไม่ต้อง deploy contract, เหมาะกับชมรม"
         />
         <ModeCard
           active={mode === "onchain"}
@@ -35,7 +35,7 @@ export function DaoQuickstartForm() {
           title="On-chain Governor"
           tag="Advanced"
           tagTone="warning"
-          description="Deploy OZ Governor contract · ใช้ token voting · ต้องมี voting token"
+          description="Deploy OZ Governor contract — ใช้ token voting, ต้องมี voting token"
         />
       </div>
 

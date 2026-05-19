@@ -3,9 +3,9 @@ import { MintForm } from "./_mint-form";
 import { RecentMints } from "./_recent-mints";
 
 export const metadata: Metadata = {
-  title: "Mint Playground · สร้าง NFT/SBT แรกของคุณ",
+  title: "Mint Playground — สร้าง NFT/SBT แรกของคุณ",
   description:
-    "Mint NFT หรือ SBT แรกของคุณบน Base Sepolia testnet · อัปโหลดรูป + ตั้งชื่อ + sign tx · ฟรีและปลอดภัย",
+    "Mint NFT หรือ SBT แรกของคุณบน Base Sepolia testnet — อัปโหลดรูป, ตั้งชื่อ, sign tx, ฟรีและปลอดภัย",
 };
 
 export default function MintPage() {
@@ -13,17 +13,17 @@ export default function MintPage() {
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <header className="mb-6">
         <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-brand-light)] text-[var(--color-brand)] text-[11px] font-semibold uppercase tracking-wider mb-3">
-          Play · Mint Playground
+          Play — Mint Playground
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
           สร้าง NFT/SBT แรกของคุณ
         </h1>
         <p className="text-[var(--color-muted)] leading-relaxed">
-          อัปโหลดรูป · ตั้งชื่อ · กด mint · ได้ token จริงบน Base Sepolia
-          testnet · ฟรี ไม่มีค่าใช้จ่าย.
+          อัปโหลดรูป, ตั้งชื่อ, กด mint แล้วได้ token จริงบน Base Sepolia
+          testnet ฟรี ไม่มีค่าใช้จ่าย.
         </p>
         <p className="mt-2 text-xs text-[var(--color-muted)]">
-          Testnet only · not curated · ผลงานทุกคนเห็นได้สาธารณะ.
+          Testnet only, not curated — ผลงานทุกคนเห็นได้สาธารณะ.
         </p>
       </header>
 

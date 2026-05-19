@@ -1,5 +1,5 @@
 /**
- * EAS (Ethereum Attestation Service) integration for web3.cuvetsmo.com
+ * EAS (Ethereum Attestation Service) integration for CUVETSMO Web3
  *
  * Wave 2F · Free Base mainnet path. Instead of deploying our own SBT/Badge/
  * Guestbook contracts on Base mainnet (~$10-50 in gas + ongoing per-mint cost),
@@ -79,7 +79,7 @@ export function defaultRpcForNetwork(network: EasNetwork): string {
 // ──────────────────────────────────────────────────────────────────────
 
 /**
- * Schema definitions for web3.cuvetsmo.com.
+ * Schema definitions for CUVETSMO Web3.
  *
  * UIDs are deterministic — computed from (schema + resolver + revocable) — so
  * once a schema is registered on Base mainnet by anyone, the UID is fixed.

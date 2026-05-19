@@ -3,7 +3,7 @@ import { baseSepolia } from "wagmi/chains";
 import { createConfig } from "@privy-io/wagmi";
 
 /**
- * wagmi configuration for web3.cuvetsmo.com
+ * wagmi configuration for CUVETSMO Web3
  *
  * Network: Base Sepolia (testnet) only.
  * RPC: defaults to public Base Sepolia endpoint. Override via

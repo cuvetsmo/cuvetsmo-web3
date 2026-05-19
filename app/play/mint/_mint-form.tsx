@@ -162,7 +162,7 @@ export function MintForm() {
       image: img.ipfs,
       attributes: [
         { trait_type: "Type", value: type === "nft" ? "NFT" : "Soulbound" },
-        { trait_type: "Minted on", value: "web3.cuvetsmo.com" },
+        { trait_type: "Minted on", value: "CUVETSMO Web3" },
         { trait_type: "Network", value: "Base Sepolia" },
       ],
     };

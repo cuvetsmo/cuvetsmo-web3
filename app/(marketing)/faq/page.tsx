@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description:
     "คำถามที่คนใหม่ web3 ถามบ่อย — เรื่องเงิน, ความปลอดภัย, identity, ทำไมเลือก Base ไม่ใช่ Bitkub. ตอบแบบเข้าใจง่ายสำหรับคนที่ไม่ใช่ developer.",
   openGraph: {
-    title: "FAQ — web3.cuvetsmo.com",
+    title: "FAQ — CUVETSMO Web3",
     description:
       "Common questions about web3, money safety, and what CUVETSMO does. Plain Thai answers for non-developers.",
     images: ["/og.png"],
@@ -41,7 +41,7 @@ const FAQS: FaqEntry[] = [
           <strong> rug pull ของโปรเจกต์ใหม่ๆ</strong> — ไม่ใช่ตัว blockchain เอง.
         </p>
         <p className="mb-3">
-          ที่ web3.cuvetsmo.com เราอยู่บน <strong>testnet</strong> ทั้งหมด — ทุก asset
+          ที่ CUVETSMO Web3 เราอยู่บน <strong>testnet</strong> ทั้งหมด — ทุก asset
           มูลค่า <strong>0 บาท</strong>. คุณไม่มีทางเสียเงินจากระบบนี้ เพราะไม่มีเงินจริงไหลเข้าไปเลย.
         </p>
         <p>
@@ -192,7 +192,7 @@ const FAQS: FaqEntry[] = [
         <ul className="space-y-1.5 list-disc pl-5">
           <li>Smart contract เป็น public good — deploy แล้วใครก็ใช้ต่อได้</li>
           <li>SBT/NFT ที่ออกไปแล้ว <strong>ยังอยู่ใน wallet ผู้รับ</strong> แม้เว็บปิด</li>
-          <li>Domain web3.cuvetsmo.com อยู่ใต้ control ของสโม ไม่ใช่บุคคล</li>
+          <li>Domain CUVETSMO Web3 อยู่ใต้ control ของสโม ไม่ใช่บุคคล</li>
           <li>มี working group ของนิสิตรุ่นต่อๆ ไปที่รับช่วงต่อตามอายุการเป็นนิสิต</li>
         </ul>
       </>
@@ -211,7 +211,7 @@ const FAQS: FaqEntry[] = [
         </p>
         <p>
           เปรียบเหมือนสอบจริง vs สอบ mock — กฎเหมือนกัน, แต่ไม่มีผลต่อ transcript จริง.
-          web3.cuvetsmo.com ทั้งหมดอยู่บน <strong>Base Sepolia</strong> ซึ่งเป็น testnet
+          CUVETSMO Web3 ทั้งหมดอยู่บน <strong>Base Sepolia</strong> ซึ่งเป็น testnet
           ของ Base.
         </p>
       </>
@@ -358,7 +358,7 @@ export default function FaqPage() {
           คำถามที่ถามบ่อย
         </h1>
         <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          คำถามที่นิสิต, อาจารย์, พ่อแม่ ถามตอนเห็น web3.cuvetsmo.com ครั้งแรก.
+          คำถามที่นิสิต, อาจารย์, พ่อแม่ ถามตอนเห็น CUVETSMO Web3 ครั้งแรก.
           ตอบแบบเข้าใจง่าย ไม่มีศัพท์เทคนิคโดยไม่จำเป็น.
         </p>
       </header>

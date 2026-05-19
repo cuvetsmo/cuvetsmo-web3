@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata: Metadata = {
   title: "Profile",
   description:
-    "Your web3.cuvetsmo.com profile — Vet SBT Card, badges, XP, login methods.",
+    "Your CUVETSMO Web3 profile — Vet SBT Card, badges, XP, login methods.",
 };
 
 export default function ProfilePage() {

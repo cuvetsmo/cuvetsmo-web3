@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "ทำไมเราสร้าง web3 playground สำหรับนิสิตสัตวแพทย์ · vision, team, 4 pillars, tech stack, roadmap.",
+    "ทำไมเราสร้าง web3 playground สำหรับนิสิตสัตวแพทย์ — vision, team, 4 pillars, tech stack, roadmap.",
   openGraph: {
-    title: "About · web3.cuvetsmo.com",
+    title: "About — CUVETSMO Web3",
     description:
-      "วิสัยทัศน์ 10 ปี · 4 เสาหลัก · ทีม · roadmap · tech stack.",
+      "วิสัยทัศน์ 10 ปี, 4 เสาหลัก, ทีม, roadmap, tech stack.",
     images: ["/og.png"],
   },
 };
@@ -26,7 +26,7 @@ const PILLARS = [
     name: "Play",
     nameTh: "ทดลองเล่น",
     icon: "🎮",
-    role: "Sandbox · zero risk",
+    role: "Sandbox — zero risk",
     detail:
       "Mint NFT, sign message, swap token, vote ใน DAO poll — ทุกอย่างบน testnet ไม่มีค่าใช้จ่ายและไม่มีความเสี่ยงเสียเงินจริง.",
   },
@@ -63,32 +63,32 @@ const TECH_STACK = [
   },
   {
     layer: "Auth + Wallet",
-    items: ["Privy (embedded wallet · email/social)", "Account Abstraction (ERC-4337)", "wagmi + viem"],
+    items: ["Privy (embedded wallet — email/social)", "Account Abstraction (ERC-4337)", "wagmi + viem"],
   },
   {
     layer: "Storage + Infra",
-    items: ["Pinata (IPFS metadata)", "Vercel (hosting)", "Supabase (off-chain · later)"],
+    items: ["Pinata (IPFS metadata)", "Vercel (hosting)", "Supabase (off-chain, later)"],
   },
 ] as const;
 
 const TEAM = [
   {
-    name: "Palm · ปาล์ม",
-    role: "Web3 Lead · CUVETSMO 68 VP Planning",
+    name: "Palm (ปาล์ม)",
+    role: "Web3 Lead, CUVETSMO 68 VP Planning",
     detail:
-      "Vet 86 · ออกแบบ architecture, ดูแล smart contracts + frontend, เขียน master plan.",
+      "Vet 86 — ออกแบบ architecture, ดูแล smart contracts + frontend, เขียน master plan.",
   },
   {
-    name: "Boom · บูม",
+    name: "Boom (บูม)",
     role: "CUVETSMO 69 President",
     detail:
-      "Vet 87 · ดูแลการเชื่อม web3 platform กับงานสโมและกิจการนิสิต Phase 2 onwards.",
+      "Vet 87 — ดูแลการเชื่อม web3 platform กับงานสโมและกิจการนิสิต Phase 2 onwards.",
   },
   {
     name: "Faculty Advisor",
-    role: "TBD · กำลังหา",
+    role: "TBD — กำลังหา",
     detail:
-      "อาจารย์ที่ปรึกษาด้าน digital transformation · กิจการนิสิต · กำลังประเมินกับทีมที่ปรึกษา CUVET.",
+      "อาจารย์ที่ปรึกษาด้าน digital transformation และกิจการนิสิต กำลังประเมินกับทีมที่ปรึกษา CUVET.",
   },
 ] as const;
 
@@ -97,7 +97,7 @@ const ROADMAP = [
     phase: "Phase 0",
     label: "Foundation",
     status: "done",
-    detail: "Scaffold, auth, routing, brand tokens · Wave 1 (May 2026)",
+    detail: "Scaffold, auth, routing, brand tokens (Wave 1, May 2026)",
   },
   {
     phase: "Phase 1",
@@ -109,7 +109,7 @@ const ROADMAP = [
     phase: "Phase 1.5",
     label: "Polish + DNS",
     status: "done",
-    detail: "Landing rewrite, glossary, OG image, web3.cuvetsmo.com live",
+    detail: "Landing rewrite, glossary, OG image, CUVETSMO Web3 live",
   },
   {
     phase: "Phase 2",
@@ -121,7 +121,7 @@ const ROADMAP = [
     phase: "Phase 3",
     label: "Multi-faculty + scale",
     status: "active",
-    detail: "Onboard 2-3 more CU faculties · prep public launch · case study writing",
+    detail: "Onboard 2-3 more CU faculties, prep public launch, case study writing",
   },
 ] as const;
 
@@ -131,7 +131,7 @@ export default function AboutPage() {
       {/* Header */}
       <header className="mb-12">
         <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-2">
-          About · เกี่ยวกับเรา
+          About — เกี่ยวกับเรา
         </p>
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4">
           ทำไมเราสร้าง <span className="text-[var(--color-brand)]">web3 platform</span>?
@@ -144,7 +144,7 @@ export default function AboutPage() {
       {/* Origin story */}
       <section className="mb-16">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-6">
-          จุดเริ่มต้น · The origin
+          จุดเริ่มต้น — The origin
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           <div className="card">
@@ -163,7 +163,7 @@ export default function AboutPage() {
         <div className="mt-6 p-5 rounded-xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20">
           <p className="text-sm leading-relaxed text-[var(--color-text)]">
             <strong className="text-[var(--color-brand)]">เริ่มที่นิสิตสัตวแพทย์ CU เพราะ:</strong>{" "}
-            เล็กพอที่ iterate เร็ว · มี community เหนียวแน่น · vet เป็น domain ที่มี real-world use case (welfare treasury, attendance SBT) ที่ทรงพลังกว่า generic student club platform.
+            เล็กพอที่ iterate เร็ว, มี community เหนียวแน่น, และ vet เป็น domain ที่มี real-world use case (welfare treasury, attendance SBT) ที่ทรงพลังกว่า generic student club platform.
           </p>
         </div>
       </section>
@@ -171,7 +171,7 @@ export default function AboutPage() {
       {/* 4 Pillars detail */}
       <section className="mb-16">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          4 เสาหลัก · ทำไมต้อง 4 ไม่ใช่ 2 ไม่ใช่ 6
+          4 เสาหลัก — ทำไมต้อง 4 ไม่ใช่ 2 ไม่ใช่ 6
         </h2>
         <p className="text-sm text-[var(--color-muted)] mb-6 max-w-2xl">
           2 เสา (Learn + Build) ไม่พอ — ขาด safe space ทดลองและขาด user creation.
@@ -204,15 +204,14 @@ export default function AboutPage() {
           ))}
         </div>
         <div className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          User journey: Learn → Play → Build → The Lab ·
-          แต่ละ pillar reinforce กัน — ของจาก Lab feed กลับไป Play, achievements จาก Quests สะสมเป็น badge บน SBT.
+          User journey: Learn → Play → Build → The Lab. แต่ละ pillar reinforce กัน — ของจาก Lab feed กลับไป Play, achievements จาก Quests สะสมเป็น badge บน SBT.
         </div>
       </section>
 
       {/* Tech stack */}
       <section className="mb-16">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          Tech stack · เลือก boring solutions
+          Tech stack — เลือก boring solutions
         </h2>
         <p className="text-sm text-[var(--color-muted)] mb-6 max-w-2xl">
           เราเลือกสิ่งที่ &ldquo;pragmatic&rdquo; ไม่ใช่ &ldquo;trendy&rdquo; — battle-tested libraries, mainstream patterns, contributors เยอะ, docs ดี.
@@ -225,8 +224,8 @@ export default function AboutPage() {
               </h3>
               <ul className="space-y-1 text-sm text-[var(--color-text)]">
                 {s.items.map((i) => (
-                  <li key={i} className="leading-relaxed">
-                    · {i}
+                  <li key={i} className="leading-relaxed flex gap-2 before:content-['•'] before:text-[var(--color-brand)] before:font-bold">
+                    {i}
                   </li>
                 ))}
               </ul>
@@ -238,7 +237,7 @@ export default function AboutPage() {
       {/* Team */}
       <section className="mb-16">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-6">
-          ทีม · Team
+          ทีม — Team
         </h2>
         <div className="grid gap-4 sm:grid-cols-3">
           {TEAM.map((m) => (
@@ -339,7 +338,7 @@ export default function AboutPage() {
       {/* Links */}
       <section className="card bg-[var(--color-brand-light)] border-[var(--color-brand)]/30">
         <h2 className="text-lg font-bold tracking-tight mb-3">
-          อ่านต่อ · Resources
+          อ่านต่อ — Resources
         </h2>
         <div className="grid sm:grid-cols-2 gap-3">
           <a
@@ -367,7 +366,7 @@ export default function AboutPage() {
             <div>
               <div className="text-sm font-semibold">Master Plan v0.1</div>
               <div className="text-xs text-[var(--color-muted)]">
-                Full whitepaper · 20 sections + 4 appendices
+                Full whitepaper, 20 sections + 4 appendices
               </div>
             </div>
             <span aria-hidden className="text-[var(--color-brand)]">
@@ -381,7 +380,7 @@ export default function AboutPage() {
             <div>
               <div className="text-sm font-semibold">Glossary TH/EN</div>
               <div className="text-xs text-[var(--color-muted)]">
-                ศัพท์ web3 25 รายการ พร้อมคำอธิบาย
+                ศัพท์ web3 53 รายการ พร้อมคำอธิบาย
               </div>
             </div>
             <span aria-hidden className="text-[var(--color-brand)]">
@@ -393,9 +392,37 @@ export default function AboutPage() {
             className="flex items-center justify-between rounded-lg px-4 py-3 bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
           >
             <div>
-              <div className="text-sm font-semibold">Wallet 101 →</div>
+              <div className="text-sm font-semibold">Wallet 101</div>
               <div className="text-xs text-[var(--color-muted)]">
-                เริ่มต้นเข้า web3 · 10 นาที
+                เริ่มต้นเข้า web3 ใน 10 นาที
+              </div>
+            </div>
+            <span aria-hidden className="text-[var(--color-brand)]">
+              →
+            </span>
+          </Link>
+          <Link
+            href="/learn/zero-to-hero"
+            className="flex items-center justify-between rounded-lg px-4 py-3 bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
+          >
+            <div>
+              <div className="text-sm font-semibold">Zero to Hero</div>
+              <div className="text-xs text-[var(--color-muted)]">
+                อ่าน 3 นาที — เข้าใจ web3 จาก 0
+              </div>
+            </div>
+            <span aria-hidden className="text-[var(--color-brand)]">
+              →
+            </span>
+          </Link>
+          <Link
+            href="/faq"
+            className="flex items-center justify-between rounded-lg px-4 py-3 bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
+          >
+            <div>
+              <div className="text-sm font-semibold">FAQ</div>
+              <div className="text-xs text-[var(--color-muted)]">
+                คำถามที่ถามบ่อย, ตอบแบบเข้าใจง่าย
               </div>
             </div>
             <span aria-hidden className="text-[var(--color-brand)]">

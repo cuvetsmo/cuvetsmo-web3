@@ -13,12 +13,12 @@ const ibmPlexSansThai = IBM_Plex_Sans_Thai({
 export const metadata: Metadata = {
   metadataBase: new URL("https://web3.cuvetsmo.com"),
   title: {
-    default: "web3.cuvetsmo.com — Web3 Playground สำหรับนิสิตสัตวแพทย์",
-    template: "%s · web3.cuvetsmo.com",
+    default: "CUVETSMO Web3 — Playground สำหรับนิสิตสัตวแพทย์",
+    template: "%s · CUVETSMO Web3",
   },
   description:
-    "web3 playground for Thai vet students · learn, play, build, create. 4 เสาหลัก: Learn · Play · Build · The Lab. Educational testnet.",
-  applicationName: "web3.cuvetsmo.com",
+    "Web3 playground for Thai vet students — learn, play, build, create. 4 เสาหลัก: Learn, Play, Build, The Lab. Educational testnet.",
+  applicationName: "CUVETSMO Web3",
   keywords: [
     "web3",
     "cuvetsmo",
@@ -43,28 +43,28 @@ export const metadata: Metadata = {
     apple: "/smo-logo.png",
   },
   openGraph: {
-    title: "web3.cuvetsmo.com — Web3 Playground for Thai Vet Students",
+    title: "CUVETSMO Web3 — Playground for Thai Vet Students",
     description:
       "Learn, Play, Build, The Lab. Educational testnet by students, for students.",
     type: "website",
     locale: "th_TH",
     alternateLocale: ["en_US"],
-    siteName: "web3.cuvetsmo.com",
+    siteName: "CUVETSMO Web3",
     url: "https://web3.cuvetsmo.com",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "web3.cuvetsmo.com — 4 pillars: Learn, Play, Build, The Lab",
+        alt: "CUVETSMO Web3 — 4 pillars: Learn, Play, Build, The Lab",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "web3.cuvetsmo.com — Web3 Playground for Thai Vet Students",
+    title: "CUVETSMO Web3 — Playground for Thai Vet Students",
     description:
-      "Learn · Play · Build · The Lab. Built on Base · educational testnet.",
+      "Learn, Play, Build, The Lab. Built on Base, educational testnet.",
     images: ["/og.png"],
   },
   robots: {

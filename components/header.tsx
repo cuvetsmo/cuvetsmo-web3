@@ -33,7 +33,7 @@ export function Header() {
         <Link
           href="/"
           className="flex items-center gap-2.5 shrink-0"
-          aria-label="web3.cuvetsmo.com home"
+          aria-label="CUVETSMO Web3 home"
         >
           <Image
             src="/smo-logo.png"
@@ -44,8 +44,8 @@ export function Header() {
             priority
           />
           <span className="font-semibold text-[15px] tracking-tight">
-            <span className="hidden sm:inline">web3.cuvetsmo.com</span>
-            <span className="sm:hidden">web3</span>
+            <span className="hidden sm:inline">CUVETSMO Web3</span>
+            <span className="sm:hidden">Web3</span>
           </span>
         </Link>
 

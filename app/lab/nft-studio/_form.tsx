@@ -109,7 +109,7 @@ export function NftStudioForm() {
           image: imageResults[i].ipfs,
           attributes: [
             { trait_type: "Collection", value: form.name },
-            { trait_type: "Created via", value: "web3.cuvetsmo.com — The Lab" },
+            { trait_type: "Created via", value: "CUVETSMO Web3 — The Lab" },
           ],
         };
         const r = await pinJSON(meta);

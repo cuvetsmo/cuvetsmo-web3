@@ -5,7 +5,7 @@ import { TemplateCard } from "./_card";
 export const metadata: Metadata = {
   title: "Templates",
   description:
-    "Library of audited-style template contracts: lottery, tip jar, staking, vesting, multisig, streaming, NFT staking. View source · fork on Remix · deploy.",
+    "Library of audited-style template contracts: lottery, tip jar, staking, vesting, multisig, streaming, NFT staking. View source, fork on Remix, deploy.",
 };
 
 export default async function TemplatesPage() {

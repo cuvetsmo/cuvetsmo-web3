@@ -1,6 +1,6 @@
 # contracts/
 
-Foundry workspace for web3.cuvetsmo.com smart contracts.
+Foundry workspace for CUVETSMO Web3 smart contracts.
 
 **Owner**: Agent A (Smart Contracts).
 

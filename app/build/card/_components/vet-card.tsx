@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CONTRACTS, VET_SBT_CARD_ABI, isReady } from "@/lib/contracts";
 import { shortAddress, explorerUrl } from "@/lib/utils";
+import { WhatJustHappened } from "@/components/what-just-happened";
 
 /**
  * Vet SBT Card — claim + view.
@@ -156,6 +157,11 @@ function ClaimCardView({
   } = useWriteContract();
   const { isLoading: confirming, isSuccess: confirmed } =
     useWaitForTransactionReceipt({ hash: txHash });
+
+  const [wjhOpen, setWjhOpen] = useState(false);
+  useEffect(() => {
+    if (confirmed && txHash) setWjhOpen(true);
+  }, [confirmed, txHash]);
 
   useEffect(() => {
     if (confirmed && typeof window !== "undefined") {
@@ -309,6 +315,16 @@ function ClaimCardView({
           </span>
         )}
       </CardFooter>
+      {confirmed && txHash && (
+        <WhatJustHappened
+          open={wjhOpen}
+          onClose={() => setWjhOpen(false)}
+          action="claim"
+          txHash={txHash}
+          chainId={84532}
+          summary="Claim Vet SBT Card สำเร็จ"
+        />
+      )}
     </Card>
   );
 }
@@ -735,7 +751,7 @@ function ShareButtons({
   studentName: string;
   cohort: number;
 }) {
-  const text = `เพิ่งได้ Vet SBT Card 🎓 ${studentName} · Vet ${cohort} · CU. ลอง mint ของคุณที่ web3.cuvetsmo.com`;
+  const text = `เพิ่งได้ Vet SBT Card 🎓 ${studentName} · Vet ${cohort} · CU. ลอง mint ของคุณที่ CUVETSMO Web3`;
 
   function shareNative() {
     if (typeof navigator === "undefined" || !navigator.share) {

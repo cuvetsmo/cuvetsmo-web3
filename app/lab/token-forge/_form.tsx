@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { parseUnits } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
@@ -11,6 +11,7 @@ import { DeployProgress } from "../_components/deploy-progress";
 import { ConnectGate } from "../_components/connect-gate";
 import { Field, Input, Toggle } from "../_components/form-field";
 import { Button } from "@/components/ui/button";
+import { WhatJustHappened } from "@/components/what-just-happened";
 
 const ZERO = "0x0000000000000000000000000000000000000000";
 
@@ -46,6 +47,11 @@ export function TokenForgeForm() {
 
   const step = useDeployTracker({ txHash, isPending, writeError });
 
+  const [wjhOpen, setWjhOpen] = useState(false);
+  useEffect(() => {
+    if (step.kind === "success" && txHash) setWjhOpen(true);
+  }, [step.kind, txHash]);
+
   const factoryAddress = CONTRACTS.TOKEN_FACTORY;
   const factoryReady = factoryAddress !== ZERO;
 
@@ -75,17 +81,30 @@ export function TokenForgeForm() {
   // Render result after success
   if (step.kind === "success" && step.deployedAddress) {
     return (
-      <SuccessPanel
-        deployedAddress={step.deployedAddress}
-        tokenName={form.name}
-        tokenSymbol={form.symbol.toUpperCase()}
-        supply={form.supply}
-        onReset={() => {
-          reset();
-          setForm(DEFAULTS);
-          setTouched(false);
-        }}
-      />
+      <>
+        <SuccessPanel
+          deployedAddress={step.deployedAddress}
+          tokenName={form.name}
+          tokenSymbol={form.symbol.toUpperCase()}
+          supply={form.supply}
+          onReset={() => {
+            reset();
+            setForm(DEFAULTS);
+            setTouched(false);
+            setWjhOpen(false);
+          }}
+        />
+        {txHash && (
+          <WhatJustHappened
+            open={wjhOpen}
+            onClose={() => setWjhOpen(false)}
+            action="deploy"
+            txHash={txHash}
+            chainId={84532}
+            summary={`Deploy ${form.symbol.toUpperCase()} token สำเร็จ`}
+          />
+        )}
+      </>
     );
   }
 
