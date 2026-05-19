@@ -1,0 +1,94 @@
+import Link from "next/link";
+
+/**
+ * Site footer — 3 columns + disclaimer band.
+ */
+
+const PROJECT_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/glossary", label: "Glossary (TH/EN)" },
+  { href: "/learn/wallet-101", label: "Wallet 101" },
+];
+
+const TOOL_LINKS = [
+  { href: "/play/mint", label: "Mint Playground" },
+  { href: "/play/swap", label: "Swap Sandbox" },
+  { href: "/lab/token-forge", label: "Token Forge" },
+  { href: "/lab/nft-studio", label: "NFT Studio" },
+];
+
+const CONTACT_LINKS = [
+  { href: "https://cuvetsmo.com", label: "cuvetsmo.com" },
+  { href: "https://github.com/cuvetsmo", label: "github.com/cuvetsmo" },
+  { href: "https://status.cuvetsmo.com", label: "status.cuvetsmo.com" },
+  { href: "mailto:palm@cuvetsmo.com", label: "palm@cuvetsmo.com" },
+];
+
+export function Footer() {
+  return (
+    <footer
+      className="mt-auto border-t border-[var(--color-border)] bg-[var(--color-card)]"
+      role="contentinfo"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <FooterColumn title="Project" links={PROJECT_LINKS} />
+          <FooterColumn title="Tools" links={TOOL_LINKS} />
+          <FooterColumn title="Contact" links={CONTACT_LINKS} external />
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[var(--color-muted)]">
+          <p>Built by students, for students. Made in Bangkok.</p>
+          <p className="font-mono">
+            web3.cuvetsmo.com — Base Sepolia testnet
+          </p>
+        </div>
+
+        <div className="mt-4 p-3 rounded-md bg-[var(--color-brand-light)] text-[var(--color-brand)] text-xs leading-relaxed">
+          <strong className="font-semibold">Disclaimer:</strong> educational
+          testnet. Not financial advice. Not an investment offering. ทุก asset
+          ในระบบเป็น testnet มูลค่า 0 บาท ใช้สำหรับการเรียนรู้เท่านั้น.
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  links,
+  external,
+}: {
+  title: string;
+  links: { href: string; label: string }[];
+  external?: boolean;
+}) {
+  return (
+    <div>
+      <h3 className="text-sm font-semibold mb-3">{title}</h3>
+      <ul className="space-y-2">
+        {links.map((link) => (
+          <li key={link.href}>
+            {external ? (
+              <a
+                href={link.href}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noopener noreferrer"
+                className="text-sm text-[var(--color-muted)] hover:text-[var(--color-brand)] transition-colors"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                href={link.href}
+                className="text-sm text-[var(--color-muted)] hover:text-[var(--color-brand)] transition-colors"
+              >
+                {link.label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

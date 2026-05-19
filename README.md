@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# cuvetsmo-web3
 
-## Getting Started
+Web3 playground and creation platform for Thai vet students. 4 pillars: **Learn · Play · Build · The Lab**. Educational testnet on Base Sepolia.
 
-First, run the development server:
+Production target: **https://web3.cuvetsmo.com**.
+
+Master plan: `C:\Users\palmz\Desktop\Web3\cuvetsmo_web3_master_plan.md`.
+
+## Stack
+
+- Next.js 16 (App Router, Turbopack)
+- React 19 + TypeScript (strict)
+- Tailwind CSS 4 (`@theme inline` tokens)
+- Privy (auth + embedded wallets) via `@privy-io/react-auth`
+- wagmi 2 + viem (via `@privy-io/wagmi` config)
+- TanStack Query
+- Base Sepolia testnet
+
+## Getting started
 
 ```bash
+npm install
+cp .env.local.example .env.local
+# fill in NEXT_PUBLIC_PRIVY_APP_ID (https://dashboard.privy.io)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See **`STRUCTURE.md`** for Wave 2 agent ownership map.
 
-## Learn More
+```
+app/
+├── (marketing)/     — landing, about, glossary    (Agent E)
+├── learn/           — Wallet 101, Quests           (Agent B)
+├── play/            — Mint, Board, Swap            (Agent C)
+├── build/           — Vet SBT Card, Profile        (Agent B)
+├── lab/             — Token/NFT/SBT/DAO factories  (Agent D)
+├── api/faucet/      — testnet ETH dispenser        (Agent B)
+├── providers.tsx    — Privy + wagmi + Query
+└── layout.tsx       — root + IBM Plex Sans Thai
 
-To learn more about Next.js, take a look at the following resources:
+components/
+├── header.tsx       — top nav + wallet button
+├── footer.tsx       — 3-col bilingual footer
+├── wallet-button.tsx
+└── ui/              — shared primitives
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+lib/
+├── wagmi.ts         — Base Sepolia config
+├── privy.ts         — Privy config
+├── contracts.ts     — addresses + ABIs            (Agent A populates)
+└── utils.ts         — shared helpers
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+contracts/           — Foundry workspace            (Agent A populates)
+```
 
-## Deploy on Vercel
+## Brand
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Token | Value |
+|-------|-------|
+| Primary | `#0369a1` (sky-700) |
+| Hover | `#0c4a6e` (sky-800) |
+| Font | IBM Plex Sans Thai |
+| Logo | `public/smo-logo.png` |
+| Tone | Thai-mixed, no emoji in nav |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Wave plan
+
+| Wave | Scope | Status |
+|------|-------|--------|
+| 1 | Scaffold, auth, routing, layouts | shipped |
+| 2 | Smart contracts + content + UI (5 parallel agents) | up next |
+| 3 | Vercel deploy + Cloudflare DNS + production cutover | future |
+
+## Conventions
+
+- **Never** mention "Claude" or "AI" in user-facing content.
+- **Never** put secrets in `NEXT_PUBLIC_*` env vars.
+- **Always** read contract addresses from `lib/contracts.ts` (not env directly).
+- Run `npm run lint && npm run build` before opening a PR.
+
+## License
+
+MIT (code) · CC-BY-SA 4.0 (content) — see master plan §10.
