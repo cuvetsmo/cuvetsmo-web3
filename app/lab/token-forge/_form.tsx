@@ -207,12 +207,12 @@ export function TokenForgeForm() {
 
         <p className="text-xs text-[var(--color-muted)] leading-relaxed -mt-1">
           🛈 Note: implementation ปัจจุบัน mint supply ครั้งเดียวให้คุณ + burn
-          เปิดใช้งานอัตโนมัติ · flags อื่น ๆ จะเปิดใช้ในเวอร์ชัน v2.
+          เปิดใช้งานอัตโนมัติ. Flags อื่นๆ จะเปิดใช้ในเวอร์ชัน v2.
         </p>
 
         {!factoryReady && (
           <p className="rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-900 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
-            ⏳ TokenFactory ยังไม่ deploy · ปุ่ม Deploy จะปิดไว้จนกว่า Agent A
+            ⏳ TokenFactory ยังไม่ deploy — ปุ่ม Deploy จะปิดไว้จนกว่า Agent A
             จะ wire address.
           </p>
         )}
@@ -236,7 +236,7 @@ export function TokenForgeForm() {
         {step.kind !== "idle" && <DeployProgress step={step} />}
 
         <p className="text-xs text-center text-[var(--color-muted)] mt-1">
-          ก่อน deploy ดูข้อมูลให้แน่ใจ · ทำซ้ำหรือเปลี่ยนไม่ได้หลัง deploy.
+          ก่อน deploy ดูข้อมูลให้แน่ใจ — ทำซ้ำหรือเปลี่ยนไม่ได้หลัง deploy.
         </p>
       </form>
     </ConnectGate>
@@ -276,7 +276,7 @@ function SuccessPanel({
   return (
     <div className="rounded-2xl border border-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/30 dark:border-emerald-800 p-6 sm:p-7">
       <p className="inline-flex items-center gap-2 px-2 py-0.5 rounded bg-emerald-600 text-white text-xs font-semibold uppercase tracking-wide mb-4">
-        ✓ Deployed · Live!
+        ✓ Deployed — Live
       </p>
       <h3 className="text-2xl font-bold tracking-tight mb-2">
         {tokenName} ({tokenSymbol})
@@ -297,7 +297,7 @@ function SuccessPanel({
           href={`/lab/token-forge/${deployedAddress}`}
           className="btn-brand text-sm inline-flex items-center"
         >
-          เปิด token page · share URL →
+          เปิด token page (share URL) →
         </Link>
         <a
           href={`https://sepolia.basescan.org/address/${deployedAddress}`}

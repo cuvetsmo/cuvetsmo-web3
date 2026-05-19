@@ -53,7 +53,7 @@ export default function ZeroToHeroPage() {
           <p className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1">
             ดูศัพท์ที่เจอใน 5 ขั้น
           </p>
-          <h3 className="font-bold mb-1">Glossary TH/EN — 53 คำพื้นฐาน</h3>
+          <h3 className="font-bold mb-1">Glossary TH/EN — 68 คำพื้นฐาน</h3>
           <p className="text-sm text-[var(--color-muted)] leading-relaxed mb-3">
             พจนานุกรมสองภาษา พร้อมตัวอย่างบริบทสัตวแพทย์
           </p>

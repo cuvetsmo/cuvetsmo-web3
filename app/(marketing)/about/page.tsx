@@ -380,7 +380,7 @@ export default function AboutPage() {
             <div>
               <div className="text-sm font-semibold">Glossary TH/EN</div>
               <div className="text-xs text-[var(--color-muted)]">
-                ศัพท์ web3 53 รายการ พร้อมคำอธิบาย
+                ศัพท์ web3 68 รายการ พร้อมคำอธิบาย
               </div>
             </div>
             <span aria-hidden className="text-[var(--color-brand)]">

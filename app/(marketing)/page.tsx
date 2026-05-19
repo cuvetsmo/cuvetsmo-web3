@@ -117,14 +117,14 @@ export default function LandingPage() {
             />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-center max-w-4xl mx-auto leading-[1.15]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-center max-w-4xl mx-auto leading-[1.15] animate-fade-up">
             <span className="block">เครื่องมือ Web3</span>
-            <span className="block text-[var(--color-brand)] mt-1">
+            <span className="block gradient-text mt-1">
               สำหรับนิสิตสัตวแพทย์ จุฬาฯ
             </span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-[var(--color-muted)] text-center max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg text-[var(--color-muted)] text-center max-w-2xl mx-auto leading-relaxed animate-fade-up" style={{ animationDelay: "0.05s" }}>
             เรียนรู้ ทดลอง สร้าง — ครบในที่เดียว
             <br className="hidden sm:block" />
             <span className="text-sm sm:text-base">
@@ -133,7 +133,7 @@ export default function LandingPage() {
             </span>
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.1s" }}>
             <Link
               href="/learn/zero-to-hero"
               className="btn-brand text-center flex-1 sm:flex-initial"
@@ -263,7 +263,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-8 text-center text-xs text-[var(--color-muted)]">
-            ตัวเลขจะเริ่มนับเมื่อ Phase 1 launch บน Base Sepolia · ทุก asset เป็น testnet มูลค่า 0 บาท
+            ตัวเลขจะเริ่มนับเมื่อ Phase 1 launch บน Base Sepolia — ทุก asset เป็น testnet มูลค่า 0 บาท
           </p>
         </div>
       </section>
@@ -285,31 +285,31 @@ export default function LandingPage() {
             </span>
           </blockquote>
           <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-            Palm · VP Planning, CUVETSMO 68
+            Palm — VP Planning, CUVETSMO 68
           </p>
         </div>
 
         <div className="mt-12 grid sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-brand)] mb-2">
-              Mission · ภารกิจ
+              ภารกิจ — Mission
             </h3>
-            <ul className="space-y-2 text-sm text-[var(--color-text)] leading-relaxed">
-              <li>· ทำให้นิสิตคนแรกที่ไม่เคยรู้จัก crypto ใช้ web3 ได้ใน 5 นาที</li>
-              <li>· ให้ทุกคนสร้าง token/DApp ของตัวเองได้ใน 30 วินาที</li>
-              <li>· มี product ที่ใช้งานจริง ไม่ใช่แค่ demo</li>
-              <li>· เตรียมพร้อม regulatory — flip switch ไป production ได้ทันที</li>
+            <ul className="space-y-2 text-sm text-[var(--color-text)] leading-relaxed list-disc pl-5 marker:text-[var(--color-brand)]">
+              <li>ทำให้นิสิตคนแรกที่ไม่เคยรู้จัก crypto ใช้ web3 ได้ใน 5 นาที</li>
+              <li>ให้ทุกคนสร้าง token/DApp ของตัวเองได้ใน 30 วินาที</li>
+              <li>มี product ที่ใช้งานจริง ไม่ใช่แค่ demo</li>
+              <li>เตรียมพร้อม regulatory — flip switch ไป production ได้ทันที</li>
             </ul>
           </div>
           <div className="card">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-brand)] mb-2">
-              Mission · in English
+              Mission (English)
             </h3>
-            <ul className="space-y-2 text-sm text-[var(--color-text)] leading-relaxed">
-              <li>· Onboard a complete beginner to web3 in 5 minutes</li>
-              <li>· Empower anyone to deploy their own token/DApp in 30s</li>
-              <li>· Ship real products, not demos</li>
-              <li>· Be regulatory-ready — switch to production the day rules allow</li>
+            <ul className="space-y-2 text-sm text-[var(--color-text)] leading-relaxed list-disc pl-5 marker:text-[var(--color-brand)]">
+              <li>Onboard a complete beginner to web3 in 5 minutes</li>
+              <li>Empower anyone to deploy their own token/DApp in 30s</li>
+              <li>Ship real products, not demos</li>
+              <li>Be regulatory-ready — switch to production the day rules allow</li>
             </ul>
           </div>
         </div>
@@ -330,10 +330,10 @@ export default function LandingPage() {
                 พร้อมเริ่มต้นหรือยัง?
               </p>
               <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-1">
-                10 นาที · จาก zero สู่ web3
+                10 นาที — จาก zero สู่ web3
               </h3>
               <p className="text-sm text-[var(--color-muted)]">
-                ไม่ต้องมีพื้นฐาน · ไม่ใช้เงินจริง · ไม่ต้องโหลด app
+                ไม่ต้องมีพื้นฐาน, ไม่ใช้เงินจริง, ไม่ต้องโหลด app
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 shrink-0">

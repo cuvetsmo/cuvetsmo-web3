@@ -23,9 +23,9 @@ export default async function TemplatesPage() {
           📚 Templates
         </h2>
         <p className="text-[var(--color-muted)] text-sm leading-relaxed max-w-3xl">
-          Smart contract templates สำหรับใช้เป็น starting point · เปิดดู source
-          ในเบราว์เซอร์ · กด fork ไปแก้ใน Remix · หรือ deploy as-is (เร็ว ๆ นี้
-          ใน Wave 3). โค้ดทั้งหมดเป็น educational · ยังไม่ audit · อย่าใช้กับ
+          Smart contract templates สำหรับใช้เป็น starting point — เปิดดู source
+          ในเบราว์เซอร์, กด fork ไปแก้ใน Remix, หรือ deploy as-is (เร็วๆ นี้
+          ใน Wave 3). โค้ดทั้งหมดเป็น educational ยังไม่ audit — อย่าใช้กับ
           ของจริงที่มีมูลค่า.
         </p>
       </header>
@@ -44,8 +44,8 @@ export default async function TemplatesPage() {
           <p className="text-2xl mb-1.5">🛡️</p>
           <h3 className="text-base font-semibold mb-1">Safe (production multisig)</h3>
           <p className="text-xs text-[var(--color-muted)] leading-relaxed mb-3">
-            ต้องการ multisig ของจริง? ใช้ Safe (เดิม Gnosis Safe) แทน · audit
-            แล้ว · UI พร้อม · รองรับ Base mainnet/testnet.
+            ต้องการ multisig ของจริง? ใช้ Safe (เดิม Gnosis Safe) แทน — audit
+            แล้ว, UI พร้อม, รองรับ Base mainnet/testnet.
           </p>
           <span className="text-xs text-[var(--color-brand)] font-medium">
             เปิด safe.global ↗
