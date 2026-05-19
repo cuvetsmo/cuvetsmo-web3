@@ -36,8 +36,8 @@ export function Header() {
           aria-label="CUVETSMO Web3 home"
         >
           <Image
-            src="/smo-logo.png"
-            alt="CUVETSMO"
+            src="/web3-logo-mark.png"
+            alt="CUVETSMO Web3"
             width={32}
             height={32}
             className="rounded"

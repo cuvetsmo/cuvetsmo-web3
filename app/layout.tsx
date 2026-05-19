@@ -37,10 +37,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/smo-logo.png", type: "image/png" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
     shortcut: "/favicon.ico",
-    apple: "/smo-logo.png",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "CUVETSMO Web3 — Playground for Thai Vet Students",
