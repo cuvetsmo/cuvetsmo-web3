@@ -20,7 +20,7 @@ export const privyConfig: PrivyClientConfig = {
   appearance: {
     theme: "light",
     accentColor: "#0369a1",
-    logo: "/smo-logo.png",
+    logo: "/web3-logo-mark.png",
     showWalletLoginFirst: false,
   },
   defaultChain: baseSepolia,

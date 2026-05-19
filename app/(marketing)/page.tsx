@@ -34,7 +34,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "CUVETSMO Web3 — 4 pillars: Learn · Play · Build · The Lab",
+        alt: "CUVETSMO Web3 — 4 pillars: Learn, Play, Build, The Lab",
       },
     ],
   },
@@ -188,7 +188,7 @@ export default function LandingPage() {
             4 เสาหลัก — 4 Pillars
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Learn · Play · Build · The Lab
+            Learn, Play, Build, The Lab
           </h2>
           <p className="mt-3 text-[var(--color-muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             แต่ละเสาหลักออกแบบให้เสริมกัน — เริ่มจากเรียน

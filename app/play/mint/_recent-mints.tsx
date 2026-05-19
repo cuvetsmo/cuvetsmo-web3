@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePublicClient } from "wagmi";
-import { parseAbiItem, type Address } from "viem";
+import { parseAbiItem, type Address, type Log, type AbiEvent } from "viem";
 import { explorerUrl, shortAddress } from "@/lib/utils";
 import { PLAY_ADDRESSES, isLive } from "../_lib/addresses";
 
@@ -24,9 +24,36 @@ const SOULBOUND_EVENT = parseAbiItem(
 );
 
 const RECENT_LIMIT = 20;
-// 5000-block lookback ≈ ~2.5h on Base (2s blocks). Adjust if traffic grows.
+// 5000-block lookback gives ~2.5h history on Base (2s blocks).
+// Public Base RPC caps eth_getLogs at 2000 blocks per request, so we chunk.
 const LOOKBACK_BLOCKS = BigInt(5000);
+const MAX_RANGE_PER_CALL = BigInt(1900);
 const ZERO_BIG = BigInt(0);
+const ONE_BIG = BigInt(1);
+
+type PublicClient = NonNullable<ReturnType<typeof usePublicClient>>;
+
+// Fetch logs across an arbitrary range by splitting into MAX_RANGE_PER_CALL
+// chunks and merging. Each chunk runs in parallel.
+async function chunkedGetLogs(
+  client: PublicClient,
+  address: Address,
+  event: AbiEvent,
+  fromBlock: bigint,
+  toBlock: bigint,
+): Promise<Log[]> {
+  const ranges: { from: bigint; to: bigint }[] = [];
+  for (let start = fromBlock; start <= toBlock; start += MAX_RANGE_PER_CALL + ONE_BIG) {
+    const end = start + MAX_RANGE_PER_CALL > toBlock ? toBlock : start + MAX_RANGE_PER_CALL;
+    ranges.push({ from: start, to: end });
+  }
+  const results = await Promise.all(
+    ranges.map((r) =>
+      client.getLogs({ address, event, fromBlock: r.from, toBlock: r.to }),
+    ),
+  );
+  return results.flat() as Log[];
+}
 
 /**
  * Gallery of the most-recent public mints from both factories.
@@ -65,44 +92,48 @@ export function RecentMints() {
 
         if (nftLive) {
           promises.push(
-            publicClient
-              .getLogs({
-                address: PLAY_ADDRESSES.NFT_FACTORY,
-                event: MINTED_EVENT,
-                fromBlock,
-                toBlock: latest,
-              })
-              .then((logs) =>
-                logs.map((l) => ({
+            chunkedGetLogs(
+              publicClient,
+              PLAY_ADDRESSES.NFT_FACTORY,
+              MINTED_EVENT,
+              fromBlock,
+              latest,
+            ).then((logs) =>
+              logs.map((l) => {
+                const args = (l as Log & { args: { to: Address; tokenId: bigint; tokenURI: string } }).args;
+                return {
                   contract: PLAY_ADDRESSES.NFT_FACTORY,
-                  to: l.args.to as Address,
-                  tokenId: (l.args.tokenId ?? ZERO_BIG).toString(),
-                  tokenURI: l.args.tokenURI as string | undefined,
+                  to: args.to,
+                  tokenId: (args.tokenId ?? ZERO_BIG).toString(),
+                  tokenURI: args.tokenURI,
                   blockNumber: l.blockNumber!,
                   txHash: l.transactionHash!,
-                })),
-              ),
+                };
+              }),
+            ),
           );
         }
         if (sbtLive) {
           promises.push(
-            publicClient
-              .getLogs({
-                address: PLAY_ADDRESSES.SBT_FACTORY,
-                event: SOULBOUND_EVENT,
-                fromBlock,
-                toBlock: latest,
-              })
-              .then((logs) =>
-                logs.map((l) => ({
+            chunkedGetLogs(
+              publicClient,
+              PLAY_ADDRESSES.SBT_FACTORY,
+              SOULBOUND_EVENT,
+              fromBlock,
+              latest,
+            ).then((logs) =>
+              logs.map((l) => {
+                const args = (l as Log & { args: { to: Address; tokenId: bigint; tokenURI: string } }).args;
+                return {
                   contract: PLAY_ADDRESSES.SBT_FACTORY,
-                  to: l.args.to as Address,
-                  tokenId: (l.args.tokenId ?? ZERO_BIG).toString(),
-                  tokenURI: l.args.tokenURI as string | undefined,
+                  to: args.to,
+                  tokenId: (args.tokenId ?? ZERO_BIG).toString(),
+                  tokenURI: args.tokenURI,
                   blockNumber: l.blockNumber!,
                   txHash: l.transactionHash!,
-                })),
-              ),
+                };
+              }),
+            ),
           );
         }
 
