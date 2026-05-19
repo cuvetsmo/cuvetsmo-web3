@@ -11,12 +11,14 @@ const ibmPlexSansThai = IBM_Plex_Sans_Thai({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://web3.cuvetsmo.com"),
   title: {
     default: "web3.cuvetsmo.com — Web3 Playground สำหรับนิสิตสัตวแพทย์",
     template: "%s · web3.cuvetsmo.com",
   },
   description:
-    "Web3 playground และ creation platform สำหรับนิสิตคณะสัตวแพทยศาสตร์ จุฬาฯ. 4 เสาหลัก: Learn, Play, Build, The Lab. Educational testnet.",
+    "web3 playground for Thai vet students · learn, play, build, create. 4 เสาหลัก: Learn · Play · Build · The Lab. Educational testnet.",
+  applicationName: "web3.cuvetsmo.com",
   keywords: [
     "web3",
     "cuvetsmo",
@@ -24,9 +26,20 @@ export const metadata: Metadata = {
     "veterinary",
     "blockchain education",
     "base sepolia",
+    "soulbound token",
+    "nft",
+    "dao",
+    "thai web3",
   ],
+  authors: [{ name: "CUVETSMO Web3 Working Group" }],
+  creator: "CUVETSMO",
+  publisher: "CUVETSMO",
   icons: {
-    icon: "/smo-logo.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/smo-logo.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
     apple: "/smo-logo.png",
   },
   openGraph: {
@@ -35,7 +48,31 @@ export const metadata: Metadata = {
       "Learn, Play, Build, The Lab. Educational testnet by students, for students.",
     type: "website",
     locale: "th_TH",
+    alternateLocale: ["en_US"],
     siteName: "web3.cuvetsmo.com",
+    url: "https://web3.cuvetsmo.com",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "web3.cuvetsmo.com — 4 pillars: Learn, Play, Build, The Lab",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "web3.cuvetsmo.com — Web3 Playground for Thai Vet Students",
+    description:
+      "Learn · Play · Build · The Lab. Built on Base · educational testnet.",
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "https://web3.cuvetsmo.com",
   },
 };
 

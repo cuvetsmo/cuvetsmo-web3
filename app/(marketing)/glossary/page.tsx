@@ -1,18 +1,19 @@
-import { Placeholder } from "@/components/ui/placeholder";
+import type { Metadata } from "next";
+import { GLOSSARY } from "./_data";
+import { GlossaryClient } from "./glossary-client";
 
-export const metadata = {
-  title: "Glossary",
-  description: "Web3 vocabulary — TH/EN bilingual definitions for vet students.",
+export const metadata: Metadata = {
+  title: "Glossary TH/EN",
+  description:
+    "ศัพท์ web3 แบบสองภาษา (ไทย/อังกฤษ) · 25 คำที่ใช้บ่อยใน CUVETSMO platform — wallet, NFT, SBT, DAO, gas, blockchain.",
+  openGraph: {
+    title: "Glossary TH/EN · web3.cuvetsmo.com",
+    description:
+      "Bilingual web3 dictionary for Thai vet students · 25 essential entries.",
+    images: ["/og.png"],
+  },
 };
 
 export default function GlossaryPage() {
-  return (
-    <Placeholder
-      agent="Agent E (Marketing/Content)"
-      pillar="Marketing"
-      title="Glossary"
-      description="Bilingual TH/EN definitions of every Web3 term used on this site. Each entry: term, short definition, why it matters for vets, link to deeper learn module."
-      spec="master plan Appendix B — Glossary (TH/EN)"
-    />
-  );
+  return <GlossaryClient entries={[...GLOSSARY]} />;
 }
