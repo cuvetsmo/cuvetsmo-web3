@@ -1,0 +1,16 @@
+{
+  "_note": "PLACEHOLDER — run `forge script script/Deploy.s.sol --rpc-url base_sepolia --broadcast --private-key $DEPLOYER_PRIVATE_KEY` after funding the deployer wallet on Base Sepolia.",
+  "_deployer": "0x769B00bbBfA3d3100dd1e15D8563c82F569F4593",
+  "_chainId": 84532,
+  "orgRegistry": "",
+  "vetSbtCard": "",
+  "badgeRegistry": "",
+  "firstStepsSbt": "",
+  "guestbook": "",
+  "tokenImpl": "",
+  "tokenFactory": "",
+  "nftImpl": "",
+  "nftFactory": "",
+  "sbtFactory": "",
+  "governorFactory": ""
+}

@@ -4,37 +4,73 @@ Foundry workspace for web3.cuvetsmo.com smart contracts.
 
 **Owner**: Agent A (Smart Contracts).
 
-## Layout (target)
+## Layout
 
 ```
 contracts/
-├── foundry.toml        # Foundry config (Base Sepolia profile + remappings)
+├── foundry.toml         # solc 0.8.28 · via_ir · optimizer 200 · Base RPCs
+├── remappings.txt       # OZ + OZ-upgradeable
 ├── src/
-│   ├── OrgRegistry.sol      # registered orgs that can issue SBT cards
-│   ├── VetSBTCard.sol       # ERC-5114 soulbound student card
-│   ├── BadgeRegistry.sol    # badge SBT collection
-│   ├── factories/
-│   │   ├── TokenFactory.sol     # CREATE2 ERC-20 deployer
-│   │   ├── NFTFactory.sol       # ERC-721 collection deployer
-│   │   ├── SBTFactory.sol       # soulbound badge deployer
-│   │   └── GovernorFactory.sol  # OpenZeppelin Governor + ERC20Votes
-│   └── shared/
-│       └── (interfaces, libraries)
+│   ├── OrgRegistry.sol           # multi-tenant org registry (orgId 1 = CUVET)
+│   ├── VetSBTCard.sol            # soulbound student ID card · on-chain SVG
+│   ├── BadgeRegistry.sol         # ERC-1155 non-transferable badges
+│   ├── FirstStepsSBT.sol         # Wallet 101 completion badge
+│   ├── Guestbook.sol             # event-only message wall (no storage)
+│   ├── TokenImplementation.sol   # ERC-20 master cloned by TokenFactory
+│   ├── TokenFactory.sol          # EIP-1167 ERC-20 clone factory · rate-limited
+│   ├── NFTImplementation.sol     # ERC-721 master cloned by NFTFactory/SBTFactory
+│   ├── NFTFactory.sol            # ERC-721 collection factory
+│   ├── SBTFactory.sol            # soulbound ERC-721 collection factory
+│   └── GovernorFactory.sol       # STUB · Phase-2 OZ Governor factory
 ├── script/
-│   └── Deploy.s.sol     # deployment script (Base Sepolia)
-├── test/
-│   └── *.t.sol          # Foundry tests
-└── lib/                 # forge deps (gitignored, install via forge install)
+│   ├── Deploy.s.sol      # deploys all 11 contracts in order
+│   └── extract-abis.js   # regenerates lib/contracts.ts from forge artifacts
+├── test/                 # 9 *.t.sol files · 79 tests · 100% pass
+├── deployments/          # network-specific addresses (base-sepolia.json, base.json)
+└── lib/                  # forge deps · gitignored
 ```
 
-## Deployment outputs
+## Quick start
 
-After `forge script script/Deploy.s.sol --rpc-url base_sepolia --broadcast`,
-write the deployed addresses into:
+```shell
+# Build
+forge build
 
-1. The root `.env.local` (for local dev)
-2. Vercel project env vars (for production — Wave 3 handles)
-3. `lib/contracts.ts` ABI registry (paste const ABIs)
+# Test (79 tests across 9 suites)
+forge test --summary
+
+# Local smoke test (anvil)
+anvil &
+DEPLOYER_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+  forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
+
+# Base Sepolia deploy (after funding deployer wallet)
+forge script script/Deploy.s.sol --rpc-url base_sepolia --broadcast --private-key $DEPLOYER_PRIVATE_KEY
+
+# Regenerate lib/contracts.ts ABIs
+node script/extract-abis.js
+```
+
+## Deployer wallet
+
+Wave 2A generated a fresh deployer keypair stored in `contracts/.env` (gitignored):
+
+```
+Address:     0x769B00bbBfA3d3100dd1e15D8563c82F569F4593
+```
+
+**To deploy on Base Sepolia**, fund this address via the Coinbase faucet:
+https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet (~0.05 ETH is enough).
+
+Estimated gas for full deploy: ~0.024 ETH.
+
+## Mainnet caveat
+
+Only deploy these LOW-RISK contracts to Base mainnet:
+- OrgRegistry, VetSBTCard, BadgeRegistry, FirstStepsSBT, Guestbook
+
+DO NOT deploy factories to mainnet without an audit — factory bugs can cause user
+fund loss. The factories are testnet-only until Wave 3 ships audits.
 
 ## References
 

@@ -1,0 +1,10 @@
+{
+  "_note": "PLACEHOLDER — only deploy LOW-RISK contracts to Base mainnet (OrgRegistry, VetSBTCard, BadgeRegistry, FirstStepsSBT, Guestbook). Factories require audit.",
+  "_deployer": "TBD — Palm to fund a fresh wallet",
+  "_chainId": 8453,
+  "orgRegistry": "",
+  "vetSbtCard": "",
+  "badgeRegistry": "",
+  "firstStepsSbt": "",
+  "guestbook": ""
+}
