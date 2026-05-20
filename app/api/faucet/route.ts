@@ -13,6 +13,15 @@ import { baseSepolia } from "viem/chains";
 /**
  * Faucet endpoint — drips 0.001 ETH on Base Sepolia to a user's address.
  *
+ * DORMANT (2026-05-20): every visible feature on web3.cuvetsmo.com pays
+ * its own gas via Pimlico Paymaster + Coinbase Smart Wallet UserOps, so
+ * users never need raw ETH and the Wallet 101 wizard no longer routes
+ * here. This route is intentionally left in place + the dormant
+ * FaucetStep component in wallet-101-wizard.tsx is preserved so we can
+ * revive cheaply if a future feature ever needs EOA-funded gas. To
+ * revive: set FAUCET_PRIVATE_KEY env var on Vercel, fund the wallet via
+ * Coinbase CDP / Alchemy faucet, then wire the wizard step back in.
+ *
  * Rate limit (Day 1): in-memory Map keyed by lowercase address, 24h cooldown.
  *   - Survives normal runtime, NOT process restarts. Good enough for MVP.
  *   - Future: migrate to Supabase table (claims: address, last_claim_at).
@@ -20,15 +29,19 @@ import { baseSepolia } from "viem/chains";
  * Server wallet: env FAUCET_PRIVATE_KEY (0x-prefixed). Server-only.
  *
  * If FAUCET_PRIVATE_KEY is missing/empty, returns a helpful 503 pointing
- * users at the Coinbase public faucet so the flow still completes.
+ * users at the Coinbase Developer Platform faucet so the flow still
+ * completes (URL updated 2026-05-20: old /faucets/... path now 404s).
  *
- * Spec: master plan §6.4 Faucet
+ * Spec: master plan §6.4 Faucet (now dormant per the §Wave 3.5 sponsored-
+ * deploy retrospective).
  */
 
 const DRIP_AMOUNT_ETH = "0.001";
 const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+// Old /faucets/base-ethereum-sepolia-faucet returns 403 since the Coinbase
+// rebrand. The CDP portal path is the current working entry point.
 const COINBASE_FAUCET =
-  "https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet";
+  "https://portal.cdp.coinbase.com/products/faucet";
 
 // In-memory rate limit. globalThis so HMR in dev does not blow it away.
 const g = globalThis as unknown as { _faucetClaims?: Map<string, number> };

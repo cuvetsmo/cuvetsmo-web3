@@ -63,8 +63,9 @@ export default function SwapPage() {
           พร้อมลองของจริง?
         </h3>
         <p className="text-sm text-[var(--color-muted)] mb-4 leading-relaxed">
-          เมื่อเข้าใจ AMM แล้ว ลอง Quest #8 บน Learn pillar · swap testnet
-          tokens จริงบน Base Sepolia · ใช้ของจาก faucet ฟรี.
+          เมื่อเข้าใจ AMM แล้ว ลอง Quest #8 บน Learn pillar — swap testnet
+          tokens จริงบน Base Sepolia. ค่า gas sponsor ให้ฟรีผ่าน account
+          abstraction ไม่ต้องเตรียม ETH เอง.
         </p>
         <Link
           href="/learn/quests"

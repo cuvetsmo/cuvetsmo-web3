@@ -25,23 +25,27 @@ import {
 import { WhatJustHappened } from "@/components/what-just-happened";
 
 /**
- * Wallet 101 — 5-step wizard
+ * Wallet 101 — 4-step wizard
  *   1. Welcome (concept)
  *   2. Login (Privy → embedded wallet auto-creates)
- *   3. Faucet (POST /api/faucet)
- *   4. First Mint (FirstStepsSBT.claim)
- *   5. Congrats
+ *   3. First Mint (FirstStepsSBT.claim — gas sponsored by Pimlico Paymaster)
+ *   4. Congrats
  *
- * Spec: master plan §5.1
+ * Faucet step removed 2026-05-20: gas is sponsored via Pimlico + Coinbase
+ * Smart Wallet across every visible feature, so user-funded ETH is not
+ * needed. FaucetStep component below stays in the file as dormant code —
+ * un-comment + add "faucet" back to STEPS to revive the step if a future
+ * feature ever needs raw EOA gas.
+ *
+ * Spec: master plan §5.1 (revised post-Wave 3.5 Pimlico Sponsored Deploy)
  */
 
-const STEPS = ["welcome", "login", "faucet", "mint", "done"] as const;
+const STEPS = ["welcome", "login", "mint", "done"] as const;
 type Step = (typeof STEPS)[number];
 
 const STEP_LABEL: Record<Step, string> = {
   welcome: "ยินดีต้อนรับ",
   login: "Login + Wallet",
-  faucet: "รับ test ETH",
   mint: "Mint ตัวแรก",
   done: "เสร็จแล้ว",
 };
@@ -56,17 +60,11 @@ export function Wallet101Wizard() {
       <div className="space-y-6">
         <ProgressBar step={step} progress={progress} />
         {step === "welcome" && <WelcomeStep onNext={() => setStep("login")} />}
-        {step === "login" && <LoginStep onNext={() => setStep("faucet")} />}
-        {step === "faucet" && (
-          <FaucetStep
-            onNext={() => setStep("mint")}
-            onBack={() => setStep("login")}
-          />
-        )}
+        {step === "login" && <LoginStep onNext={() => setStep("mint")} />}
         {step === "mint" && (
           <MintStep
             onNext={() => setStep("done")}
-            onBack={() => setStep("faucet")}
+            onBack={() => setStep("login")}
           />
         )}
         {step === "done" && <DoneStep />}
@@ -99,7 +97,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
     <Card>
       <CardHeader>
         <Badge tone="brand" className="self-start">
-          ขั้นที่ 1 / 5
+          ขั้นที่ 1 / 4
         </Badge>
         <CardTitle>Wallet เหมือนบัญชีธนาคารแต่ไม่มีคนกลาง</CardTitle>
         <CardDescription>
@@ -157,7 +155,7 @@ function LoginStep({ onNext }: { onNext: () => void }) {
     <Card>
       <CardHeader>
         <Badge tone="brand" className="self-start">
-          ขั้นที่ 2 / 5
+          ขั้นที่ 2 / 4
         </Badge>
         <CardTitle>Login แล้วได้ wallet ฟรี</CardTitle>
         <CardDescription>
@@ -209,11 +207,23 @@ function LoginStep({ onNext }: { onNext: () => void }) {
   );
 }
 
-// ─── Step 3 — Faucet drip ──────────────────────────────────────────────
+// ─── DORMANT — Faucet drip step ────────────────────────────────────────
+// Removed from the wizard flow 2026-05-20 — gas is now sponsored via
+// Pimlico Paymaster + Coinbase Smart Wallet on every visible feature, so
+// user-funded ETH is not needed. Component definition kept in this file
+// (and /api/faucet route preserved) so we can revive it cheaply if a
+// future feature ever needs raw EOA gas. To revive:
+//   1. Add "faucet" back to STEPS array
+//   2. Re-add the {step === "faucet" && <FaucetStep .../>} block
+//   3. Set FAUCET_PRIVATE_KEY env var on Vercel + fund the wallet
+// The badge text below still says 3 / 5 — adjust when reviving.
+//
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type FaucetResult =
   | { ok: true; txHash: string; explorerUrl: string }
   | { ok: false; message: string; fallback?: string };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FaucetStep({
   onNext,
   onBack,
@@ -419,7 +429,7 @@ function MintStep({
     <Card>
       <CardHeader>
         <Badge tone="brand" className="self-start">
-          ขั้นที่ 4 / 5
+          ขั้นที่ 3 / 4
         </Badge>
         <CardTitle>Mint Soulbound ตัวแรก</CardTitle>
         <CardDescription>
@@ -571,15 +581,10 @@ function Sidebar({ step }: { step: Step }) {
             "ยังเป็น wallet ของคุณ — เปิด export key ได้ทีหลัง.",
           ],
         };
-      case "faucet":
-        return {
-          title: "ทำไมต้องมี ETH?",
-          lines: [
-            "ETH = น้ำมันของ blockchain. ทุก tx ใช้ gas.",
-            "Base Sepolia ETH ไม่มีมูลค่าจริง — ใช้ฝึกฟรี.",
-            "1 drip = 0.001 ETH ≈ 50+ ครั้งของ test mint.",
-          ],
-        };
+      // case "faucet" — dormant since 2026-05-20 (gas sponsored, see header
+      // comment above FaucetStep). Re-add if reviving the wizard step:
+      //   case "faucet":
+      //     return { title: "ทำไมต้องมี ETH?", lines: [...] };
       case "mint":
         return {
           title: "SBT vs NFT?",
