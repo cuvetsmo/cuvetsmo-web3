@@ -2,7 +2,14 @@
 
 Web3 playground and creation platform for Thai vet students. 4 pillars: **Learn · Play · Build · The Lab**. Educational testnet on Base Sepolia.
 
-Production target: **https://web3.cuvetsmo.com**.
+🌐 **Live:** [web3.cuvetsmo.com](https://web3.cuvetsmo.com)
+
+**Part of [CUVETSMO Labs](https://labs.cuvetsmo.com)** — experimental tools by [CUVETSMO](https://cuvetsmo.com) (Chulalongkorn Veterinary Student Council).
+
+Sibling labs:
+- 🤖 [ai.cuvetsmo.com](https://ai.cuvetsmo.com) — Free Thai AI chatbot, no login, with citations
+- 🩻 [imaging.cuvetsmo.com](https://imaging.cuvetsmo.com) — DICOM viewer + Norberg/VHS overlays
+- 🧪 [labs.cuvetsmo.com](https://labs.cuvetsmo.com) — Labs umbrella index
 
 Master plan: `C:\Users\palmz\Desktop\Web3\cuvetsmo_web3_master_plan.md`.
 
