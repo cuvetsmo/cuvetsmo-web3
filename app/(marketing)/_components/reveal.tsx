@@ -54,9 +54,12 @@ export function Reveal({
       return;
     }
 
+    let revealedYet = false;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          revealedYet = true;
           setRevealed(true);
           observer.disconnect();
         }
@@ -68,8 +71,25 @@ export function Reveal({
       }
     );
     observer.observe(node);
-    return () => observer.disconnect();
-  }, [threshold]);
+
+    // Fallback · if the observer hasn't fired after 2.5s (e.g. element
+    // never entered viewport · headless screenshot · JS-only nav reuse),
+    // force reveal so the user never sees a permanently-invisible card.
+    // This was the bug Palm hit on Phase 4 mobile audit · cards 2-4 of the
+    // Learn hub stayed at opacity:0 because Playwright's programmatic
+    // fullPage scroll didn't trigger intersection events.
+    const fallbackTimer = window.setTimeout(() => {
+      if (!revealedYet) {
+        setRevealed(true);
+        observer.disconnect();
+      }
+    }, 2500 + delay);  // wait past the staggered delay before firing
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, [threshold, delay]);
 
   return (
     <Tag
