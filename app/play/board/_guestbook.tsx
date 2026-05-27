@@ -11,6 +11,7 @@ import {
 } from "wagmi";
 import type { Address, Hash } from "viem";
 import { explorerUrl, shortAddress } from "@/lib/utils";
+import { useSponsoredWrite } from "@/lib/use-sponsored-write";
 import { ContractPending } from "../_components/contract-pending";
 import { PLAY_ADDRESSES, isLive } from "../_lib/addresses";
 import { GUESTBOOK_ABI } from "../_lib/abis";
@@ -41,11 +42,15 @@ export function Guestbook() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
+  // Opt-in gasless mode — uses Privy embedded wallet + Pimlico paymaster.
+  // Defaults to false so existing flow is unchanged for current users.
+  const [gaslessMode, setGaslessMode] = useState(false);
 
   const live = isLive(PLAY_ADDRESSES.GUESTBOOK);
 
   const { writeContractAsync, isPending: signing } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash: txHash });
+  const sponsored = useSponsoredWrite();
 
   // Initial history fetch
   useEffect(() => {
@@ -168,6 +173,13 @@ export function Guestbook() {
     }
   }, [receipt.isSuccess]);
 
+  const busy =
+    signing ||
+    receipt.isLoading ||
+    sponsored.status === "preparing" ||
+    sponsored.status === "signing" ||
+    sponsored.status === "confirming";
+
   const canSubmit = useMemo(
     () =>
       ready &&
@@ -175,21 +187,36 @@ export function Guestbook() {
       live &&
       draft.trim().length > 0 &&
       draft.length <= MESSAGE_MAX &&
-      !signing &&
-      !receipt.isLoading,
-    [
-      ready,
-      authenticated,
-      live,
-      draft,
-      signing,
-      receipt.isLoading,
-    ],
+      !busy,
+    [ready, authenticated, live, draft, busy],
   );
 
   async function handlePost() {
     if (!canSubmit) return;
     setError(null);
+
+    // Gasless path: route through Pimlico-sponsored Smart Account. Caller
+    // pays $0 — the Smart Account is the on-chain message sender, so the
+    // wall will show the Smart Account address, not the EOA.
+    if (gaslessMode && sponsored.available) {
+      try {
+        const result = await sponsored.send({
+          address: PLAY_ADDRESSES.GUESTBOOK,
+          abi: GUESTBOOK_ABI,
+          functionName: "post",
+          args: [draft.trim()],
+        });
+        // Reuse the existing receipt-tracked path so the success banner
+        // + form reset behaviour stays identical.
+        setTxHash(result.txHash as Hash);
+        return;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Sponsored post failed");
+        return;
+      }
+    }
+
+    // Wagmi path (user pays gas) — kept untouched for fallback.
     try {
       const hash = await writeContractAsync({
         address: PLAY_ADDRESSES.GUESTBOOK,
@@ -240,12 +267,34 @@ export function Guestbook() {
               disabled={!canSubmit}
               className="btn-brand text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {signing && "Sign in wallet..."}
-              {!signing && receipt.isLoading && "Mining..."}
-              {!signing && !receipt.isLoading && "Sign + Post"}
+              {gaslessMode && sponsored.status === "signing" && "Sign UserOp..."}
+              {gaslessMode && sponsored.status === "confirming" && "Sponsoring..."}
+              {!gaslessMode && signing && "Sign in wallet..."}
+              {!gaslessMode && !signing && receipt.isLoading && "Mining..."}
+              {!busy && (gaslessMode ? "🎁 Free post" : "Sign + Post")}
             </button>
           )}
         </div>
+
+        {authenticated && sponsored.available && (
+          <label className="flex items-start gap-2 text-xs text-[var(--color-muted)] cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={gaslessMode}
+              onChange={(e) => setGaslessMode(e.target.checked)}
+              disabled={busy}
+              className="mt-0.5 accent-[var(--color-brand)]"
+            />
+            <span>
+              <span className="font-semibold text-[var(--color-text)]">
+                🎁 Gasless mode
+              </span>{" "}
+              · post via Smart Wallet (Pimlico-sponsored, $0 to you).
+              ข้อความจะปรากฏจาก Smart Account address ของคุณ ไม่ใช่ EOA.
+            </span>
+          </label>
+        )}
+
         {error && (
           <p className="text-xs text-red-600 dark:text-red-400 font-mono">
             {error}
@@ -254,6 +303,9 @@ export function Guestbook() {
         {receipt.isSuccess && (
           <p className="text-xs text-emerald-700 dark:text-emerald-300">
             โพสต์สำเร็จ! ข้อความถูกบันทึก on-chain ถาวร.
+            {sponsored.result && gaslessMode && (
+              <> · <span className="font-mono">Smart Acct {shortAddress(sponsored.result.smartAccountAddress)}</span> · gas $0 (Pimlico)</>
+            )}
           </p>
         )}
       </div>

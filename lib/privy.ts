@@ -10,6 +10,17 @@ import { baseSepolia } from "viem/chains";
  *   LINE / Apple after wave-1 ship.
  * - Brand color matches cuvetsmo.com (#0369a1).
  *
+ * ⚠️ PALM DASHBOARD ACTION REQUIRED (2026-05-26 UX audit · U3):
+ * -----------------------------------------------------------------
+ * Console warning observed: "App configuration has Solana wallet login
+ * enabled, but no Solana wallet connectors have been passed to Privy."
+ *
+ * The walletChainType lock below silences modal duplicates, BUT the
+ * Solana-login-enabled flag still lives in the Privy DASHBOARD
+ * (https://dashboard.privy.io → CUVETSMO Web3 app → Login methods → Solana).
+ * Turn that toggle OFF — project is EVM-only on Base. Once disabled, the
+ * console warning + the Solana JS bundle drop entirely.
+ *
  * 2026-05-20 — explicit walletChainType: 'ethereum-only'
  * -----------------------------------------------------------------
  * Why this is mandatory even though the docs say it's the default:

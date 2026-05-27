@@ -99,7 +99,10 @@ export const SCHEMAS = {
     schema:
       "uint16 yearAdmitted, bytes32 studentIdHash, uint8 facultyCode, uint8 departmentCode",
     revocable: true,
-    uid: (process.env.NEXT_PUBLIC_EAS_SCHEMA_VET_CARD as `0x${string}`) ?? "",
+    uid: validateSchemaUid(
+      process.env.NEXT_PUBLIC_EAS_SCHEMA_VET_CARD,
+      "VET_CARD",
+    ),
   },
   /** Achievement Badge — per-quest credential. */
   BADGE: {
@@ -107,7 +110,10 @@ export const SCHEMAS = {
     label: "Achievement Badge",
     schema: "string badgeId, string metadataURI, uint64 awardedAt",
     revocable: true,
-    uid: (process.env.NEXT_PUBLIC_EAS_SCHEMA_BADGE as `0x${string}`) ?? "",
+    uid: validateSchemaUid(
+      process.env.NEXT_PUBLIC_EAS_SCHEMA_BADGE,
+      "BADGE",
+    ),
   },
   /** Guestbook — immutable message. */
   GUESTBOOK: {
@@ -115,11 +121,40 @@ export const SCHEMAS = {
     label: "Guestbook Message",
     schema: "string message",
     revocable: false,
-    uid: (process.env.NEXT_PUBLIC_EAS_SCHEMA_GUESTBOOK as `0x${string}`) ?? "",
+    uid: validateSchemaUid(
+      process.env.NEXT_PUBLIC_EAS_SCHEMA_GUESTBOOK,
+      "GUESTBOOK",
+    ),
   },
 } as const;
 
 export type SchemaName = keyof typeof SCHEMAS;
+
+/**
+ * Validate a schema UID at module boot. Returns the UID unchanged when
+ * format is valid, or an empty string (with a console.warn) when invalid.
+ *
+ * Catches the "Palm pasted a wrong UID into .env.local" failure mode at
+ * boot instead of letting it surface as cryptic EAS calldata errors later.
+ *
+ * Expected shape: `0x` + 64 lowercase hex characters (32-byte digest).
+ */
+export function validateSchemaUid(
+  uid: string | undefined,
+  name: string,
+): `0x${string}` {
+  if (!uid) return "" as `0x${string}`;
+  if (!/^0x[a-fA-F0-9]{64}$/.test(uid)) {
+    if (typeof window !== "undefined" || process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[EAS] schema "${name}" UID "${uid.slice(0, 12)}…" is not a valid 32-byte hex string; ignoring.`,
+      );
+    }
+    return "" as `0x${string}`;
+  }
+  return uid as `0x${string}`;
+}
 
 /** True when all three schemas have UIDs configured. */
 export function schemasReady(): boolean {
@@ -296,8 +331,13 @@ export async function attestVetCard(
       value: 0n,
     },
   });
+  // EAS SDK v2.9 Transaction<T>: `receipt` is populated AFTER `wait()`
+  // resolves (see node_modules/.../eas-sdk/dist/lib.esm/transaction.d.ts).
+  // Earlier sessions assumed a `.tx.hash` shortcut — that doesn't exist on
+  // this SDK version. Read receipt.hash post-wait instead.
   const uid = await tx.wait();
-  return { uid, txHash: tx.receipt?.hash ?? "" };
+  const txHash = tx.receipt?.hash ?? "";
+  return { uid, txHash };
 }
 
 /**
@@ -323,8 +363,13 @@ export async function attestBadge(
       value: 0n,
     },
   });
+  // EAS SDK v2.9 Transaction<T>: `receipt` is populated AFTER `wait()`
+  // resolves (see node_modules/.../eas-sdk/dist/lib.esm/transaction.d.ts).
+  // Earlier sessions assumed a `.tx.hash` shortcut — that doesn't exist on
+  // this SDK version. Read receipt.hash post-wait instead.
   const uid = await tx.wait();
-  return { uid, txHash: tx.receipt?.hash ?? "" };
+  const txHash = tx.receipt?.hash ?? "";
+  return { uid, txHash };
 }
 
 /**
@@ -354,8 +399,13 @@ export async function attestGuestbookMessage(
       value: 0n,
     },
   });
+  // EAS SDK v2.9 Transaction<T>: `receipt` is populated AFTER `wait()`
+  // resolves (see node_modules/.../eas-sdk/dist/lib.esm/transaction.d.ts).
+  // Earlier sessions assumed a `.tx.hash` shortcut — that doesn't exist on
+  // this SDK version. Read receipt.hash post-wait instead.
   const uid = await tx.wait();
-  return { uid, txHash: tx.receipt?.hash ?? "" };
+  const txHash = tx.receipt?.hash ?? "";
+  return { uid, txHash };
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -435,11 +485,26 @@ export async function getAttestationsByRecipient(
     }
   `;
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables: { where, take: limit } }),
-  });
+  // Abort easscan.org calls after 10s so an indexer outage doesn't hang
+  // the calling component indefinitely (e.g. profile/board pages).
+  const abort = new AbortController();
+  const timeoutId = setTimeout(() => abort.abort(), 10_000);
+  let res: Response;
+  try {
+    res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { where, take: limit } }),
+      signal: abort.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error(`EAS GraphQL timeout after 10s on ${endpoint}`);
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
   if (!res.ok) {
     throw new Error(`EAS GraphQL ${res.status}: ${await res.text()}`);
   }
@@ -521,11 +586,26 @@ export async function getAttestationsBySchema(
     }
   `;
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables: { where, take: limit } }),
-  });
+  // Abort easscan.org calls after 10s so an indexer outage doesn't hang
+  // the calling component indefinitely (e.g. profile/board pages).
+  const abort = new AbortController();
+  const timeoutId = setTimeout(() => abort.abort(), 10_000);
+  let res: Response;
+  try {
+    res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { where, take: limit } }),
+      signal: abort.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error(`EAS GraphQL timeout after 10s on ${endpoint}`);
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
   if (!res.ok) {
     throw new Error(`EAS GraphQL ${res.status}: ${await res.text()}`);
   }
@@ -630,8 +710,13 @@ export async function registerSchema(
     schema: schema.schema,
     revocable: schema.revocable,
   });
+  // EAS SDK v2.9 Transaction<T>: `receipt` is populated AFTER `wait()`
+  // resolves (see node_modules/.../eas-sdk/dist/lib.esm/transaction.d.ts).
+  // Earlier sessions assumed a `.tx.hash` shortcut — that doesn't exist on
+  // this SDK version. Read receipt.hash post-wait instead.
   const uid = await tx.wait();
-  return { uid, txHash: tx.receipt?.hash ?? "" };
+  const txHash = tx.receipt?.hash ?? "";
+  return { uid, txHash };
 }
 
 // ──────────────────────────────────────────────────────────────────────

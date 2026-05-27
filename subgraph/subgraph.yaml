@@ -1,0 +1,89 @@
+specVersion: 0.0.5
+description: CUVETSMO Web3 · Goldsky subgraph indexing Guestbook + BadgeRegistry + VetSBTCard on Base Sepolia
+repository: https://github.com/cuvetsmo/cuvetsmo-web3
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  # ────────────────────────────────────────────────────────────────────
+  # Guestbook · on-chain message board
+  # 0x070e7D457546ab4cD4aD8C56c1253DC85a4a1fBc · Base Sepolia (chainId 84532)
+  # ────────────────────────────────────────────────────────────────────
+  - kind: ethereum
+    name: Guestbook
+    network: base-sepolia
+    source:
+      address: "0x070e7D457546ab4cD4aD8C56c1253DC85a4a1fBc"
+      abi: Guestbook
+      # TODO bump to the actual deploy block before deploy — saves ~10 min of
+      # index time. Find via:
+      #   curl -s "https://api-sepolia.basescan.org/api?module=account&action=txlist&address=0x070e7D...&startblock=0&endblock=99999999&sort=asc&apikey=YOUR_KEY" | jq '.result[0].blockNumber'
+      startBlock: 27000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings.ts
+      entities:
+        - GuestbookPost
+      abis:
+        - name: Guestbook
+          file: ./abis/Guestbook.json
+      eventHandlers:
+        - event: MessagePosted(indexed address,string,uint64)
+          handler: handleMessagePosted
+
+  # ────────────────────────────────────────────────────────────────────
+  # BadgeRegistry · quest/achievement SBTs
+  # 0xabBb31fa07EBB4e6dC56c9BE2Dd65A73bFBfA67e · Base Sepolia
+  # ────────────────────────────────────────────────────────────────────
+  - kind: ethereum
+    name: BadgeRegistry
+    network: base-sepolia
+    source:
+      address: "0xabBb31fa07EBB4e6dC56c9BE2Dd65A73bFBfA67e"
+      abi: BadgeRegistry
+      startBlock: 27000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings.ts
+      entities:
+        - Badge
+        - BadgeAward
+      abis:
+        - name: BadgeRegistry
+          file: ./abis/BadgeRegistry.json
+      eventHandlers:
+        - event: BadgeDefined(indexed uint256,string,indexed address)
+          handler: handleBadgeDefined
+        - event: BadgeMinted(indexed address,indexed uint256)
+          handler: handleBadgeMinted
+        - event: BadgeMinterChanged(indexed uint256,indexed address,indexed address)
+          handler: handleBadgeMinterChanged
+
+  # ────────────────────────────────────────────────────────────────────
+  # VetSBTCard · per-student identity SBT
+  # 0xE679d26ac80E345E7F3c5F08A2802872f589E6F5 · Base Sepolia
+  # ────────────────────────────────────────────────────────────────────
+  - kind: ethereum
+    name: VetSBTCard
+    network: base-sepolia
+    source:
+      address: "0xE679d26ac80E345E7F3c5F08A2802872f589E6F5"
+      abi: VetSBTCard
+      startBlock: 27000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings.ts
+      entities:
+        - VetCard
+      abis:
+        - name: VetSBTCard
+          file: ./abis/VetSBTCard.json
+      eventHandlers:
+        - event: CardClaimed(indexed address,indexed uint256,indexed uint256,uint16,uint8,uint8)
+          handler: handleCardClaimed

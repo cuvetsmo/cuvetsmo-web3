@@ -38,6 +38,125 @@ const DEFAULTS: FormState = {
   files: [],
 };
 
+// ─── Quick presets — Chula vet student use cases ────────────────────────
+type PresetPartial = Partial<Omit<FormState, "files">>;
+interface Preset {
+  id: string;
+  emoji: string;
+  title: string;
+  description: string;
+  apply: PresetPartial;
+}
+
+const NFT_PRESETS: readonly Preset[] = [
+  {
+    id: "class-project",
+    emoji: "🩺",
+    title: "Final Class Project",
+    description: "งานปลายเทอม / project showcase · 1/1 art",
+    apply: {
+      mode: "1of1",
+      name: "Vet Final Project 2569",
+      symbol: "VETPRJ",
+      description:
+        "Final-year project showcase by a Chulalongkorn Veterinary student. Proof of work, not a tradable asset.",
+      maxSupply: "1",
+      maxPerWallet: "1",
+      royaltyPct: "0",
+    },
+  },
+  {
+    id: "conference",
+    emoji: "🎟️",
+    title: "Conference Attendance",
+    description: "TVMA / WSAVA / vet conference · collection drop",
+    apply: {
+      mode: "collection",
+      name: "TVMA 2026 Attendance",
+      symbol: "TVMA26",
+      description:
+        "Attendance NFT for the 2026 Thai Veterinary Medical Association conference. One per attendee.",
+      maxSupply: "500",
+      maxPerWallet: "1",
+      royaltyPct: "0",
+    },
+  },
+  {
+    id: "fundraiser",
+    emoji: "🐾",
+    title: "Charity Fundraiser",
+    description: "ทุน stray care / spay-neuter · collection",
+    apply: {
+      mode: "collection",
+      name: "Vet 86 Stray Care Drive",
+      symbol: "STRAY86",
+      description:
+        "Supports the Vet 86 spay-neuter and stray-feeding fund. Each NFT credits a contribution.",
+      maxSupply: "200",
+      maxPerWallet: "5",
+      royaltyPct: "5",
+    },
+  },
+  {
+    id: "award",
+    emoji: "🏆",
+    title: "Best Presenter / Award",
+    description: "รางวัล · พิเศษ · เก็บถาวร",
+    apply: {
+      mode: "1of1",
+      name: "Vet Excellence Award",
+      symbol: "AWARD",
+      description:
+        "Awarded to a Chulalongkorn Veterinary student for outstanding work. Soul of the award, not the trophy.",
+      maxSupply: "1",
+      maxPerWallet: "1",
+      royaltyPct: "0",
+    },
+  },
+];
+
+function PresetGrid({
+  onApply,
+  disabled,
+}: {
+  onApply: (preset: PresetPartial) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 mb-5">
+      <h3 className="text-sm font-semibold mb-1">⚡ Quick presets · Chula Vet</h3>
+      <p className="text-xs text-[var(--color-muted)] mb-3">
+        คลิกเลือก template เพื่อเติมฟอร์มอัตโนมัติ · ยังแก้ field ทุกตัวต่อได้
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {NFT_PRESETS.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => onApply(p.apply)}
+            disabled={disabled}
+            className="text-left rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 hover:border-[var(--color-brand)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <div className="flex items-start gap-2">
+              <span aria-hidden className="text-xl leading-none">
+                {p.emoji}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold leading-tight">
+                  {p.title}
+                </div>
+                <div className="text-xs text-[var(--color-muted)] leading-snug mt-0.5">
+                  {p.description}
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function NftStudioForm() {
   const { address } = useAccount();
   const [form, setForm] = useState<FormState>(DEFAULTS);
@@ -212,6 +331,10 @@ export function NftStudioForm() {
 
   return (
     <ConnectGate>
+      <PresetGrid
+        onApply={(p) => setForm((s) => ({ ...s, ...p }))}
+        disabled={uploading || isPending}
+      />
       <form onSubmit={onSubmit} className="grid gap-4 sm:gap-5">
         <Field label="Mode" required hint="เลือกประเภท drop">
           <div className="grid sm:grid-cols-2 gap-2">

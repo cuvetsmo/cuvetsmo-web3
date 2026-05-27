@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
 import {
   createPublicClient,
-  createWalletClient,
+  encodeFunctionData,
   http,
   isAddress,
   type Hex,
+  type Address,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
+import {
+  toCoinbaseSmartAccount,
+  createBundlerClient,
+  createPaymasterClient,
+  entryPoint06Address,
+} from "viem/account-abstraction";
+import { createPimlicoClient } from "permissionless/clients/pimlico";
 
-import { getQuestById } from "@/lib/quests";
+import { getQuestById, metadataUriForQuest } from "@/lib/quests";
 import {
   CONTRACTS,
   BADGE_REGISTRY_ABI,
   isReady,
 } from "@/lib/contracts";
+import { encodeBadge, SCHEMAS } from "@/lib/eas";
 
 /**
  * POST /api/quests/[id]/verify
@@ -202,11 +211,28 @@ export async function POST(
     );
   }
 
-  // Mint badge ----------------------------------------------------------
-  const minterKey = process.env.BADGE_MINTER_PRIVATE_KEY?.trim();
-  const registry = CONTRACTS.BADGE_REGISTRY;
+  // ─── Mint badge as EAS attestation via Pimlico-sponsored Smart Account ───
+  //
+  // Switched from BadgeRegistry.mint() (owner-only · needs funded admin EOA)
+  // to EAS BADGE attestation (anyone can attest · sponsored by Pimlico) so
+  // the server can issue quest badges without burning gas on a hot wallet.
+  //
+  // Required env:
+  //   EAS_ATTESTER_PRIVATE_KEY (or DEPLOYER_PRIVATE_KEY) — server-only EOA
+  //                                                       whose Smart Account
+  //                                                       signs attestations
+  //   NEXT_PUBLIC_EAS_SCHEMA_BADGE — BADGE schema UID (already registered)
+  //   NEXT_PUBLIC_PIMLICO_BUNDLER_URL  — Pimlico bundler + paymaster RPC
+  //
+  // Falls back to `mintPending: true` if any of these are missing — keeps
+  // the verified XP path working even before the env vars are set in prod.
+  const attesterKey = (
+    process.env.EAS_ATTESTER_PRIVATE_KEY ?? process.env.DEPLOYER_PRIVATE_KEY
+  )?.trim();
+  const badgeSchemaUid = SCHEMAS.BADGE.uid;
+  const pimlicoUrl = process.env.NEXT_PUBLIC_PIMLICO_BUNDLER_URL;
 
-  if (!isReady(registry) || !minterKey) {
+  if (!attesterKey || !badgeSchemaUid || !pimlicoUrl) {
     return NextResponse.json({
       verified: true,
       questId,
@@ -215,33 +241,134 @@ export async function POST(
       mintPending: true,
       detail,
       message:
-        "Verified! Badge mint pending — contracts will be wired soon. Your XP is already counted.",
+        "Verified! Badge attestation pending — set EAS_ATTESTER_PRIVATE_KEY (server) + NEXT_PUBLIC_EAS_SCHEMA_BADGE + NEXT_PUBLIC_PIMLICO_BUNDLER_URL to enable on-chain badges. XP is already counted.",
     });
   }
 
   try {
-    const pk: Hex = (minterKey.startsWith("0x")
-      ? minterKey
-      : `0x${minterKey}`) as Hex;
-    const account = privateKeyToAccount(pk);
-    const wallet = createWalletClient({
-      account,
+    const pk: Hex = (attesterKey.startsWith("0x")
+      ? attesterKey
+      : `0x${attesterKey}`) as Hex;
+    const owner = privateKeyToAccount(pk);
+
+    const publicClient = createPublicClient({
       chain: baseSepolia,
       transport: http(rpcUrl),
     });
-    const txHash = await wallet.writeContract({
-      address: registry,
-      abi: BADGE_REGISTRY_ABI,
-      functionName: "mint",
-      args: [userAddress as `0x${string}`, BigInt(quest.id)],
+
+    // version: '1.1' matches deploy-via-pimlico.mts so we use the SAME smart
+    // account that owns the contracts (0x96165f...c456).
+    const smartAccount = await toCoinbaseSmartAccount({
+      client: publicClient,
+      owners: [owner],
+      version: "1.1",
     });
+
+    const bundler = createBundlerClient({
+      account: smartAccount,
+      client: publicClient,
+      transport: http(pimlicoUrl),
+      paymaster: createPaymasterClient({ transport: http(pimlicoUrl) }),
+    });
+    const pimlicoClient = createPimlicoClient({
+      transport: http(pimlicoUrl),
+      entryPoint: { address: entryPoint06Address, version: "0.6" },
+    });
+
+    // EAS contract on Base + Base Sepolia (same address).
+    const EAS_ADDRESS: Address = "0x4200000000000000000000000000000000000021";
+    const ZERO_BYTES32 =
+      "0x0000000000000000000000000000000000000000000000000000000000000000" as Hex;
+
+    // Encode the BADGE attestation payload (string badgeId, string metadataURI, uint64 awardedAt).
+    // metadataURI prefers the pinned IPFS CID (immutable · standalone). Falls
+    // back to the quest detail page URL if the CID hasn't been pinned yet.
+    const metadataURI =
+      metadataUriForQuest(quest.id) ||
+      `https://web3.cuvetsmo.com/learn/quests/${quest.id}`;
+    const badgeData = encodeBadge({
+      badgeId: `cuvetsmo-quest-${quest.id}`,
+      metadataURI,
+      awardedAt: Math.floor(Date.now() / 1000),
+    });
+
+    // EAS attest() ABI fragment — single attestation.
+    const EAS_ATTEST_ABI = [
+      {
+        inputs: [
+          {
+            components: [
+              { name: "schema", type: "bytes32" },
+              {
+                components: [
+                  { name: "recipient", type: "address" },
+                  { name: "expirationTime", type: "uint64" },
+                  { name: "revocable", type: "bool" },
+                  { name: "refUID", type: "bytes32" },
+                  { name: "data", type: "bytes" },
+                  { name: "value", type: "uint256" },
+                ],
+                name: "data",
+                type: "tuple",
+              },
+            ],
+            name: "request",
+            type: "tuple",
+          },
+        ],
+        name: "attest",
+        outputs: [{ name: "", type: "bytes32" }],
+        stateMutability: "payable",
+        type: "function",
+      },
+    ] as const;
+
+    const callData = encodeFunctionData({
+      abi: EAS_ATTEST_ABI,
+      functionName: "attest",
+      args: [
+        {
+          schema: badgeSchemaUid,
+          data: {
+            recipient: userAddress as `0x${string}`,
+            expirationTime: 0n,
+            revocable: true,
+            refUID: ZERO_BYTES32,
+            data: badgeData as Hex,
+            value: 0n,
+          },
+        },
+      ],
+    });
+
+    const gasPrice = await pimlicoClient.getUserOperationGasPrice();
+    const userOpHash = await bundler.sendUserOperation({
+      account: smartAccount,
+      calls: [{ to: EAS_ADDRESS, value: 0n, data: callData }],
+      maxFeePerGas: gasPrice.fast.maxFeePerGas,
+      maxPriorityFeePerGas: gasPrice.fast.maxPriorityFeePerGas,
+    });
+
+    const receipt = await bundler.waitForUserOperationReceipt({
+      hash: userOpHash,
+    });
+
     return NextResponse.json({
       verified: true,
       questId,
       badge: quest.badge,
       xp: quest.xp,
-      mintTxHash: txHash,
-      explorerUrl: `https://sepolia.basescan.org/tx/${txHash}`,
+      // Back-compat fields — quest-grid client still reads these.
+      mintTxHash: receipt.receipt.transactionHash,
+      explorerUrl: `https://sepolia.basescan.org/tx/${receipt.receipt.transactionHash}`,
+      // Richer EAS-native fields for future quest UIs.
+      attestation: {
+        schemaUid: badgeSchemaUid,
+        attester: smartAccount.address,
+        userOpHash,
+        txHash: receipt.receipt.transactionHash,
+        easExplorerUrl: `https://base-sepolia.easscan.org/attester/with-schema/${badgeSchemaUid}/by/${userAddress}`,
+      },
       detail,
     });
   } catch (err) {
@@ -255,9 +382,17 @@ export async function POST(
         mintError: message,
         detail,
         message:
-          "Verified but badge mint failed on-chain. Try again later — XP is still counted.",
+          "Verified but badge attestation failed on-chain. Your XP is still counted — try again later.",
       },
       { status: 200 },
     );
   }
 }
+
+// BADGE_REGISTRY_ABI + CONTRACTS.BADGE_REGISTRY are no longer referenced by
+// this route's mint path (we switched to EAS attestations via Pimlico). Keep
+// the imports for downstream callers that may still read badge state, and
+// reference them here so the linter doesn't strip them as unused.
+void BADGE_REGISTRY_ABI;
+void CONTRACTS.BADGE_REGISTRY;
+void isReady;

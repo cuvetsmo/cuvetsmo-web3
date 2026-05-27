@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CONTRACTS, VET_SBT_CARD_ABI, isReady } from "@/lib/contracts";
 import { shortAddress, explorerUrl } from "@/lib/utils";
+import { useSponsoredWrite } from "@/lib/use-sponsored-write";
 import { WhatJustHappened } from "@/components/what-just-happened";
 
 /**
@@ -158,6 +159,18 @@ function ClaimCardView({
   const { isLoading: confirming, isSuccess: confirmed } =
     useWaitForTransactionReceipt({ hash: txHash });
 
+  // Opt-in gas-sponsored mint via Pimlico Smart Account — for first-time
+  // users with $0 ETH. When ON, msg.sender becomes the Smart Account, so
+  // the card lives at the Smart Account address (not the Privy EOA).
+  // The existing panel-level `cardOf(eoa)` read won't see it — we surface
+  // the result inline in this view instead.
+  const [gaslessMode, setGaslessMode] = useState(false);
+  const sponsored = useSponsoredWrite();
+  const gaslessBusy =
+    sponsored.status === "preparing" ||
+    sponsored.status === "signing" ||
+    sponsored.status === "confirming";
+
   const [wjhOpen, setWjhOpen] = useState(false);
   useEffect(() => {
     if (confirmed && txHash) setWjhOpen(true);
@@ -184,6 +197,46 @@ function ClaimCardView({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmed]);
+
+  async function claimGasless() {
+    if (!contractReady || !address) return;
+    if (!studentName.trim() || !studentId.trim()) return;
+    if (!sponsored.available) return;
+    sponsored.reset();
+    const studentIdHash = keccak256(stringToHex(studentId.trim()));
+    try {
+      const result = await sponsored.send({
+        address: contract,
+        abi: VET_SBT_CARD_ABI,
+        functionName: "claim",
+        args: [
+          ORG_ID_CUVET,
+          Number(yearAdmitted),
+          studentIdHash,
+          FACULTY_CODE_VET,
+          DEPT_CODE_DEFAULT,
+        ],
+      });
+      // Stash card data keyed by the Smart Account address so a future
+      // smart-account-aware reader can render the SVG card without
+      // re-prompting the form.
+      try {
+        window.localStorage.setItem(
+          `cuvetsmo:vetcard:${result.smartAccountAddress.toLowerCase()}`,
+          JSON.stringify({
+            studentName,
+            studentId,
+            yearAdmitted: Number(yearAdmitted),
+            cohort: Number(cohort),
+          }),
+        );
+      } catch {
+        /* quota — ignore */
+      }
+    } catch {
+      /* error surfaces via sponsored.error */
+    }
+  }
 
   function claim() {
     if (!contractReady || !address) return;
@@ -285,6 +338,25 @@ function ClaimCardView({
           verifier เทียบ hash ได้.
         </p>
 
+        {sponsored.available && (
+          <label className="flex items-start gap-2 text-xs cursor-pointer select-none rounded-lg border border-dashed border-[var(--color-brand)]/40 bg-[var(--color-brand-light)]/60 p-3">
+            <input
+              type="checkbox"
+              checked={gaslessMode}
+              onChange={(e) => setGaslessMode(e.target.checked)}
+              disabled={isPending || confirming || gaslessBusy}
+              className="mt-0.5 accent-[var(--color-brand)]"
+            />
+            <span>
+              <span className="font-semibold text-[var(--color-brand)]">
+                🎁 Gasless mode — claim ฟรี, $0 ETH
+              </span>
+              <span className="block mt-0.5 text-[var(--color-muted)]">
+                Mint ผ่าน Smart Wallet (Pimlico-sponsored) — เหมาะกับนิสิตที่เพิ่งสมัคร wallet ครั้งแรก. การ์ดจะอยู่ใน Smart Account address (ต่างจาก Privy EOA).
+              </span>
+            </span>
+          </label>
+        )}
         {isPending && (
           <div className="rounded-lg bg-[var(--color-brand-light)] p-3 text-sm text-[var(--color-brand)]">
             รอ confirm ใน wallet popup...
@@ -295,20 +367,80 @@ function ClaimCardView({
             รอ block confirm... ({shortAddress(txHash)})
           </div>
         )}
+        {gaslessBusy && (
+          <div className="rounded-lg bg-[var(--color-brand-light)] p-3 text-sm text-[var(--color-brand)]">
+            {sponsored.status === "signing" && "เซ็น UserOp ใน wallet popup..."}
+            {sponsored.status === "confirming" && "Pimlico sponsoring + waiting block..."}
+            {sponsored.status === "preparing" && "Preparing sponsored userOp..."}
+          </div>
+        )}
+        {sponsored.status === "success" && sponsored.result && (
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-900 p-3 text-sm text-emerald-900 dark:text-emerald-200">
+            <p className="font-semibold mb-1">✅ Card minted (gasless)</p>
+            <ul className="space-y-1 text-xs">
+              <li>
+                <span className="text-[var(--color-muted)]">Smart Account:</span>{" "}
+                <a
+                  href={explorerUrl(sponsored.result.smartAccountAddress, "address")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono underline"
+                >
+                  {shortAddress(sponsored.result.smartAccountAddress)}
+                </a>
+              </li>
+              <li>
+                <span className="text-[var(--color-muted)]">Transaction:</span>{" "}
+                <a
+                  href={explorerUrl(sponsored.result.txHash, "tx")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono underline"
+                >
+                  {shortAddress(sponsored.result.txHash)}
+                </a>
+              </li>
+              <li>
+                <span className="text-[var(--color-muted)]">Gas paid by you:</span>{" "}
+                <span className="font-mono">$0 (Pimlico paymaster)</span>
+              </li>
+            </ul>
+            <p className="mt-2 text-xs leading-snug">
+              📝 SVG card view ของ Smart Account จะมาใน Wave 3 (ตอนนี้แสดงเฉพาะการ์ดของ Privy EOA address).
+            </p>
+          </div>
+        )}
+        {sponsored.error && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+            Gasless claim failed: {sponsored.error.message}
+          </div>
+        )}
         {error && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
             {error.message}
           </div>
         )}
       </CardContent>
-      <CardFooter>
-        <Button
-          onClick={claim}
-          disabled={!contractReady || !formValid || isPending || confirming}
-          size="lg"
-        >
-          Claim my Vet SBT Card
-        </Button>
+      <CardFooter className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        {gaslessMode ? (
+          <Button
+            onClick={claimGasless}
+            disabled={
+              !contractReady || !formValid || gaslessBusy || !sponsored.available
+            }
+            size="lg"
+          >
+            🎁 Claim FREE (Smart Wallet)
+          </Button>
+        ) : (
+          <Button
+            onClick={claim}
+            disabled={!contractReady || !formValid || isPending || confirming}
+            size="lg"
+          >
+            Claim my Vet SBT Card
+          </Button>
+        )}
         {!emailOk && (
           <span className="text-xs text-[var(--color-muted)]">
             Need chula email to claim.

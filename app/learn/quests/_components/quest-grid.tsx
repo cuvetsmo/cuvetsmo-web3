@@ -221,6 +221,13 @@ type VerifyState =
         mintTxHash?: string;
         explorerUrl?: string;
         mintPending?: boolean;
+        attestation?: {
+          schemaUid: string;
+          attester: string;
+          userOpHash: string;
+          txHash: string;
+          easExplorerUrl: string;
+        };
       };
     }
   | { phase: "error"; message: string };
@@ -276,6 +283,7 @@ function QuestDetailModal({
             mintTxHash: data.mintTxHash,
             explorerUrl: data.explorerUrl,
             mintPending: !!data.mintPending,
+            attestation: data.attestation,
           },
         });
         onComplete(quest);
@@ -379,9 +387,33 @@ function QuestDetailModal({
                 </p>
                 {state.payload.mintPending && (
                   <p className="text-xs text-emerald-700 mt-2">
-                    Badge mint pending — contracts กำลัง deploy. XP คุณบันทึก
-                    แล้ว.
+                    Badge attestation pending — env not yet configured. XP
+                    บันทึกแล้ว · attestation จะ issue เมื่อ admin set EAS_ATTESTER_PRIVATE_KEY.
                   </p>
+                )}
+                {state.payload.attestation && (
+                  <div className="mt-3 rounded-md bg-white/70 border border-emerald-200 p-2 text-[11px] space-y-1">
+                    <p className="text-emerald-800">
+                      <span className="text-emerald-600">⛓️ Attested on EAS:</span>{" "}
+                      <a
+                        href={state.payload.attestation.easExplorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline font-mono"
+                      >
+                        view on easscan.org ↗
+                      </a>
+                    </p>
+                    <p className="text-emerald-800">
+                      <span className="text-emerald-600">Attester:</span>{" "}
+                      <span className="font-mono">
+                        {state.payload.attestation.attester.slice(0, 6)}…
+                        {state.payload.attestation.attester.slice(-4)}
+                      </span>{" "}
+                      <span className="text-emerald-600">· gas:</span>{" "}
+                      <span className="font-mono">$0 (Pimlico)</span>
+                    </p>
+                  </div>
                 )}
                 {state.payload.mintTxHash && (
                   <a
@@ -393,7 +425,7 @@ function QuestDetailModal({
                     rel="noopener noreferrer"
                     className="mt-2 inline-block text-xs underline text-[var(--color-brand)]"
                   >
-                    ดู mint tx ↗
+                    ดู tx บน BaseScan ↗
                   </a>
                 )}
               </div>

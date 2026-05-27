@@ -33,6 +33,113 @@ const DEFAULTS: FormState = {
   recipients: "",
 };
 
+// ─── Quick presets — Chula vet student use cases ────────────────────────
+type PresetPartial = Partial<Omit<FormState, "image">>;
+interface Preset {
+  id: string;
+  emoji: string;
+  title: string;
+  description: string;
+  apply: PresetPartial;
+}
+
+const SBT_PRESETS: readonly Preset[] = [
+  {
+    id: "cohort",
+    emoji: "🎓",
+    title: "Year Cohort Member",
+    description: "รุ่น Vet 86 · ผูกถาวรตลอดชีวิต",
+    apply: {
+      name: "Vet 86 Cohort",
+      symbol: "VET86",
+      description:
+        "Soulbound membership for the Vet 86 cohort at Chulalongkorn University. Permanent, non-transferable.",
+      maxSupply: "180",
+    },
+  },
+  {
+    id: "club",
+    emoji: "🐶",
+    title: "Club Membership",
+    description: "ชมรม / กลุ่มกิจกรรม นิสิตสัตวแพทย์",
+    apply: {
+      name: "JohnJud Care Member",
+      symbol: "JOHNJ",
+      description:
+        "Soulbound membership badge for the JohnJud animal-welfare club at CUVET. Stays with the wallet forever.",
+      maxSupply: "300",
+    },
+  },
+  {
+    id: "course",
+    emoji: "📚",
+    title: "Course Completion",
+    description: "ผ่านวิชา / rotation · transcript credential",
+    apply: {
+      name: "Veterinary Pathology — Pass",
+      symbol: "VPATH",
+      description:
+        "Awarded to Chulalongkorn Veterinary students who completed the Pathology rotation requirements.",
+      maxSupply: "200",
+    },
+  },
+  {
+    id: "volunteer",
+    emoji: "❤️",
+    title: "Volunteer Hours",
+    description: "ชั่วโมงอาสาสมัคร · stray care · field trip",
+    apply: {
+      name: "Vet Volunteer 50+ Hours",
+      symbol: "VOL50",
+      description:
+        "Soulbound recognition for accumulating 50+ hours of veterinary volunteer service.",
+      maxSupply: "500",
+    },
+  },
+];
+
+function PresetGrid({
+  onApply,
+  disabled,
+}: {
+  onApply: (preset: PresetPartial) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 mb-5">
+      <h3 className="text-sm font-semibold mb-1">⚡ Quick presets · Chula Vet</h3>
+      <p className="text-xs text-[var(--color-muted)] mb-3">
+        คลิก template เพื่อเติมฟอร์ม SBT อัตโนมัติ · ยังแก้ field ต่อได้
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {SBT_PRESETS.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => onApply(p.apply)}
+            disabled={disabled}
+            className="text-left rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 hover:border-[var(--color-brand)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <div className="flex items-start gap-2">
+              <span aria-hidden className="text-xl leading-none">
+                {p.emoji}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold leading-tight">
+                  {p.title}
+                </div>
+                <div className="text-xs text-[var(--color-muted)] leading-snug mt-0.5">
+                  {p.description}
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function SbtMakerForm() {
   const { address } = useAccount();
   const [form, setForm] = useState<FormState>(DEFAULTS);
@@ -224,6 +331,10 @@ export function SbtMakerForm() {
 
   return (
     <ConnectGate>
+      <PresetGrid
+        onApply={(p) => setForm((s) => ({ ...s, ...p }))}
+        disabled={uploading || isPending}
+      />
       <form onSubmit={onSubmit} className="grid gap-4 sm:gap-5">
         <Toggle
           checked

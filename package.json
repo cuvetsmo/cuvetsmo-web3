@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "smoke": "tsx scripts/smoke.mts",
+    "pin:quests": "tsx scripts/pin-quest-metadata.mts",
+    "register:schemas": "tsx contracts/script/register-eas-schemas-via-pimlico.mts"
   },
   "dependencies": {
     "@ethereum-attestation-service/eas-sdk": "^2.9.0",

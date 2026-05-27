@@ -216,3 +216,37 @@ export function getQuestById(id: number): Quest | undefined {
 }
 
 export const TOTAL_XP_AVAILABLE = QUESTS.reduce((sum, q) => sum + q.xp, 0);
+
+/**
+ * IPFS CIDs for per-quest badge metadata JSON (pinned via Pinata).
+ *
+ * Each JSON follows the ERC-721 metadata standard with extras:
+ *   - name · description · external_url · background_color
+ *   - image: deterministic Pollinations.ai URL keyed by quest id
+ *   - attributes: tier · kind · XP · badge · glyph · issuer · network
+ *
+ * Used by the verify route to set `metadataURI` on the EAS BADGE
+ * attestation issued on quest completion. Re-pin via
+ *   `npx tsx scripts/pin-quest-metadata.mts`
+ * after editing any quest field — CIDs change with content.
+ *
+ * Last pinned: 2026-05-26
+ */
+export const QUEST_METADATA_CID: Record<number, string> = {
+  1: "QmRm6DpCRC1pwtcgFYP5HDv8GKyAru9kJRAaYVNtBZYyKY",
+  2: "QmYXzyrf5U2Z57rDdzLWnhzKDFU4ErquCAHgisi8sWBtK5",
+  3: "QmcHSqYrEX5Qror9y6iKuDQMS3VZFw4WyhFFBeUDoApkEb",
+  4: "QmPLnueucAduTTtwzp4PS1EfR3eGbu8VSEHffZAgUwKS4G",
+  5: "QmRqt5wMYLDoj4c2kjmccRgaMTeoKRxsH2mqxWkXw38qNS",
+  6: "QmT6rBcyAgi2WfZfJeKcTnARdWFPRME4ShU7JQFySvc6p3",
+  7: "QmRLLSz7JoCq9145mjje6Wxr5ntUpnVZqMykENhg9n8VBQ",
+  8: "QmdnrmFBw6zuQZDWaHBkJ1MJEyeTUAaqvx79nUxXabtqCc",
+  9: "QmWiNR4DgKswUyEGLyfQewhrFSy99ATjWRb1hCgP6QUF2k",
+  10: "Qme2cMeDSUvZnoJWJSLSxrQYKKdcQ5AWa7yNdP56oDc2so",
+};
+
+/** Returns ipfs://<cid> for a quest, or "" if not pinned yet. */
+export function metadataUriForQuest(questId: number): string {
+  const cid = QUEST_METADATA_CID[questId];
+  return cid ? `ipfs://${cid}` : "";
+}

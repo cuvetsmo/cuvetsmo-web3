@@ -1,0 +1,71 @@
+# CUVETSMO Web3 · subgraph schema
+#
+# Entities mirror the 3 indexed contracts. Each `id` follows
+# "<contract>-<event-hint>" so cross-contract joins are unambiguous.
+
+# ─── Guestbook ────────────────────────────────────────────────────────
+type GuestbookPost @entity(immutable: true) {
+  "tx-hash + log-index — globally unique"
+  id: ID!
+  "Message author (EOA OR Smart Account if gasless was used)"
+  author: Bytes!
+  "Free-text message (max 280 chars on-chain enforcement)"
+  message: String!
+  "Block-time the contract recorded (uint64)"
+  timestamp: BigInt!
+  "Block number for ordering"
+  blockNumber: BigInt!
+  "Transaction hash for explorer links"
+  txHash: Bytes!
+}
+
+# ─── BadgeRegistry ────────────────────────────────────────────────────
+type Badge @entity {
+  "badgeId as decimal string"
+  id: ID!
+  "Off-chain metadata pointer (ipfs:// or https://)"
+  metadataURI: String!
+  "Address authorized to call mint() for this badge"
+  minter: Bytes!
+  "Block the badge was first defined"
+  definedAt: BigInt!
+  "All awards of this badge"
+  awards: [BadgeAward!]! @derivedFrom(field: "badge")
+}
+
+type BadgeAward @entity(immutable: true) {
+  "user address + '-' + badgeId — idempotent per BadgeRegistry semantics"
+  id: ID!
+  "Holder address"
+  user: Bytes!
+  "Reference to the Badge definition"
+  badge: Badge!
+  "Block-time of the mint"
+  mintedAt: BigInt!
+  "Block number for ordering"
+  blockNumber: BigInt!
+  "Transaction hash for explorer links"
+  txHash: Bytes!
+}
+
+# ─── VetSBTCard ──────────────────────────────────────────────────────
+type VetCard @entity {
+  "Holder address (one card per address per organization)"
+  id: ID!
+  "ERC-721 token id"
+  tokenId: BigInt!
+  "Org under which the card was issued (CUVET = 1)"
+  orgId: BigInt!
+  "Gregorian year of admission (e.g. 2026 = Vet 86)"
+  yearAdmitted: Int!
+  "u8 faculty code (Vet = 1)"
+  facultyCode: Int!
+  "u8 department / track code"
+  departmentCode: Int!
+  "Block-time the card was claimed"
+  mintedAt: BigInt!
+  "Block number for ordering"
+  blockNumber: BigInt!
+  "Transaction hash for explorer links"
+  txHash: Bytes!
+}

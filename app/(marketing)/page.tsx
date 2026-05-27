@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Stat } from "./_components/stat";
 
 /**
  * Landing page — Wave 2E (Agent E · Marketing).
@@ -116,11 +115,9 @@ export default function LandingPage() {
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-[var(--color-muted)] text-center max-w-2xl mx-auto leading-relaxed animate-fade-up" style={{ animationDelay: "0.05s" }}>
-            เรียนรู้ ทดลอง สร้าง — ครบในที่เดียว
-            <br className="hidden sm:block" />
-            <span className="text-sm sm:text-base">
-              A web3 playground built by Thai vet students, for Thai vet
-              students.
+            <span className="block">เรียนรู้ ทดลอง สร้าง — ครบในที่เดียว</span>
+            <span lang="en" className="block mt-2 text-sm sm:text-base opacity-75">
+              A web3 playground built by Thai vet students, for Thai vet students.
             </span>
           </p>
 
@@ -217,45 +214,6 @@ export default function LandingPage() {
               </span>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* ─── Stats ─── */}
-      <section className="border-y border-[var(--color-border)] bg-[var(--color-card)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="mb-8 text-center">
-            <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-2">
-              Phase 0 · Foundation
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              ตอนนี้บนเครือข่าย
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-            <Stat
-              value={0}
-              suffix="+"
-              label="Vet SBT Card holders"
-              hint="นิสิตที่ claim card แล้ว"
-            />
-            <Stat
-              value={0}
-              suffix="+"
-              label="assets created"
-              hint="token/NFT/DAO จาก The Lab"
-            />
-            <Stat
-              value={0}
-              suffix="+"
-              label="quest completions"
-              hint="Web3 Quests ที่ทำสำเร็จ"
-            />
-          </div>
-
-          <p className="mt-8 text-center text-xs text-[var(--color-muted)]">
-            ตัวเลขจะเริ่มนับเมื่อ Phase 1 launch บน Base Sepolia — ทุก asset เป็น testnet มูลค่า 0 บาท
-          </p>
         </div>
       </section>
 
