@@ -380,11 +380,7 @@ export default function LandingPage() {
                   className="chip-pill"
                   style={{ color: chipColor(c.tone) }}
                 >
-                  <span
-                    aria-hidden
-                    className="h-2 w-2 rounded-full"
-                    style={{ background: chipColor(c.tone) }}
-                  />
+                  <PartnerMark tone={c.tone} />
                   {c.label}
                 </span>
               ))}
@@ -406,21 +402,18 @@ export default function LandingPage() {
                   className="chip-pill"
                   style={{ color: chipColor(c.tone) }}
                 >
-                  <span
-                    aria-hidden
-                    className="h-2 w-2 rounded-full"
-                    style={{ background: chipColor(c.tone) }}
-                  />
+                  <PartnerMark tone={c.tone} />
                   {c.label}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Honest framing · explicit ว่าเป็นชื่อ partner ไม่ใช่ official logo */}
+          {/* Honest framing · 3 official logos sourced from public brand kits,
+              rest still ชื่อ + colored dot fallback */}
           <p className="mt-6 text-center text-[11px] text-[var(--color-muted)] opacity-70">
-            ชื่อ partners · official logos จะถูก wire เมื่อทาง brand kit ของ
-            แต่ละ protocol อนุญาตการใช้งาน
+            Official logos: Base · Pimlico · EAS (จาก public brand kits).
+            ส่วนที่เหลือยังเป็น text + colored dot จนกว่าจะได้สิทธิ์ใช้งาน
           </p>
         </div>
       </section>
@@ -767,6 +760,57 @@ function chipColor(tone: BrandTone): string {
     case "cuvet":   return "#0369a1";
     case "chula":   return "#c8316d";
   }
+}
+
+/**
+ * Map brand tone → official partner-logo URL (or null).
+ *
+ * Logos sourced from each project's *official* brand kit:
+ *   - Base · github.com/base/brand-kit (Coinbase Inc.)
+ *   - Pimlico · github.com/pimlicolabs/brand-resources
+ *   - EAS · attest.org (Spruce Systems · Ethereum Foundation grant)
+ *
+ * Brands without an open brand-kit URL fall back to a colored dot until we
+ * either (a) get Palm to download from their gated brand page (Privy uses
+ * Google Drive), or (b) get explicit logo-use permission from the protocol.
+ */
+function partnerLogoSrc(tone: BrandTone): string | null {
+  switch (tone) {
+    case "base":    return "/partners/base.svg";
+    case "pimlico": return "/partners/pimlico-mark.svg";
+    case "eas":     return "/partners/eas.png";
+    // Below: official brand kits not yet sourced — colored dot fallback.
+    case "privy":   return null;  // Google Drive gated · ask Palm to fetch
+    case "pinata":  return null;
+    case "openzep": return null;
+    case "cuvet":   return null;
+    case "chula":   return null;
+  }
+}
+
+/** Brand mark for use inside .chip-pill · img if available, else colored dot. */
+function PartnerMark({ tone, size = 16 }: { tone: BrandTone; size?: number }) {
+  const src = partnerLogoSrc(tone);
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt=""
+        aria-hidden
+        width={size}
+        height={size}
+        className="block object-contain"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+  return (
+    <span
+      aria-hidden
+      className="h-2 w-2 rounded-full"
+      style={{ background: chipColor(tone) }}
+    />
+  );
 }
 
 function CompareCell({

@@ -311,19 +311,21 @@ button {
 .chip-strip-mask {
   position: relative;
   overflow: hidden;
-  /* Wider fade edges feel softer · 12% vs the old 8% */
+  /* Tightened fade edges (6%) — wider fades hide motion · we want motion
+     to be unmistakable on first paint. Mozi runs ~8% but their strip is
+     wider · 6% reads cleaner on 1280–1900 viewports. */
   mask-image: linear-gradient(
     to right,
     transparent 0,
-    black 12%,
-    black 88%,
+    black 6%,
+    black 94%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
-    black 12%,
-    black 88%,
+    black 6%,
+    black 94%,
     transparent 100%
   );
 }
@@ -332,12 +334,16 @@ button {
   display: flex;
   gap: 1.75rem;
   width: max-content;
-  animation: scroll-left-infinite 32s linear infinite;
+  /* 16s = ~120 px/s on a 1900-wide strip · roughly 2× the old 32s.
+     Halving the duration is what made motion legible (Palm 2026-05-27:
+     "ยังไม่เห็นเคลื่อนไหว" even after the hover-pause fix). */
+  animation: scroll-left-infinite 16s linear infinite;
   will-change: transform;
 }
 
 .chip-strip--reverse {
-  animation: scroll-right-infinite 38s linear infinite;
+  /* Slightly slower on the lower row · keeps the parallax mismatch */
+  animation: scroll-right-infinite 20s linear infinite;
 }
 
 /* No hover pause · marquee runs continuously (Mozi pattern).

@@ -203,17 +203,38 @@ function FloatingChip({
     pimlico: "#ff6b35",
     eas:     "#0ea5e9",
   };
+  // Official brand-kit logos · sourced from each project's public repo.
+  // Privy stays null until Palm grabs the gated Google Drive asset.
+  const LOGO_SRC: Record<typeof tone, string | null> = {
+    base:    "/partners/base.svg",
+    privy:   null,
+    pimlico: "/partners/pimlico-mark.svg",
+    eas:     "/partners/eas.png",
+  };
   const hex = TONE_HEX[tone];
+  const src = LOGO_SRC[tone];
   return (
     <span
       className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ring-1 bg-white"
       style={{ color: hex, boxShadow: `0 4px 12px -2px ${hex}25` }}
     >
-      <span
-        aria-hidden
-        className="h-2 w-2 rounded-full"
-        style={{ background: hex }}
-      />
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          aria-hidden
+          width={14}
+          height={14}
+          className="block object-contain"
+          style={{ width: 14, height: 14 }}
+        />
+      ) : (
+        <span
+          aria-hidden
+          className="h-2 w-2 rounded-full"
+          style={{ background: hex }}
+        />
+      )}
       {label}
     </span>
   );
