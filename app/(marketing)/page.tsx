@@ -353,29 +353,67 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════ 2 · Trusted-by infinite strip ═══════════════════════ */}
-      <section className="border-y border-[var(--color-border)] bg-[var(--color-surface-2)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)] mb-5">
-            Built on · ผสานกับ
-          </p>
+      {/* ═══════════════════════ 2 · Trusted-by · dual-row parallax marquee ═══════════════════════ */}
+      <section className="chip-section border-y border-[var(--color-border)] bg-[var(--color-surface-2)] relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-14">
+          {/* Section eyebrow with decorative side lines */}
+          <div className="flex items-center justify-center gap-4 mb-7">
+            <span
+              aria-hidden
+              className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent to-[var(--color-border)]"
+            />
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+              Built on · ผสานกับ
+            </p>
+            <span
+              aria-hidden
+              className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent to-[var(--color-border)]"
+            />
+          </div>
+
+          {/* Row 1 · scrolls left at 32s */}
           <div className="chip-strip-mask">
             <div className="chip-strip">
-              {/* Duplicate the list 4× so the infinite loop is seamless */}
-              {[...TRUSTED_BY, ...TRUSTED_BY, ...TRUSTED_BY, ...TRUSTED_BY].map(
-                (c, i) => (
-                  <span
-                    key={`${c.label}-${i}`}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-[var(--color-card)] ring-1 ring-black/5 shadow-sm"
-                    style={{ color: chipColor(c.tone) }}
-                  >
-                    <BrandMark tone={c.tone} size={18} />
-                    {c.label}
-                  </span>
-                ),
-              )}
+              {/* Duplicate the list 2× so translateX(-50%) loops seamlessly */}
+              {[...TRUSTED_BY, ...TRUSTED_BY].map((c, i) => (
+                <span
+                  key={`r1-${c.label}-${i}`}
+                  className="chip-pill"
+                  style={{ color: chipColor(c.tone) }}
+                >
+                  <BrandMark tone={c.tone} size={20} />
+                  {c.label}
+                </span>
+              ))}
             </div>
           </div>
+
+          {/* Row 2 · scrolls right at 38s · offset chip order so the two rows
+              never line up vertically (more organic) */}
+          <div className="chip-strip-mask mt-4">
+            <div className="chip-strip chip-strip--reverse">
+              {[
+                ...TRUSTED_BY.slice(4),
+                ...TRUSTED_BY.slice(0, 4),
+                ...TRUSTED_BY.slice(4),
+                ...TRUSTED_BY.slice(0, 4),
+              ].map((c, i) => (
+                <span
+                  key={`r2-${c.label}-${i}`}
+                  className="chip-pill"
+                  style={{ color: chipColor(c.tone) }}
+                >
+                  <BrandMark tone={c.tone} size={20} />
+                  {c.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Hover hint · subtle, only on lg+ */}
+          <p className="hidden lg:block mt-6 text-center text-[11px] text-[var(--color-muted)] opacity-60">
+            hover แล้วทั้งสองแถวจะหยุดให้อ่าน
+          </p>
         </div>
       </section>
 
