@@ -192,6 +192,128 @@ const PILLARS = [
   },
 ] as const;
 
+// ─── Universe · creatable / claimable items (Mozi "Asset Universe" pattern) ─
+// Hero items = the killer artifacts students collect. Lab tools = ways they
+// build. Stats = the infra layer behind it all. Keep data shape stable so a
+// scroll-aware grid can pick winners with ease.
+
+const UNIVERSE_HEROES: ReadonlyArray<{
+  title: string;
+  tag: string;
+  blurb: string;
+  href: string;
+  accent: string;
+  emoji: string;
+}> = [
+  {
+    title: "Vet SBT Card",
+    tag: "CLAIM",
+    blurb:
+      "Soulbound credential ผูกกับอีเมล @chula.ac.th · 1 ใบต่อ wallet · gasless mint",
+    href: "/build/card",
+    accent: "from-sky-500/15 to-cyan-500/10 border-sky-500/30",
+    emoji: "🪪",
+  },
+  {
+    title: "Quest Badges",
+    tag: "EARN",
+    blurb:
+      "10 hands-on Web3 quests · ทำเสร็จได้ EAS attestation portable · ใช้ใน DAO, job apps, portfolio",
+    href: "/learn/quests",
+    accent: "from-emerald-500/15 to-teal-500/10 border-emerald-500/30",
+    emoji: "⛓️",
+  },
+  {
+    title: "Vet NFT Templates",
+    tag: "MINT",
+    blurb:
+      "3 official templates · Y6 Clinic Rotation · Camp Participant · IVSA Member · ที่ใช้ใน NFT Studio ได้",
+    href: "/lab/templates",
+    accent: "from-purple-500/15 to-violet-500/10 border-purple-500/30",
+    emoji: "🎴",
+  },
+];
+
+const UNIVERSE_TOOLS: ReadonlyArray<{
+  title: string;
+  href: string;
+  emoji: string;
+  hint: string;
+}> = [
+  { title: "NFT Studio",    href: "/lab/nft-studio",    emoji: "🎨", hint: "ERC-721 / 1155" },
+  { title: "SBT Maker",     href: "/lab/sbt-maker",     emoji: "🔗", hint: "Non-transferable" },
+  { title: "Token Forge",   href: "/lab/token-forge",   emoji: "🪙", hint: "ERC-20 deploy" },
+  { title: "DAO Quickstart",href: "/lab/dao-quickstart",emoji: "🗳", hint: "Governor + Token" },
+  { title: "Page Builder",  href: "/lab/page-builder",  emoji: "📐", hint: "Sub-route landing" },
+  { title: "Templates",     href: "/lab/templates",     emoji: "📚", hint: "Vet-specific" },
+];
+
+const UNIVERSE_STATS: ReadonlyArray<{ label: string; value: string; sub: string }> = [
+  { label: "Contracts on Base Sepolia", value: "11", sub: "OpenZeppelin v5 + 79 Foundry tests" },
+  { label: "EAS schemas registered",    value: "3",  sub: "VetCard + Badge + Guestbook" },
+  { label: "Quest CIDs on IPFS",        value: "10", sub: "Pinata pinned · permanent metadata" },
+  { label: "No-code Lab tools",         value: "6",  sub: "Deploy assets in <30s" },
+];
+
+// ─── Roadmap timeline (Mozi "Roadmap" pattern) ───────────────────────────
+const ROADMAP: ReadonlyArray<{
+  phase: string;
+  label: string;
+  state: "done" | "active" | "next" | "future";
+  bullets: ReadonlyArray<string>;
+}> = [
+  {
+    phase: "Phase 0",
+    label: "Educational testnet",
+    state: "done",
+    bullets: [
+      "11 contracts deployed บน Base Sepolia (gas $0 via Pimlico)",
+      "Marketing landing + 4 pillars + Lab tools live",
+      "EAS attestation pipeline working end-to-end",
+    ],
+  },
+  {
+    phase: "Phase 1",
+    label: "Pre-mainnet polish",
+    state: "active",
+    bullets: [
+      "Indexer (Goldsky subgraph) for portable badge queries",
+      "Mainnet audit-prep doc + 5 low-risk contracts hardening",
+      "Multi-language (TH+EN), responsive polish, perf budget",
+    ],
+  },
+  {
+    phase: "Phase 2",
+    label: "Mainnet · audit-gated",
+    state: "next",
+    bullets: [
+      "External audit · 5 low-risk contracts on Base mainnet",
+      "Funded deployer wallet · ENS · staked ETH for ops",
+      "Real mainnet Vet SBT Card mint for Vet 86+ cohort",
+    ],
+  },
+  {
+    phase: "Phase 3",
+    label: "Cross-faculty CU",
+    state: "future",
+    bullets: [
+      "Chula multi-faculty (CUVET → Eng, Med, Dent, Pharm)",
+      "Cross-faculty Quest badges + role-specific NFT templates",
+      "DAO governance for shared CU student community",
+    ],
+  },
+  {
+    phase: "Phase 4",
+    label: "Multi-university",
+    state: "future",
+    bullets: [
+      "Open onboarding for any TH/SEA university with @uni.ac.th gating",
+      "Federated EAS schemas · cross-uni job + grad-school portability",
+      "Student-led DAO Treasury layer",
+    ],
+  },
+];
+
 // ─── Comparison table (Mozi "MOZI is Unique" pattern) ────────────────────
 type Cell = boolean | string;
 const COMPARISON_ROWS: ReadonlyArray<{
@@ -538,6 +660,103 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ═══════════════════════ 5.5 · Universe · asset/tool/infra mosaic ═══════════════════════ */}
+      <section className="bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-surface-2)] to-[var(--color-bg)] border-y border-[var(--color-border)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+          <Reveal>
+            <div className="mb-10 text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand)] mb-2">
+                Universe — ทุกอย่างที่สร้าง / เก็บได้
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                Claim · Earn · Mint · Build
+              </h2>
+              <p className="mt-3 text-[var(--color-muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                Vet 86+ collect ได้ทั้ง credential · badge · NFT template · และ
+                ใช้ no-code Lab tools สร้าง asset ของกลุ่มเองได้ใน 30 วินาที.
+              </p>
+            </div>
+          </Reveal>
+
+          {/* Hero row · 3 claim artifacts */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-8">
+            {UNIVERSE_HEROES.map((h, i) => (
+              <Reveal key={h.title} delay={i * 100}>
+                <Link
+                  href={h.href}
+                  className={`group block relative rounded-2xl overflow-hidden p-6 bg-gradient-to-br ${h.accent} border hover:shadow-xl hover:-translate-y-1 transition-all h-full`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/70 text-[var(--color-text)]">
+                      {h.tag}
+                    </span>
+                    <span aria-hidden className="text-4xl leading-none">
+                      {h.emoji}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold tracking-tight mb-2">
+                    {h.title}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text)]/85 leading-relaxed">
+                    {h.blurb}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-brand)] group-hover:gap-2 transition-all">
+                    ดูรายละเอียด <span aria-hidden>→</span>
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Tools row · 6 no-code lab tools */}
+          <Reveal delay={120}>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)] mb-3 text-center">
+              No-code Lab · 6 tools ที่ใช้สร้าง asset ของตัวเอง
+            </p>
+          </Reveal>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
+            {UNIVERSE_TOOLS.map((t, i) => (
+              <Reveal key={t.title} delay={i * 60}>
+                <Link
+                  href={t.href}
+                  className="group flex flex-col items-center text-center gap-1.5 p-4 rounded-xl bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:shadow-md transition-all h-full"
+                >
+                  <span aria-hidden className="text-2xl leading-none group-hover:scale-110 transition-transform">
+                    {t.emoji}
+                  </span>
+                  <span className="text-sm font-semibold">{t.title}</span>
+                  <span className="text-[10px] text-[var(--color-muted)]">{t.hint}</span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Stats row · 4 infrastructure numbers */}
+          <Reveal delay={80}>
+            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)] mb-4 text-center">
+                Infrastructure · ผ่าน 79 Foundry tests + 1.85 MB copyright deposit
+              </p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {UNIVERSE_STATS.map((s) => (
+                  <div key={s.label} className="text-center">
+                    <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--color-brand)]">
+                      {s.value}
+                    </p>
+                    <p className="text-xs font-semibold mt-1 text-[var(--color-text)]">
+                      {s.label}
+                    </p>
+                    <p className="text-[11px] text-[var(--color-muted)] mt-0.5 leading-snug">
+                      {s.sub}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ═══════════════════════ 6 · Comparison table ═══════════════════════ */}
       <section className="bg-[var(--color-surface-2)] border-y border-[var(--color-border)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
@@ -737,6 +956,70 @@ export default function LandingPage() {
           </div>
           </Reveal>
         </div>
+      </section>
+
+      {/* ═══════════════════════ 7.5 · Roadmap teaser ═══════════════════════ */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16">
+        <Reveal>
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 sm:p-8">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+              <div className="flex-1">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand)] mb-2">
+                  Roadmap
+                </p>
+                <h3 className="text-2xl font-bold tracking-tight mb-2">
+                  จาก testnet → mainnet → multi-university
+                </h3>
+                <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+                  5 เฟส · Phase 0 ใน testnet ทำงานแล้ว · Phase 1 active อยู่
+                  ตอนนี้ · pre-mainnet polish + indexer + audit prep.
+                </p>
+              </div>
+              <div className="grid grid-cols-5 gap-1.5 shrink-0">
+                {ROADMAP.map((r) => (
+                  <div
+                    key={r.phase}
+                    className={`flex flex-col items-center text-center gap-1 p-2.5 rounded-lg min-w-[68px] ${
+                      r.state === "done"
+                        ? "bg-emerald-500/15 ring-1 ring-emerald-500/30"
+                        : r.state === "active"
+                        ? "bg-[var(--color-brand-light)] ring-1 ring-[var(--color-brand)]/40"
+                        : r.state === "next"
+                        ? "bg-amber-500/10 ring-1 ring-amber-400/30"
+                        : "bg-[var(--color-border)]/30 ring-1 ring-[var(--color-border)]"
+                    }`}
+                  >
+                    <span
+                      className={`text-[10px] font-mono ${
+                        r.state === "done"
+                          ? "text-emerald-700 dark:text-emerald-300"
+                          : r.state === "active"
+                          ? "text-[var(--color-brand)]"
+                          : r.state === "next"
+                          ? "text-amber-700 dark:text-amber-300"
+                          : "text-[var(--color-muted)]"
+                      }`}
+                    >
+                      P{r.phase.split(" ")[1]}
+                    </span>
+                    <span className="text-[10px] font-semibold leading-tight">
+                      {r.state === "done" && "✓"}
+                      {r.state === "active" && "▶"}
+                      {r.state === "next" && "○"}
+                      {r.state === "future" && "○"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/roadmap"
+                className="btn-outline shrink-0 whitespace-nowrap"
+              >
+                อ่าน roadmap เต็มๆ →
+              </Link>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ═══════════════════════ 8 · Final CTA · community-first ═══════════════════════ */}
