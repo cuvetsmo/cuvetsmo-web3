@@ -13,8 +13,6 @@
  * Each layer has its own slow drift animation. The composition reads as
  * "soft web3 in motion" without being chaotic.
  */
-import { BrandMark } from "./brand-mark";
-
 export function HeroIllustration() {
   return (
     <div
@@ -199,17 +197,23 @@ function FloatingChip({
   label: string;
   tone: "base" | "privy" | "pimlico" | "eas";
 }) {
-  const TONE: Record<typeof tone, string> = {
-    base:    "bg-white text-[#0052ff] ring-[#0052ff]/20",
-    privy:   "bg-white text-[#5b48ee] ring-[#5b48ee]/20",
-    pimlico: "bg-white text-[#ff6b35] ring-[#ff6b35]/20",
-    eas:     "bg-white text-[#0ea5e9] ring-[#0ea5e9]/20",
+  const TONE_HEX: Record<typeof tone, string> = {
+    base:    "#0052ff",
+    privy:   "#5b48ee",
+    pimlico: "#ff6b35",
+    eas:     "#0ea5e9",
   };
+  const hex = TONE_HEX[tone];
   return (
     <span
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ring-1 ${TONE[tone]}`}
+      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ring-1 bg-white"
+      style={{ color: hex, boxShadow: `0 4px 12px -2px ${hex}25` }}
     >
-      <BrandMark tone={tone} size={14} />
+      <span
+        aria-hidden
+        className="h-2 w-2 rounded-full"
+        style={{ background: hex }}
+      />
       {label}
     </span>
   );

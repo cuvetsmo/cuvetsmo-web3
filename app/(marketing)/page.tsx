@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 
 import { HeroIllustration } from "./_components/hero-illustration";
-import { BrandMark, type BrandTone } from "./_components/brand-mark";
+import type { BrandTone } from "./_components/brand-mark";
 import {
   IphoneMockup,
   ClaimCardScreen,
@@ -293,10 +293,9 @@ export default function LandingPage() {
                   {HERO_CHIPS.map((c, i) => (
                     <span key={c.label} className="whitespace-nowrap">
                       <span
-                        className="inline-flex items-center gap-1.5 align-baseline px-2 py-0.5 rounded-md text-xs font-semibold bg-white ring-1 ring-black/5 shadow-sm"
+                        className="inline-block align-baseline px-2 py-0.5 rounded-md text-xs font-semibold bg-white ring-1 ring-black/5 shadow-sm"
                         style={{ color: chipColor(c.tone) }}
                       >
-                        <BrandMark tone={c.tone} size={12} />
                         {c.label}
                       </span>
                       {i < HERO_CHIPS.length - 1 && (
@@ -381,7 +380,11 @@ export default function LandingPage() {
                   className="chip-pill"
                   style={{ color: chipColor(c.tone) }}
                 >
-                  <BrandMark tone={c.tone} size={20} />
+                  <span
+                    aria-hidden
+                    className="h-2 w-2 rounded-full"
+                    style={{ background: chipColor(c.tone) }}
+                  />
                   {c.label}
                 </span>
               ))}
@@ -403,16 +406,21 @@ export default function LandingPage() {
                   className="chip-pill"
                   style={{ color: chipColor(c.tone) }}
                 >
-                  <BrandMark tone={c.tone} size={20} />
+                  <span
+                    aria-hidden
+                    className="h-2 w-2 rounded-full"
+                    style={{ background: chipColor(c.tone) }}
+                  />
                   {c.label}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Hover hint · subtle, only on lg+ */}
-          <p className="hidden lg:block mt-6 text-center text-[11px] text-[var(--color-muted)] opacity-60">
-            hover แล้วทั้งสองแถวจะหยุดให้อ่าน
+          {/* Honest framing · explicit ว่าเป็นชื่อ partner ไม่ใช่ official logo */}
+          <p className="mt-6 text-center text-[11px] text-[var(--color-muted)] opacity-70">
+            ชื่อ partners · official logos จะถูก wire เมื่อทาง brand kit ของ
+            แต่ละ protocol อนุญาตการใช้งาน
           </p>
         </div>
       </section>

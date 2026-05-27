@@ -340,11 +340,11 @@ button {
   animation: scroll-right-infinite 38s linear infinite;
 }
 
-/* Hovering anywhere in the section pauses BOTH rows · creates the
-   "this is alive but I can read it" affordance. */
-.chip-section:hover .chip-strip {
-  animation-play-state: paused;
-}
+/* No hover pause · marquee runs continuously (Mozi pattern).
+   Earlier we paused on .chip-section:hover but that triggered the
+   moment the cursor entered the section bbox · users perceived "not
+   moving at all" because their cursor was already there on first paint.
+   Permanent motion reads better as decoration. */
 
 @media (prefers-reduced-motion: reduce) {
   .chip-strip,
