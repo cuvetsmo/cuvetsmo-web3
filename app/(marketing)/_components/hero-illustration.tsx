@@ -222,6 +222,8 @@ function FloatingChip({
         aria-hidden
         width={14}
         height={14}
+        decoding="async"
+        loading="eager"
         className="block object-contain"
         style={{ width: 14, height: 14 }}
       />

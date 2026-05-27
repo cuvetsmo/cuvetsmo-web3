@@ -1121,6 +1121,11 @@ function PartnerMark({ tone, size = 16 }: { tone: BrandTone; size?: number }) {
       aria-hidden
       width={size}
       height={size}
+      /* async decode prevents marquee scroll-stutter when images first paint */
+      decoding="async"
+      /* eager so the first 8 are ready before the loop wraps · 32 total imgs
+         in the marquee · all small (<20kb each) · CDN cached after first req */
+      loading="eager"
       className="block object-contain"
       style={{ width: size, height: size }}
     />
