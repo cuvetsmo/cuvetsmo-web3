@@ -23,6 +23,7 @@ import {
   isReady,
 } from "@/lib/contracts";
 import { shortAddress, explorerUrl } from "@/lib/utils";
+import { useUserAddresses } from "@/lib/use-user-addresses";
 
 const QUEST_LS_KEY = "cuvetsmo:quests:completed:v1";
 
@@ -36,6 +37,10 @@ export function ProfilePanel() {
   const { wallets } = useWallets();
   const embedded = wallets.find((w) => w.walletClientType === "privy");
   const address = embedded?.address ?? user?.wallet?.address;
+
+  // Same dual-address pattern as VetCardPanel: when gasless mint is used,
+  // assets live on the Smart Account, not the Privy EOA. Read at both.
+  const { smartAccount } = useUserAddresses();
 
   // Lazy init: localStorage access is gated so SSR doesn't crash.
   const [completed] = useState<CompletedState>(() => {
@@ -58,35 +63,62 @@ export function ProfilePanel() {
   const badgeContract = CONTRACTS.BADGE_REGISTRY;
   const badgeContractReady = isReady(badgeContract);
 
-  const { data: card } = useReadContract({
+  // ─── Card reads (EOA + Smart Account) ─────────────────────────────────
+  const { data: cardOnEoa } = useReadContract({
     address: cardContract,
     abi: VET_SBT_CARD_ABI,
     functionName: "cardOf",
     args: address ? [address as `0x${string}`] : undefined,
     query: { enabled: !!address && cardReady },
   });
+  const { data: cardOnSmartAccount } = useReadContract({
+    address: cardContract,
+    abi: VET_SBT_CARD_ABI,
+    functionName: "cardOf",
+    args: smartAccount ? [smartAccount] : undefined,
+    query: { enabled: !!smartAccount && cardReady },
+  });
+  const cardHasTokenId = (c: unknown) =>
+    !!c && typeof c === "object" && "tokenId" in c && (c as { tokenId: bigint }).tokenId !== 0n;
+  const card = cardHasTokenId(cardOnEoa)
+    ? cardOnEoa
+    : cardHasTokenId(cardOnSmartAccount)
+      ? cardOnSmartAccount
+      : null;
 
-  const { data: onChainBadges } = useReadContract({
+  // ─── Badge reads (EOA + Smart Account · BadgeRegistry path) ───────────
+  // Note: quest verify route now issues EAS BADGE attestations, not
+  // BadgeRegistry mints (see B2 refactor in app/api/quests/[id]/verify).
+  // BadgeRegistry will return [] for everyone going forward. localStorage
+  // is the day-1 source of truth for completed-quest count. Full EAS-
+  // attestation listing in profile = Phase 2 work (see docs/INDEXER_SETUP.md).
+  const { data: badgesOnEoa } = useReadContract({
     address: badgeContract,
     abi: BADGE_REGISTRY_ABI,
     functionName: "badgesOf",
     args: address ? [address as `0x${string}`] : undefined,
     query: { enabled: !!address && badgeContractReady },
   });
+  const { data: badgesOnSmartAccount } = useReadContract({
+    address: badgeContract,
+    abi: BADGE_REGISTRY_ABI,
+    functionName: "badgesOf",
+    args: smartAccount ? [smartAccount] : undefined,
+    query: { enabled: !!smartAccount && badgeContractReady },
+  });
 
   const ownedBadgeIds = useMemo<Set<number>>(() => {
-    // Prefer on-chain truth; fall back to localStorage so users see progress
-    // even before contracts go live.
-    if (
-      Array.isArray(onChainBadges) &&
-      (onChainBadges as readonly bigint[]).length > 0
-    ) {
-      return new Set(
-        (onChainBadges as readonly bigint[]).map((b) => Number(b)),
-      );
+    const combined = new Set<number>();
+    for (const list of [badgesOnEoa, badgesOnSmartAccount]) {
+      if (Array.isArray(list)) {
+        for (const id of list as readonly bigint[]) combined.add(Number(id));
+      }
     }
+    if (combined.size > 0) return combined;
+    // Fallback: localStorage so users see progress even before EAS-attestation
+    // indexer comes online.
     return new Set(completed.ids);
-  }, [onChainBadges, completed.ids]);
+  }, [badgesOnEoa, badgesOnSmartAccount, completed.ids]);
 
   const ownedQuests: Quest[] = useMemo(
     () => QUESTS.filter((q) => ownedBadgeIds.has(q.id)),

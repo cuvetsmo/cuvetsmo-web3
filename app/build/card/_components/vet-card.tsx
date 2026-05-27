@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CONTRACTS, VET_SBT_CARD_ABI, isReady } from "@/lib/contracts";
 import { shortAddress, explorerUrl } from "@/lib/utils";
 import { useSponsoredWrite } from "@/lib/use-sponsored-write";
+import { useUserAddresses } from "@/lib/use-user-addresses";
 import { WhatJustHappened } from "@/components/what-just-happened";
 
 /**
@@ -56,10 +57,16 @@ export function VetCardPanel() {
   const address = embedded?.address ?? user?.wallet?.address;
   const email = user?.email?.address ?? user?.google?.email;
 
+  // C2 (gasless mint) introduced a second address — the Coinbase Smart
+  // Account derived from the Privy EOA. If a user claimed via the
+  // gasless path, the card lives on the Smart Account, not the EOA.
+  // Read BOTH addresses and pick whichever actually holds the card.
+  const { smartAccount } = useUserAddresses();
+
   const contract = CONTRACTS.VET_SBT_CARD;
   const contractReady = isReady(contract);
 
-  const { data: onChainCard, refetch } = useReadContract({
+  const { data: cardOnEoa, refetch: refetchEoa } = useReadContract({
     address: contract,
     abi: VET_SBT_CARD_ABI,
     functionName: "cardOf",
@@ -67,11 +74,37 @@ export function VetCardPanel() {
     query: { enabled: !!address && contractReady },
   });
 
-  const hasCard =
-    !!onChainCard &&
-    typeof onChainCard === "object" &&
-    "tokenId" in onChainCard &&
-    onChainCard.tokenId !== 0n;
+  const { data: cardOnSmartAccount, refetch: refetchSmartAccount } =
+    useReadContract({
+      address: contract,
+      abi: VET_SBT_CARD_ABI,
+      functionName: "cardOf",
+      args: smartAccount ? [smartAccount] : undefined,
+      query: { enabled: !!smartAccount && contractReady },
+    });
+
+  function hasCardAt(card: unknown): card is ContractCard {
+    return (
+      !!card &&
+      typeof card === "object" &&
+      "tokenId" in card &&
+      (card as ContractCard).tokenId !== 0n
+    );
+  }
+
+  // EOA card wins if present (legacy users with non-gasless claims).
+  // Otherwise fall back to the Smart Account card from gasless flows.
+  const cardEoaPresent = hasCardAt(cardOnEoa);
+  const cardSmartPresent = hasCardAt(cardOnSmartAccount);
+  const hasCard = cardEoaPresent || cardSmartPresent;
+  const onChainCard = cardEoaPresent ? cardOnEoa : cardOnSmartAccount;
+  const cardHolderAddress = cardEoaPresent
+    ? (address as string | undefined)
+    : (smartAccount as string | undefined);
+  const refetch = () => {
+    refetchEoa();
+    refetchSmartAccount();
+  };
 
   if (!ready) {
     return (
@@ -102,9 +135,10 @@ export function VetCardPanel() {
 
   return hasCard && onChainCard ? (
     <ShowCardView
-      address={address!}
+      address={cardHolderAddress!}
       email={email}
       cardOnChain={onChainCard as ContractCard}
+      heldBySmartAccount={!cardEoaPresent && cardSmartPresent}
     />
   ) : (
     <ClaimCardView
@@ -415,7 +449,7 @@ function ClaimCardView({
               </li>
             </ul>
             <p className="mt-2 text-xs leading-snug">
-              📝 SVG card view ของ Smart Account จะมาใน Wave 3 (ตอนนี้แสดงเฉพาะการ์ดของ Privy EOA address).
+              ✓ การ์ดจะปรากฏใน view ถัดไปอัตโนมัติ (panel จะ refetch จาก Smart Account address).
             </p>
           </div>
         )}
@@ -512,10 +546,15 @@ function ShowCardView({
   address,
   email,
   cardOnChain,
+  heldBySmartAccount,
 }: {
   address: string;
   email: string | undefined;
   cardOnChain: ContractCard;
+  /** True when this card lives at the user's Smart Account (gasless mint),
+   *  not their Privy EOA. Adds a small badge so the user understands why
+   *  the displayed wallet differs from their normal connect address. */
+  heldBySmartAccount?: boolean;
 }) {
   const local = useMemo<CardData | null>(() => {
     if (typeof window === "undefined") return null;
@@ -544,12 +583,21 @@ function ShowCardView({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <Badge tone="success" className="self-start">
-            Active Card
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2 self-start">
+            <Badge tone="success">Active Card</Badge>
+            {heldBySmartAccount && (
+              <Badge tone="brand">🎁 Smart Wallet (gasless)</Badge>
+            )}
+          </div>
           <CardTitle>Vet SBT Card #{cardView.tokenId.toString()}</CardTitle>
           <CardDescription>
             Soulbound — ผูกกับ wallet ของคุณตลอดไป. โชว์ใน IG/LINE ได้เลย.
+            {heldBySmartAccount && (
+              <span className="block mt-1 text-xs text-[var(--color-muted)]">
+                การ์ดนี้อยู่ใน Smart Account address (gasless mint) ไม่ใช่ Privy EOA ของคุณ — นี่คือ wallet
+                ที่ Pimlico paymaster ใช้แทนคุณ.
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
