@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Reveal } from "../_components/reveal";
 
 /**
  * FAQ — common questions in plain Thai about web3, CUVETSMO, money safety,
@@ -348,22 +349,30 @@ const CATEGORIES = {
 
 export default function FaqPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-      <header className="mb-10">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <Badge tone="brand">FAQ</Badge>
-          <Badge tone="muted">{FAQS.length} คำถาม</Badge>
+    <main>
+      {/* Hero · cloud-bg */}
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10 sm:pb-14">
+          <Reveal>
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <Badge tone="brand">FAQ</Badge>
+              <Badge tone="muted">{FAQS.length} คำถาม</Badge>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3">
+              คำถามที่ถามบ่อย
+            </h1>
+            <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
+              คำถามที่นิสิต · อาจารย์ · พ่อแม่ ถามตอนเห็น CUVETSMO Web3 ครั้งแรก ·
+              ตอบแบบเข้าใจง่าย · ไม่มีศัพท์เทคนิคโดยไม่จำเป็น
+            </p>
+          </Reveal>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3">
-          คำถามที่ถามบ่อย
-        </h1>
-        <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          คำถามที่นิสิต, อาจารย์, พ่อแม่ ถามตอนเห็น CUVETSMO Web3 ครั้งแรก.
-          ตอบแบบเข้าใจง่าย ไม่มีศัพท์เทคนิคโดยไม่จำเป็น.
-        </p>
-      </header>
+      </section>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
 
       {/* Category chips */}
+      <Reveal>
       <div className="mb-8 flex flex-wrap gap-2">
         {(Object.entries(CATEGORIES) as Array<[keyof typeof CATEGORIES, typeof CATEGORIES[keyof typeof CATEGORIES]]>).map(
           ([key, info]) => {
@@ -384,14 +393,16 @@ export default function FaqPage() {
           },
         )}
       </div>
+      </Reveal>
 
       {/* Grouped sections */}
-      {(Object.keys(CATEGORIES) as Array<keyof typeof CATEGORIES>).map((cat) => {
+      {(Object.keys(CATEGORIES) as Array<keyof typeof CATEGORIES>).map((cat, catIdx) => {
         const entries = FAQS.filter((f) => f.category === cat);
         if (entries.length === 0) return null;
         const info = CATEGORIES[cat];
         return (
-          <section key={cat} id={`cat-${cat}`} className="mb-10 scroll-mt-24">
+          <Reveal key={cat} delay={catIdx * 80}>
+          <section id={`cat-${cat}`} className="mb-10 scroll-mt-24">
             <h2 className="text-xl font-bold tracking-tight mb-4 flex items-center gap-2">
               <span aria-hidden className="text-2xl">
                 {info.icon}
@@ -436,11 +447,13 @@ export default function FaqPage() {
               ))}
             </div>
           </section>
+          </Reveal>
         );
       })}
 
       {/* Ask another */}
-      <div className="mt-12 p-6 rounded-xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20">
+      <Reveal>
+      <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20">
         <h3 className="font-bold mb-2 text-[var(--color-brand)]">
           คำถามไม่มีในนี้?
         </h3>
@@ -464,6 +477,8 @@ export default function FaqPage() {
             ดู Glossary
           </Link>
         </div>
+      </div>
+      </Reveal>
       </div>
     </main>
   );

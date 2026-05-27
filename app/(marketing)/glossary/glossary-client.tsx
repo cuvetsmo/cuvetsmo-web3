@@ -63,20 +63,24 @@ export function GlossaryClient({ entries }: { entries: GlossaryEntry[] }) {
   }, [entries]);
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-      {/* Header */}
-      <header className="mb-8">
-        <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-2">
-          Glossary — TH / EN
-        </p>
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3">
-          พจนานุกรม Web3
-        </h1>
-        <p className="text-base text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          ศัพท์ web3 แบบสองภาษา — {entries.length} คำที่ใช้บ่อยใน CUVETSMO platform.
-          แต่ละ entry มีคำอธิบายภาษาไทย พร้อมตัวอย่างบริบทสัตวแพทย์ที่เกี่ยวข้อง.
-        </p>
-      </header>
+    <main>
+      {/* Hero · cloud-bg */}
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10 sm:pb-14">
+          <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-[0.18em] mb-2">
+            Glossary — TH / EN
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3 max-w-3xl">
+            พจนานุกรม Web3
+          </h1>
+          <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
+            ศัพท์ web3 แบบสองภาษา · {entries.length} คำที่ใช้บ่อยใน CUVETSMO platform ·
+            แต่ละ entry มีคำอธิบายภาษาไทย พร้อมตัวอย่างบริบทสัตวแพทย์ที่เกี่ยวข้อง
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
 
       {/* Search */}
       <div className="mb-8 sticky top-[57px] z-30 bg-[var(--color-bg)]/85 backdrop-blur -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 border-b border-[var(--color-border)]">
@@ -248,7 +252,7 @@ export function GlossaryClient({ entries }: { entries: GlossaryEntry[] }) {
       </div>
 
       {/* Footer note */}
-      <div className="mt-12 p-5 rounded-xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20">
+      <div className="mt-12 p-5 sm:p-6 rounded-2xl bg-[var(--color-brand-light)] border border-[var(--color-brand)]/20">
         <p className="text-sm leading-relaxed text-[var(--color-text)]">
           <strong className="text-[var(--color-brand)]">มีศัพท์ที่อยากให้เพิ่ม?</strong>{" "}
           เปิด issue ใน{" "}
@@ -260,8 +264,9 @@ export function GlossaryClient({ entries }: { entries: GlossaryEntry[] }) {
           >
             GitHub
           </a>{" "}
-          หรือทักสโม. Glossary นี้ open source — contribute ได้ทุกคน.
+          หรือทักสโม · Glossary นี้ open source · contribute ได้ทุกคน
         </p>
+      </div>
       </div>
     </main>
   );

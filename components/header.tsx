@@ -14,11 +14,16 @@ import { ThemeToggle } from "./theme-toggle";
  * - Mobile: hamburger menu
  */
 
+// Hub-page targets · users land on the hub overview, then click into a
+// specific tool. Pre-Phase-4 we linked direct to leaf pages (wallet-101,
+// mint, etc.) which skipped the hub navigation entirely · users couldn't
+// discover sibling tools.
 const NAV_LINKS = [
-  { href: "/learn/wallet-101", label: "Learn" },
-  { href: "/play/mint", label: "Play" },
-  { href: "/build/card", label: "Build" },
-  { href: "/lab/token-forge", label: "The Lab" },
+  { href: "/learn", label: "Learn" },
+  { href: "/play",  label: "Play" },
+  { href: "/build", label: "Build" },
+  { href: "/lab",   label: "The Lab" },
+  { href: "/me",    label: "My /me" },
   { href: "/about", label: "About" },
 ] as const;
 

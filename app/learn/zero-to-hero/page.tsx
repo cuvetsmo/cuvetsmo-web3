@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { ZeroToHeroFlow } from "./_components/zth-flow";
 import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/app/(marketing)/_components/reveal";
 
 export const metadata: Metadata = {
   title: "Zero to Hero — เริ่ม Web3 จาก 0",
@@ -12,28 +13,38 @@ export const metadata: Metadata = {
 
 export default function ZeroToHeroPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 md:py-12">
-      <header className="mb-8">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <Badge tone="brand">Learn</Badge>
-          <Badge tone="muted">5 ขั้น · 3 นาที</Badge>
-          <Badge tone="success">ไม่ต้องมี wallet</Badge>
+    <main>
+      {/* Hero · cloud-bg */}
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10 sm:pb-14">
+          <Reveal>
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <Badge tone="brand">Learn</Badge>
+              <Badge tone="muted">5 ขั้น · 3 นาที</Badge>
+              <Badge tone="success">ไม่ต้องมี wallet</Badge>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-3">
+              Zero to Hero
+            </h1>
+            <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
+              ไม่เคยได้ยินคำว่า blockchain เลยก็เริ่มที่นี่ได้ ·
+              ทั้งหน้านี้อ่านอย่างเดียว · ไม่มีปุ่มที่กระทบ chain ·
+              พร้อมแล้วค่อยไปทำ Wallet 101 ต่อ
+            </p>
+          </Reveal>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-          Zero to Hero
-        </h1>
-        <p className="text-base sm:text-lg text-[var(--color-muted)] max-w-2xl leading-relaxed">
-          ไม่เคยได้ยินคำว่า blockchain เลยก็เริ่มที่นี่ได้.
-          ทั้งหน้านี้อ่านอย่างเดียว ไม่มีปุ่มที่กระทบ chain — พร้อมแล้วค่อยไปทำ Wallet 101 ต่อ.
-        </p>
-      </header>
+      </section>
 
-      <ZeroToHeroFlow />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <Reveal>
+          <ZeroToHeroFlow />
+        </Reveal>
 
       <section className="mt-10 grid sm:grid-cols-2 gap-3 sm:gap-4">
+        <Reveal delay={80}>
         <Link
           href="/learn/wallet-101"
-          className="card hover:border-[var(--color-brand)] transition-colors group"
+          className="card hover:border-[var(--color-brand)] hover:-translate-y-0.5 transition-all group h-full block"
         >
           <p className="text-xs font-semibold text-[var(--color-brand)] uppercase tracking-wider mb-1">
             ถัดไป
@@ -46,9 +57,11 @@ export default function ZeroToHeroPage() {
             เริ่มทำ →
           </span>
         </Link>
+        </Reveal>
+        <Reveal delay={160}>
         <Link
           href="/glossary"
-          className="card hover:border-[var(--color-brand)] transition-colors group"
+          className="card hover:border-[var(--color-brand)] hover:-translate-y-0.5 transition-all group h-full block"
         >
           <p className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1">
             ดูศัพท์ที่เจอใน 5 ขั้น
@@ -61,6 +74,7 @@ export default function ZeroToHeroPage() {
             เปิดดู →
           </span>
         </Link>
+        </Reveal>
       </section>
 
       <div className="mt-10 border-t border-[var(--color-border)] pt-6">
@@ -70,6 +84,7 @@ export default function ZeroToHeroPage() {
         >
           ← กลับ Learn hub
         </Link>
+      </div>
       </div>
     </main>
   );
