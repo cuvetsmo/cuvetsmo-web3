@@ -483,6 +483,36 @@ button {
 .chip-cuvet      { color: #0369a1; }
 .chip-chula      { color: #c8316d; }   /* Chula pink */
 
+/* ─── Scroll-driven reveal · Mozi fade-up pattern ─────────────────────
+   Components wrapped in <Reveal> get .reveal as their base class. The
+   IntersectionObserver toggles .is-revealed when 15% of the element enters
+   the viewport · CSS handles the transition. Works with prefers-reduced-
+   motion (Reveal short-circuits to revealed=true on first render).
+   ────────────────────────────────────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ─── Float ambient (asset chips drifting slightly in hero) ───────── */
 
 @keyframes cuvet-float {
