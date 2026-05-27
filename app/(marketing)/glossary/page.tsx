@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: "Glossary TH/EN — CUVETSMO Web3",
     description:
       "Bilingual web3 dictionary for Thai vet students — 68 essential entries.",
-    images: ["/og.png"],
+    // images omitted · falls through to app/opengraph-image.tsx
   },
 };
 

@@ -65,21 +65,17 @@ export const metadata: Metadata = {
     alternateLocale: ["en_US"],
     siteName: "CUVETSMO Web3",
     url: "https://web3.cuvetsmo.com",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "CUVETSMO Web3 — 4 pillars: Learn, Play, Build, The Lab",
-      },
-    ],
+    // images intentionally omitted · app/opengraph-image.tsx auto-supplies
+    // the dynamic Mozi-style OG card (cloud-bg + headline + 8 partner chips).
+    // Static /og.png is kept as a fallback only.
   },
   twitter: {
     card: "summary_large_image",
     title: "CUVETSMO Web3 — Playground for Thai Vet Students",
     description:
       "Learn, Play, Build, The Lab. Built on Base, educational testnet.",
-    images: ["/og.png"],
+    // images intentionally omitted · app/twitter-image.tsx (if added later)
+    // would auto-supply · falls back to opengraph-image otherwise.
   },
   robots: {
     index: true,

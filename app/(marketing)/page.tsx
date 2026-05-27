@@ -49,21 +49,13 @@ export const metadata: Metadata = {
       "CUVETSMO Web3 — Web3 Playground for Thai Vet Students",
     description:
       "Learn, Play, Build, The Lab. Educational testnet by students, for students.",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "CUVETSMO Web3 — 4 pillars: Learn, Play, Build, The Lab",
-      },
-    ],
+    // images intentionally omitted · app/opengraph-image.tsx auto-supplies
   },
   twitter: {
     card: "summary_large_image",
     title: "CUVETSMO Web3 — Web3 Playground for Thai Vet Students",
     description:
       "Learn, Play, Build, The Lab. Built on Base, educational testnet.",
-    images: ["/og.png"],
   },
 };
 

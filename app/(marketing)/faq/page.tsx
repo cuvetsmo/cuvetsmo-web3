@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: "FAQ — CUVETSMO Web3",
     description:
       "Common questions about web3, money safety, and what CUVETSMO does. Plain Thai answers for non-developers.",
-    images: ["/og.png"],
+    // images omitted · falls through to app/opengraph-image.tsx
   },
 };
 
