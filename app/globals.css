@@ -10,14 +10,21 @@
    ──────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Default = light. Inline script in layout.tsx may override with
-     data-theme="dark" before React hydrates. */
-  --color-bg: #ffffff;
-  --color-surface-2: #f4f4f8;
+  /* Default = light · pastel "soft web3" palette (Mozi-inspired 2026-05-27).
+     Inline script in layout.tsx may override with data-theme="dark" before
+     React hydrates. The dark side stays cyber + Base Blue 4.6:1. */
+  --color-bg: #fffbf4;                  /* warm cream · anti-corporate-DeFi */
+  --color-surface-2: #eef6ff;           /* soft sky pastel · section alternate */
   --color-text: #0a0a0f;
-  --color-muted: #52525b;
-  --color-border: #e4e4e7;
-  --color-card: #ffffff;
+  --color-muted: #71717a;
+  --color-border: #ede7dc;              /* warm border on cream */
+  --color-card: #ffffff;                /* pure white cards pop on cream */
+
+  /* Pastel cloud tokens for hero + ambient backgrounds */
+  --color-cloud-pink:    rgba(254, 215, 230, 0.55);   /* soft pink */
+  --color-cloud-lavender:rgba(224, 220, 255, 0.55);
+  --color-cloud-sky:     rgba(208, 232, 255, 0.55);
+  --color-cloud-peach:   rgba(254, 232, 215, 0.55);
 
   /* Base Blue palette.
      --color-brand-mark = the literal #0000FF for logo positions.
@@ -28,8 +35,8 @@
   --color-brand-light: #e6e6ff;
   --color-accent: #ff0420;              /* Optimism red, "Play" CTA only */
 
-  --aurora-blue: rgba(0, 0, 255, 0.16);
-  --aurora-violet: rgba(124, 58, 237, 0.16);
+  --aurora-blue: rgba(0, 0, 255, 0.10);
+  --aurora-violet: rgba(124, 58, 237, 0.10);
 
   --font-sans:
     var(--font-geist-sans),
@@ -235,4 +242,185 @@ button {
     animation: none !important;
   }
   body { transition: none; }
+}
+
+/* ─── Mozi-inspired pastel cloud hero (light mode only) ───────────────
+   Layered radial gradients create the "soft sky + cotton cloud" feel.
+   Dark mode falls back to the existing aurora-bg.
+   ────────────────────────────────────────────────────────────────── */
+
+.cloud-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.cloud-bg::before {
+  content: "";
+  position: absolute;
+  inset: -10% -5% auto -5%;
+  height: 100%;
+  background:
+    radial-gradient(45% 60% at 18% 25%, var(--color-cloud-pink),    transparent 70%),
+    radial-gradient(40% 55% at 78% 18%, var(--color-cloud-lavender), transparent 70%),
+    radial-gradient(55% 70% at 50% 75%, var(--color-cloud-sky),     transparent 75%),
+    radial-gradient(30% 45% at 92% 55%, var(--color-cloud-peach),    transparent 70%);
+  filter: blur(40px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .cloud-bg::before {
+  background:
+    radial-gradient(60% 80% at 30% 20%, var(--aurora-blue),   transparent 70%),
+    radial-gradient(50% 70% at 70% 35%, var(--aurora-violet), transparent 70%);
+  filter: blur(48px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cloud-bg::before {
+    background:
+      radial-gradient(60% 80% at 30% 20%, var(--aurora-blue),   transparent 70%),
+      radial-gradient(50% 70% at 70% 35%, var(--aurora-violet), transparent 70%);
+    filter: blur(48px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cloud-bg::before {
+    animation: aurora-drift 24s ease-in-out infinite alternate;
+  }
+}
+
+/* ─── Trusted-by · infinite logo strip (Mozi pattern) ─────────────── */
+
+@keyframes scroll-left-infinite {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.chip-strip-mask {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.chip-strip {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: scroll-left-infinite 40s linear infinite;
+}
+
+.chip-strip:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip-strip { animation: none; }
+}
+
+/* ─── Word-by-word staggered reveal (Mozi pattern) ────────────────── */
+
+.stagger-words > * {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: cuvet-fade-up 0.5s ease-out forwards;
+}
+
+/* Up to 30 words — beyond that, all share the last delay */
+.stagger-words > *:nth-child(1)  { animation-delay: 0.05s; }
+.stagger-words > *:nth-child(2)  { animation-delay: 0.10s; }
+.stagger-words > *:nth-child(3)  { animation-delay: 0.15s; }
+.stagger-words > *:nth-child(4)  { animation-delay: 0.20s; }
+.stagger-words > *:nth-child(5)  { animation-delay: 0.25s; }
+.stagger-words > *:nth-child(6)  { animation-delay: 0.30s; }
+.stagger-words > *:nth-child(7)  { animation-delay: 0.35s; }
+.stagger-words > *:nth-child(8)  { animation-delay: 0.40s; }
+.stagger-words > *:nth-child(9)  { animation-delay: 0.45s; }
+.stagger-words > *:nth-child(10) { animation-delay: 0.50s; }
+.stagger-words > *:nth-child(11) { animation-delay: 0.55s; }
+.stagger-words > *:nth-child(12) { animation-delay: 0.60s; }
+.stagger-words > *:nth-child(13) { animation-delay: 0.65s; }
+.stagger-words > *:nth-child(14) { animation-delay: 0.70s; }
+.stagger-words > *:nth-child(15) { animation-delay: 0.75s; }
+.stagger-words > *:nth-child(n+16) { animation-delay: 0.80s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-words > * {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ─── Brand text chip (inline logo replacement) ───────────────────── */
+
+.brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.4rem;
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1.2;
+  vertical-align: baseline;
+  border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  background: color-mix(in srgb, currentColor 6%, transparent);
+  white-space: nowrap;
+}
+
+.brand-chip::before {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Brand-color presets (apply to .brand-chip via class) */
+.chip-base       { color: #0052ff; }
+.chip-privy      { color: #5b48ee; }
+.chip-pimlico    { color: #ff6b35; }
+.chip-eas        { color: #0ea5e9; }
+.chip-pinata     { color: #6a48ff; }
+.chip-openzep    { color: #4f56fa; }
+.chip-cuvet      { color: #0369a1; }
+.chip-chula      { color: #c8316d; }   /* Chula pink */
+
+/* ─── Float ambient (asset chips drifting slightly in hero) ───────── */
+
+@keyframes cuvet-float {
+  0%   { transform: translateY(0) rotate(0); }
+  50%  { transform: translateY(-6px) rotate(0.5deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+
+.animate-float-slow {
+  animation: cuvet-float 6s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: cuvet-float 9s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slower { animation: none; }
 }
