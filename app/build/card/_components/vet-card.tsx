@@ -36,6 +36,11 @@ const ORG_ID_CUVET = 1n;
 const FACULTY_CODE_VET = 1;
 const DEPT_CODE_DEFAULT = 1;
 const CURRENT_YEAR = new Date().getFullYear();
+// VetSBTCard.claim() enforces yearAdmitted ∈ [2500, 2700] (Buddhist Era /
+// พ.ศ.). Frontend stores + sends BE throughout — never the Gregorian year.
+// e.g. Vet 86 cohort = พ.ศ. 2566 = AD 2023 = (CURRENT_YEAR - 3) + 543.
+const BE_OFFSET = 543;
+const CURRENT_YEAR_BE = CURRENT_YEAR + BE_OFFSET;
 
 interface CardData {
   studentName: string;
@@ -139,7 +144,11 @@ function ClaimCardView({
   const [studentName, setStudentName] = useState("");
   const [studentId, setStudentId] = useState("");
   const [cohort, setCohort] = useState("86");
-  const [yearAdmitted, setYearAdmitted] = useState(String(CURRENT_YEAR - 3));
+  // Buddhist Era · Vet 86 admitted พ.ศ. 2566 (= AD 2023 + 543).
+  // Contract reverts InvalidYear() if year is outside [2500, 2700].
+  const [yearAdmitted, setYearAdmitted] = useState(
+    String(CURRENT_YEAR_BE - 3),
+  );
 
   const emailOk = useMemo(() => {
     if (!email) return false;
@@ -324,11 +333,11 @@ function ClaimCardView({
             mono
           />
           <Field
-            label="ปีที่เข้า / Year admitted"
+            label="ปีที่เข้า / Year admitted (พ.ศ.)"
             id="vet-year"
             value={yearAdmitted}
             onChange={setYearAdmitted}
-            placeholder={String(CURRENT_YEAR - 3)}
+            placeholder={String(CURRENT_YEAR_BE - 3)}
             mono
           />
         </div>
@@ -525,7 +534,8 @@ function ShowCardView({
     studentName: local?.studentName ?? "Vet Student",
     studentId: local?.studentId ?? "—",
     cohort: local?.cohort ?? 86,
-    yearAdmitted: cardOnChain.yearAdmitted || local?.yearAdmitted || CURRENT_YEAR - 3,
+    yearAdmitted:
+      cardOnChain.yearAdmitted || local?.yearAdmitted || CURRENT_YEAR_BE - 3,
     tokenId: cardOnChain.tokenId,
     mintedAt: cardOnChain.mintedAt,
   };
