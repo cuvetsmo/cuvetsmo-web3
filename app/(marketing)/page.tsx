@@ -2,6 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 
+import { HeroIllustration } from "./_components/hero-illustration";
+import { BrandMark, type BrandTone } from "./_components/brand-mark";
+import {
+  IphoneMockup,
+  ClaimCardScreen,
+  QuestsScreen,
+} from "./_components/iphone-mockup";
+
 /**
  * Landing page · Mozi-inspired soft-DeFi redesign (2026-05-27).
  *
@@ -54,25 +62,24 @@ export const metadata: Metadata = {
 };
 
 // ─── Hero inline brand chips ────────────────────────────────────────────
-// Text-only chips (no external logos · no IP risk). Each picks up its brand
-// color from .chip-* classes in globals.css.
-const HERO_CHIPS = [
-  { label: "Base",    cls: "chip-base" },
-  { label: "Privy",   cls: "chip-privy" },
-  { label: "Pimlico", cls: "chip-pimlico" },
-  { label: "EAS",     cls: "chip-eas" },
+// Text + SVG mark chips · CUVETSMO's *own* geometric marks (zero IP risk).
+const HERO_CHIPS: ReadonlyArray<{ label: string; tone: BrandTone }> = [
+  { label: "Base",    tone: "base" },
+  { label: "Privy",   tone: "privy" },
+  { label: "Pimlico", tone: "pimlico" },
+  { label: "EAS",     tone: "eas" },
 ] as const;
 
 // ─── Trusted-by strip · 8 partners, doubled for seamless infinite loop ───
-const TRUSTED_BY = [
-  { label: "Base",         cls: "chip-base" },
-  { label: "Privy",        cls: "chip-privy" },
-  { label: "Pimlico",      cls: "chip-pimlico" },
-  { label: "EAS",          cls: "chip-eas" },
-  { label: "Pinata",       cls: "chip-pinata" },
-  { label: "OpenZeppelin", cls: "chip-openzep" },
-  { label: "CUVET",        cls: "chip-cuvet" },
-  { label: "Chula",        cls: "chip-chula" },
+const TRUSTED_BY: ReadonlyArray<{ label: string; tone: BrandTone }> = [
+  { label: "Base",         tone: "base" },
+  { label: "Privy",        tone: "privy" },
+  { label: "Pimlico",      tone: "pimlico" },
+  { label: "EAS",          tone: "eas" },
+  { label: "Pinata",       tone: "pinata" },
+  { label: "OpenZeppelin", tone: "openzep" },
+  { label: "CUVET",        tone: "cuvet" },
+  { label: "Chula",        tone: "chula" },
 ] as const;
 
 // ─── 6-feature differentiator grid (Mozi "Why MOZI's" pattern) ──────────
@@ -245,87 +252,104 @@ const STAGGER_PARAGRAPH =
 export default function LandingPage() {
   return (
     <main>
-      {/* ═══════════════════════ 1 · Hero ═══════════════════════ */}
+      {/* ═══════════════════════ 1 · Hero · 2-col text + illustration ═══════════════════════ */}
       <section className="relative overflow-hidden cloud-bg">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-14 sm:pb-20">
-          <div className="flex justify-center mb-6">
-            <Image
-              src="/smo-logo.png"
-              alt="CUVETSMO"
-              width={80}
-              height={80}
-              className="rounded-2xl shadow-sm ring-1 ring-black/5 animate-float-slow"
-              priority
-            />
-          </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-14 sm:pb-24">
+          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-12 items-center">
+            {/* ─── Left · text column ─── */}
+            <div className="text-center lg:text-left">
+              <div className="flex lg:justify-start justify-center mb-6">
+                <Image
+                  src="/smo-logo.png"
+                  alt="CUVETSMO"
+                  width={64}
+                  height={64}
+                  className="rounded-2xl shadow-sm ring-1 ring-black/5"
+                  priority
+                />
+              </div>
 
-          <p className="text-xs sm:text-sm font-semibold text-[var(--color-brand)] uppercase tracking-[0.18em] text-center mb-3 animate-fade-up">
-            Web3 for Chula Vet Students
-          </p>
+              <p className="text-xs sm:text-sm font-semibold text-[var(--color-brand)] uppercase tracking-[0.18em] mb-3 animate-fade-up">
+                Web3 for Chula Vet Students
+              </p>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-center max-w-4xl mx-auto leading-[1.1] animate-fade-up" style={{ animationDelay: "0.05s" }}>
-            <span className="block">Learn Web3.</span>
-            <span className="block gradient-text mt-1">Build Your Identity.</span>
-          </h1>
+              <h1
+                className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.05] animate-fade-up"
+                style={{ animationDelay: "0.05s" }}
+              >
+                <span className="block">Learn Web3.</span>
+                <span className="block gradient-text mt-1">Build Your Identity.</span>
+              </h1>
 
-          <p
-            className="mt-6 text-base sm:text-lg text-[var(--color-muted)] text-center max-w-3xl mx-auto leading-relaxed animate-fade-up"
-            style={{ animationDelay: "0.1s" }}
-          >
-            <span className="block">เครื่องมือ Web3 สำหรับนิสิตสัตวแพทย์ จุฬาฯ — ครบ 4 เสาหลัก ที่เดียว.</span>
-            <span lang="en" className="block mt-2 text-sm sm:text-base opacity-80">
-              Built on{" "}
-              {HERO_CHIPS.map((c, i) => (
-                <span key={c.label}>
-                  <span className={`brand-chip ${c.cls}`}>{c.label}</span>
-                  {i < HERO_CHIPS.length - 1 ? " · " : ""}
+              <p
+                className="mt-6 text-base sm:text-lg text-[var(--color-muted)] leading-relaxed animate-fade-up"
+                style={{ animationDelay: "0.1s" }}
+              >
+                <span className="block">
+                  เครื่องมือ Web3 สำหรับนิสิตสัตวแพทย์ จุฬาฯ — ครบ 4 เสาหลัก ที่เดียว.
                 </span>
-              ))}
-              {" "}— free wallet in 5 minutes, no ETH needed.
-            </span>
-          </p>
+                <span lang="en" className="block mt-3 text-sm sm:text-base opacity-90">
+                  Built on{" "}
+                  {HERO_CHIPS.map((c, i) => (
+                    <span key={c.label} className="whitespace-nowrap">
+                      <span
+                        className="inline-flex items-center gap-1.5 align-baseline px-2 py-0.5 rounded-md text-xs font-semibold bg-white ring-1 ring-black/5 shadow-sm"
+                        style={{ color: chipColor(c.tone) }}
+                      >
+                        <BrandMark tone={c.tone} size={12} />
+                        {c.label}
+                      </span>
+                      {i < HERO_CHIPS.length - 1 && (
+                        <span className="text-[var(--color-muted)]"> · </span>
+                      )}
+                    </span>
+                  ))}
+                  {" — free wallet in 5 minutes, no ETH needed."}
+                </span>
+              </p>
 
-          <div
-            className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto animate-fade-up"
-            style={{ animationDelay: "0.15s" }}
-          >
-            <Link
-              href="/learn/zero-to-hero"
-              className="btn-brand text-center flex-1 sm:flex-initial"
-            >
-              ไม่เคยรู้จัก Web3? เริ่มที่นี่
-            </Link>
-            <Link
-              href="/learn/wallet-101"
-              className="btn-outline text-center flex-1 sm:flex-initial"
-            >
-              ทำ Wallet 101 (5 นาที)
-            </Link>
-            <Link
-              href="/about"
-              className="text-center flex-1 sm:flex-initial px-5 py-2.5 rounded-lg font-medium text-sm text-[var(--color-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand-light)] transition-colors"
-            >
-              อ่าน Master Plan →
-            </Link>
+              <div
+                className="mt-8 flex flex-col sm:flex-row gap-3 lg:justify-start justify-center animate-fade-up"
+                style={{ animationDelay: "0.15s" }}
+              >
+                <Link
+                  href="/learn/zero-to-hero"
+                  className="btn-brand text-center flex-1 sm:flex-initial"
+                >
+                  ไม่เคยรู้จัก Web3? เริ่มที่นี่
+                </Link>
+                <Link
+                  href="/learn/wallet-101"
+                  className="btn-outline text-center flex-1 sm:flex-initial"
+                >
+                  ทำ Wallet 101 (5 นาที)
+                </Link>
+              </div>
+
+              <p className="mt-3 text-xs text-[var(--color-muted)] lg:text-left text-center">
+                อ่าน 3 นาที — ไม่ต้องสมัครอะไรเลย — ไม่ต้องมี wallet
+              </p>
+
+              <p className="mt-10 text-xs sm:text-sm text-[var(--color-muted)] flex flex-wrap lg:justify-start justify-center items-center gap-x-3 gap-y-1">
+                <span className="inline-flex items-center gap-1.5">
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
+                  />
+                  Built on Base
+                </span>
+                <span aria-hidden className="opacity-30">—</span>
+                <span>Powered by CUVETSMO</span>
+                <span aria-hidden className="opacity-30">—</span>
+                <span>Educational testnet</span>
+              </p>
+            </div>
+
+            {/* ─── Right · illustration column ─── */}
+            <div className="relative">
+              <HeroIllustration />
+            </div>
           </div>
-
-          <p className="mt-3 text-xs text-center text-[var(--color-muted)]">
-            อ่าน 3 นาที — ไม่ต้องสมัครอะไรเลย — ไม่ต้องมี wallet
-          </p>
-
-          <p className="mt-10 text-xs sm:text-sm text-center text-[var(--color-muted)] flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
-              />
-              Built on Base
-            </span>
-            <span aria-hidden className="opacity-30">—</span>
-            <span>Powered by CUVETSMO</span>
-            <span aria-hidden className="opacity-30">—</span>
-            <span>Educational testnet</span>
-          </p>
         </div>
       </section>
 
@@ -337,13 +361,15 @@ export default function LandingPage() {
           </p>
           <div className="chip-strip-mask">
             <div className="chip-strip">
-              {/* Duplicate the list once so the loop is seamless */}
+              {/* Duplicate the list 4× so the infinite loop is seamless */}
               {[...TRUSTED_BY, ...TRUSTED_BY, ...TRUSTED_BY, ...TRUSTED_BY].map(
                 (c, i) => (
                   <span
                     key={`${c.label}-${i}`}
-                    className={`brand-chip ${c.cls} text-base`}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-[var(--color-card)] ring-1 ring-black/5 shadow-sm"
+                    style={{ color: chipColor(c.tone) }}
                   >
+                    <BrandMark tone={c.tone} size={18} />
                     {c.label}
                   </span>
                 ),
@@ -539,6 +565,73 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ═══════════════════════ 6.5 · Mobile section · iPhone mockups ═══════════════════════ */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 items-center">
+          {/* Text column */}
+          <div className="text-center lg:text-left order-2 lg:order-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand)] mb-3">
+              Built for the phone you already use
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 leading-tight">
+              Trade Web3. <span className="gradient-text">Trade Anywhere.</span>
+            </h2>
+            <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed mb-6">
+              ทุก flow ของ CUVETSMO Web3 ออกแบบ mobile-first · จาก Privy email
+              login → Smart Account derive → gasless mint → EAS attestation
+              ทำได้บน iPhone Safari ตั้งแต่ขั้นตอนแรกถึงสุดท้าย · ไม่ต้องโหลด
+              app เพิ่ม ไม่ต้องมี wallet ETH balance.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <Link href="/learn/wallet-101" className="btn-brand text-center">
+                เริ่ม Wallet 101 ใน 5 นาที
+              </Link>
+              <Link
+                href="/build/card"
+                className="btn-outline text-center"
+              >
+                ลอง Claim Vet SBT Card
+              </Link>
+            </div>
+            <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+              {[
+                { label: "Privy email · social login", check: true },
+                { label: "Smart Account (ERC-4337)", check: true },
+                { label: "Gasless via Pimlico", check: true },
+                { label: "EAS portable badges", check: true },
+              ].map((row) => (
+                <li
+                  key={row.label}
+                  className="flex items-start gap-2 text-[var(--color-muted)]"
+                >
+                  <span className="inline-flex h-5 w-5 mt-0.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
+                    ✓
+                  </span>
+                  <span>{row.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* iPhone column · 2 phones, staggered */}
+          <div className="order-1 lg:order-2 relative flex items-center justify-center gap-4 lg:gap-6 px-4">
+            <div className="animate-float-slow">
+              <IphoneMockup tilt={-4} label="/build/card">
+                <ClaimCardScreen />
+              </IphoneMockup>
+            </div>
+            <div
+              className="hidden sm:block animate-float-slower -mb-12"
+              style={{ animationDelay: "-2s" }}
+            >
+              <IphoneMockup tilt={5} label="/learn/quests">
+                <QuestsScreen />
+              </IphoneMockup>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════════ 7 · Mission TH/EN ═══════════════════════ */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div className="max-w-3xl mx-auto mb-12">
@@ -615,6 +708,20 @@ export default function LandingPage() {
 }
 
 // ─── Helper components ──────────────────────────────────────────────────
+
+/** Map brand tone → readable hex for inline color styling. */
+function chipColor(tone: BrandTone): string {
+  switch (tone) {
+    case "base":    return "#0052ff";
+    case "privy":   return "#5b48ee";
+    case "pimlico": return "#ff6b35";
+    case "eas":     return "#0ea5e9";
+    case "pinata":  return "#6a48ff";
+    case "openzep": return "#4f56fa";
+    case "cuvet":   return "#0369a1";
+    case "chula":   return "#c8316d";
+  }
+}
 
 function CompareCell({
   value,

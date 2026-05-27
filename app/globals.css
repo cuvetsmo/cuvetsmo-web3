@@ -170,7 +170,8 @@ button {
 
 .card:hover {
   border-color: var(--color-brand);
-  box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--color-brand) 22%, transparent);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--color-brand) 30%, transparent);
+  transform: translateY(-2px);
 }
 
 /* ─── Aurora hero background ────────────────────────────────────────── */
@@ -200,9 +201,9 @@ button {
 }
 
 @keyframes aurora-drift {
-  0%   { transform: translate3d(0,  0,    0) scale(1); }
-  50%  { transform: translate3d(-2%, -2%, 0) scale(1.05); }
-  100% { transform: translate3d(2%, 1%,   0) scale(0.98); }
+  0%   { transform: translate3d(0,    0,    0) scale(1); }
+  50%  { transform: translate3d(-4%, -3%, 0) scale(1.08); }
+  100% { transform: translate3d(3%,  2%,   0) scale(0.96); }
 }
 
 /* ─── Reveal animations (kept from prior theme) ─────────────────────── */
