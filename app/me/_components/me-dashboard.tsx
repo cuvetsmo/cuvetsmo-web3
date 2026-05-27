@@ -25,6 +25,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useReadContract } from "wagmi";
 
 import { Reveal } from "@/app/(marketing)/_components/reveal";
+import { NumberTicker } from "@/app/(marketing)/_components/number-ticker";
 import { useUserAddresses } from "@/lib/use-user-addresses";
 import {
   CONTRACTS,
@@ -259,6 +260,7 @@ export function MeDashboard() {
             <StatCard
               label="Quest XP"
               value={`${completed.xp}`}
+              numeric={completed.xp}
               hint={`/${TOTAL_XP_AVAILABLE} · ${xpPct}%`}
               accent="from-emerald-100/40 to-teal-50/20"
               border="border-emerald-200/50"
@@ -269,6 +271,7 @@ export function MeDashboard() {
             <StatCard
               label="Quests done"
               value={`${completed.ids.length}`}
+              numeric={completed.ids.length}
               hint={`/${QUESTS.length} · ${questsLeft} เหลือ`}
               accent="from-purple-100/40 to-violet-50/20"
               border="border-purple-200/50"
@@ -279,6 +282,7 @@ export function MeDashboard() {
             <StatCard
               label="Lab assets"
               value="0"
+              numeric={0}
               hint="indexer ใน Phase 1"
               accent="from-amber-100/40 to-yellow-50/20"
               border="border-amber-200/50"
@@ -467,6 +471,7 @@ function StatCard({
   accent,
   border,
   emoji,
+  numeric,
 }: {
   label: string;
   value: string;
@@ -474,6 +479,8 @@ function StatCard({
   accent: string;
   border: string;
   emoji: string;
+  /** Optional · if set, animates count-up from 0 to numeric value */
+  numeric?: number;
 }) {
   return (
     <div
@@ -487,8 +494,12 @@ function StatCard({
           {emoji}
         </span>
       </div>
-      <p className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--color-text)]">
-        {value}
+      <p className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--color-text)] tabular-nums">
+        {numeric !== undefined ? (
+          <NumberTicker value={numeric} duration={1200} startOnMount />
+        ) : (
+          value
+        )}
       </p>
       <p className="text-[11px] text-[var(--color-muted)] mt-1">
         {hint}

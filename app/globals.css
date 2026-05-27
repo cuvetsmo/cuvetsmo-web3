@@ -235,6 +235,43 @@ button {
   color: transparent;
 }
 
+/* Animated gradient text · Magic UI / 21st.dev pattern.
+   Uses a 4-stop gradient with 300% background-size and an infinite linear
+   animation that pans the background position. Keeps clip-path on text so
+   only the letters glow. Performance: backgroun-position is GPU-eligible
+   when paired with the GPU primer on .animated-gradient itself. */
+@keyframes animated-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--color-brand) 0%,
+    #7c3aed 25%,
+    #ec4899 50%,
+    #7c3aed 75%,
+    var(--color-brand) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: animated-gradient-shift 8s linear infinite;
+  /* GPU primer · keeps the animated background-position composited */
+  will-change: background-position;
+  transform: translateZ(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-gradient {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
 /* prefers-reduced-motion respect */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,

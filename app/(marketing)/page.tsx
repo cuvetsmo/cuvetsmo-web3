@@ -11,6 +11,7 @@ import {
 } from "./_components/iphone-mockup";
 import { Reveal } from "./_components/reveal";
 import { MotionBeacon } from "./_components/motion-beacon";
+import { NumberTicker } from "./_components/number-ticker";
 import {
   FeatureIllustration,
   type FeatureKey,
@@ -241,11 +242,11 @@ const UNIVERSE_TOOLS: ReadonlyArray<{
   { title: "Templates",     href: "/lab/templates",     emoji: "📚", hint: "Vet-specific" },
 ];
 
-const UNIVERSE_STATS: ReadonlyArray<{ label: string; value: string; sub: string }> = [
-  { label: "Contracts on Base Sepolia", value: "11", sub: "OpenZeppelin v5 + 79 Foundry tests" },
-  { label: "EAS schemas registered",    value: "3",  sub: "VetCard + Badge + Guestbook" },
-  { label: "Quest CIDs on IPFS",        value: "10", sub: "Pinata pinned · permanent metadata" },
-  { label: "No-code Lab tools",         value: "6",  sub: "Deploy assets in <30s" },
+const UNIVERSE_STATS: ReadonlyArray<{ label: string; value: number; sub: string }> = [
+  { label: "Contracts on Base Sepolia", value: 11, sub: "OpenZeppelin v5 + 79 Foundry tests" },
+  { label: "EAS schemas registered",    value: 3,  sub: "VetCard + Badge + Guestbook" },
+  { label: "Quest CIDs on IPFS",        value: 10, sub: "Pinata pinned · permanent metadata" },
+  { label: "No-code Lab tools",         value: 6,  sub: "Deploy assets in <30s" },
 ];
 
 // ─── Roadmap timeline (Mozi "Roadmap" pattern) ───────────────────────────
@@ -405,7 +406,7 @@ export default function LandingPage() {
                 style={{ animationDelay: "0.05s" }}
               >
                 <span className="block">Learn Web3.</span>
-                <span className="block gradient-text mt-1">Build Your Identity.</span>
+                <span className="block animated-gradient mt-1">Build Your Identity.</span>
               </h1>
 
               <p
@@ -733,8 +734,8 @@ export default function LandingPage() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {UNIVERSE_STATS.map((s) => (
                   <div key={s.label} className="text-center">
-                    <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--color-brand)]">
-                      {s.value}
+                    <p className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--color-brand)] tabular-nums">
+                      <NumberTicker value={s.value} duration={1400} />
                     </p>
                     <p className="text-xs font-semibold mt-1 text-[var(--color-text)]">
                       {s.label}
