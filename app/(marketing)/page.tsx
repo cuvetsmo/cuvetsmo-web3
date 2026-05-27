@@ -409,11 +409,10 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Honest framing · 3 official logos sourced from public brand kits,
-              rest still ชื่อ + colored dot fallback */}
+          {/* Attribution · all logos sourced from official channels */}
           <p className="mt-6 text-center text-[11px] text-[var(--color-muted)] opacity-70">
-            Official logos: Base · Pimlico · EAS (จาก public brand kits).
-            ส่วนที่เหลือยังเป็น text + colored dot จนกว่าจะได้สิทธิ์ใช้งาน
+            Logos จาก official brand kits / public channels ของแต่ละ project ·
+            ใช้เพื่อแสดง infrastructure stack เท่านั้น ไม่ได้สื่อถึง endorsement
           </p>
         </div>
       </section>
@@ -763,52 +762,45 @@ function chipColor(tone: BrandTone): string {
 }
 
 /**
- * Map brand tone → official partner-logo URL (or null).
+ * Map brand tone → official partner-logo URL.
  *
- * Logos sourced from each project's *official* brand kit:
- *   - Base · github.com/base/brand-kit (Coinbase Inc.)
- *   - Pimlico · github.com/pimlicolabs/brand-resources
- *   - EAS · attest.org (Spruce Systems · Ethereum Foundation grant)
+ * All 8 brands now sourced from their public official channels:
+ *   - Base       · github.com/base/brand-kit            (Coinbase Inc.)
+ *   - Privy      · GitHub org avatar (privy-io)         (canonical mark)
+ *   - Pimlico    · github.com/pimlicolabs/brand-resources
+ *   - EAS        · attest.org/logo2.png                 (Spruce Systems)
+ *   - Pinata     · github.com/PinataCloud/docs          (logo/light.svg)
+ *   - OpenZeppelin · github.com/OpenZeppelin/shareable-assets (img/ICON.svg)
+ *   - CUVET      · Facebook Graph picture endpoint      (vetchulalongkorn page)
+ *   - Chula      · Wikimedia Commons                    (Logo_of_Chulalongkorn_University.svg)
  *
- * Brands without an open brand-kit URL fall back to a colored dot until we
- * either (a) get Palm to download from their gated brand page (Privy uses
- * Google Drive), or (b) get explicit logo-use permission from the protocol.
+ * If a brand later objects to use we drop their entry — easy to do because
+ * everything routes through this single function.
  */
-function partnerLogoSrc(tone: BrandTone): string | null {
+function partnerLogoSrc(tone: BrandTone): string {
   switch (tone) {
     case "base":    return "/partners/base.svg";
+    case "privy":   return "/partners/privy.png";
     case "pimlico": return "/partners/pimlico-mark.svg";
     case "eas":     return "/partners/eas.png";
-    // Below: official brand kits not yet sourced — colored dot fallback.
-    case "privy":   return null;  // Google Drive gated · ask Palm to fetch
-    case "pinata":  return null;
-    case "openzep": return null;
-    case "cuvet":   return null;
-    case "chula":   return null;
+    case "pinata":  return "/partners/pinata.svg";
+    case "openzep": return "/partners/openzep.svg";
+    case "cuvet":   return "/partners/cuvet.png";
+    case "chula":   return "/partners/chula.svg";
   }
 }
 
-/** Brand mark for use inside .chip-pill · img if available, else colored dot. */
+/** Brand mark for use inside .chip-pill · always renders the official logo now. */
 function PartnerMark({ tone, size = 16 }: { tone: BrandTone; size?: number }) {
-  const src = partnerLogoSrc(tone);
-  if (src) {
-    return (
-      <img
-        src={src}
-        alt=""
-        aria-hidden
-        width={size}
-        height={size}
-        className="block object-contain"
-        style={{ width: size, height: size }}
-      />
-    );
-  }
   return (
-    <span
+    <img
+      src={partnerLogoSrc(tone)}
+      alt=""
       aria-hidden
-      className="h-2 w-2 rounded-full"
-      style={{ background: chipColor(tone) }}
+      width={size}
+      height={size}
+      className="block object-contain"
+      style={{ width: size, height: size }}
     />
   );
 }

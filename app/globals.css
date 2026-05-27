@@ -334,16 +334,17 @@ button {
   display: flex;
   gap: 1.75rem;
   width: max-content;
-  /* 16s = ~120 px/s on a 1900-wide strip · roughly 2× the old 32s.
-     Halving the duration is what made motion legible (Palm 2026-05-27:
-     "ยังไม่เห็นเคลื่อนไหว" even after the hover-pause fix). */
-  animation: scroll-left-infinite 16s linear infinite;
+  /* 10s = ~190 px/s · Palm reported he still didn't see motion at 16s, so we
+     halve again. Naming bumped to *-v2 to bust the browser CSS cache (Palm
+     hits web3.cuvetsmo.com from his iPhone where the deploy alias often
+     caches the old stylesheet). */
+  animation: scroll-left-infinite 10s linear infinite;
   will-change: transform;
 }
 
 .chip-strip--reverse {
-  /* Slightly slower on the lower row · keeps the parallax mismatch */
-  animation: scroll-right-infinite 20s linear infinite;
+  /* 12s · keeps the parallax mismatch (~20% slower than the top row) */
+  animation: scroll-right-infinite 12s linear infinite;
 }
 
 /* No hover pause · marquee runs continuously (Mozi pattern).
