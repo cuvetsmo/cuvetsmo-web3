@@ -10,6 +10,7 @@ import {
   QuestsScreen,
 } from "./_components/iphone-mockup";
 import { Reveal } from "./_components/reveal";
+import { MotionBeacon } from "./_components/motion-beacon";
 import {
   FeatureIllustration,
   type FeatureKey,
@@ -1058,6 +1059,10 @@ export default function LandingPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* Live diagnostic · proves to skeptical viewers that the marquee
+          animation is running. Dismissible for 24h via localStorage. */}
+      <MotionBeacon />
     </main>
   );
 }

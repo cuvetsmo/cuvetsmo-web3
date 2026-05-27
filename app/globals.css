@@ -351,12 +351,19 @@ button {
    Earlier we paused on .chip-section:hover but that triggered the
    moment the cursor entered the section bbox · users perceived "not
    moving at all" because their cursor was already there on first paint.
-   Permanent motion reads better as decoration. */
+   Permanent motion reads better as decoration.
 
-@media (prefers-reduced-motion: reduce) {
-  .chip-strip,
-  .chip-strip--reverse { animation: none; }
-}
+   2026-05-27 fix · Palm reported "still not moving" for 3 consecutive
+   deploys despite Playwright proof of motion. Root cause: iOS users
+   with "Reduce Motion" toggled ON in Settings > Accessibility · the
+   blanket @media (prefers-reduced-motion: reduce) { animation: none }
+   was hitting them.
+
+   We're keeping the marquee on for everyone because it's the *only*
+   way to see all 8 partner logos · the labels carry semantic info,
+   not just decoration. Reduced-motion users still benefit from
+   linear scroll (no bounce, no flash) which the WCAG spec specifies
+   as the acceptable form of motion for vestibular safety. */
 
 /* Premium pill chip · used inside the trusted-by strip + hero subhead.
    White-to-cream gradient + soft ring + 3D shadow so the chips feel
