@@ -23,6 +23,7 @@ import {
   type Quest,
 } from "@/lib/quests";
 import { cn, explorerUrl } from "@/lib/utils";
+import { fireConfetti } from "@/lib/confetti";
 
 const LS_KEY = "cuvetsmo:quests:completed:v1";
 
@@ -287,6 +288,8 @@ function QuestDetailModal({
           },
         });
         onComplete(quest);
+        // 🎉 celebrate the completion · no-op under reduce-motion
+        fireConfetti();
       } else {
         setState({
           phase: "error",

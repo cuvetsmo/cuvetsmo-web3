@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SbtMakerForm } from "./_form";
 import { LabModeSwitcher } from "@/components/lab-mode-switcher";
 import { SBT_FACTORY_SOURCE } from "../_lib/contract-sources";
+import { Reveal } from "@/app/(marketing)/_components/reveal";
 
 export const metadata: Metadata = {
   title: "SBT Maker",
@@ -11,19 +12,27 @@ export const metadata: Metadata = {
 
 export default function SbtMakerPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <header className="mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          🎖️ SBT Maker
-        </h2>
-        <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-          Soulbound Tokens คือ NFT ที่{" "}
-          <span className="font-semibold">โอนต่อไม่ได้</span> — เหมาะกับ
-          credential, สิทธิ์, record การเข้าร่วมที่ไม่ควรซื้อขายได้.
-          อัปโหลด CSV ที่อยู่ wallet เพื่อ bulk mint.
-        </p>
-      </header>
+    <main>
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+          <Reveal>
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-brand)] font-semibold mb-2">
+              The Lab — SBT Maker
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-2">
+              🎖️ SBT Maker
+            </h1>
+            <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed max-w-2xl">
+              Soulbound Tokens คือ NFT ที่{" "}
+              <span className="font-semibold">โอนต่อไม่ได้</span> — เหมาะกับ
+              credential · สิทธิ์ · record การเข้าร่วมที่ไม่ควรซื้อขายได้ ·
+              อัปโหลด CSV ที่อยู่ wallet เพื่อ bulk mint.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <UseCases />
 
       <LabModeSwitcher
@@ -35,6 +44,7 @@ export default function SbtMakerPage() {
       >
         <SbtMakerForm />
       </LabModeSwitcher>
+      </div>
     </main>
   );
 }

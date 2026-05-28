@@ -441,7 +441,7 @@ export default function LandingPage() {
               >
                 <Link
                   href="/learn/zero-to-hero"
-                  className="btn-brand text-center flex-1 sm:flex-initial"
+                  className="btn-brand btn-aurora text-center flex-1 sm:flex-initial"
                 >
                   ไม่เคยรู้จัก Web3? เริ่มที่นี่
                 </Link>

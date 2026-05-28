@@ -145,6 +145,47 @@ button {
   transform: translateY(1px);
 }
 
+/* Aurora CTA · opt-in glow halo for the single most important button on a
+   surface (hero primary). A soft brand-colored shadow that breathes via an
+   8s pulse. GPU-promoted · respects reduce-motion (halo stays static). */
+.btn-aurora {
+  position: relative;
+  isolation: isolate;
+  box-shadow:
+    0 0 0 0 color-mix(in srgb, var(--color-brand) 40%, transparent),
+    0 8px 24px -8px color-mix(in srgb, var(--color-brand) 55%, transparent);
+  will-change: box-shadow;
+  animation: btn-aurora-pulse 8s ease-in-out infinite;
+}
+
+@keyframes btn-aurora-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--color-brand) 35%, transparent),
+      0 8px 24px -8px color-mix(in srgb, var(--color-brand) 50%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px color-mix(in srgb, var(--color-brand) 0%, transparent),
+      0 12px 32px -8px color-mix(in srgb, var(--color-brand) 65%, transparent);
+  }
+}
+
+.btn-aurora:hover {
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--color-brand) 22%, transparent),
+    0 14px 36px -8px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-aurora {
+    animation: none;
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent),
+      0 8px 24px -8px color-mix(in srgb, var(--color-brand) 50%, transparent);
+  }
+}
+
 .btn-outline {
   background: transparent;
   color: var(--color-brand);

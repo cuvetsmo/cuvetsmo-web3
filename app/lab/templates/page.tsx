@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { TEMPLATES, readTemplateSource } from "./_lib/templates";
 import { TemplateCard } from "./_card";
+import { Reveal } from "@/app/(marketing)/_components/reveal";
 
 export const metadata: Metadata = {
   title: "Templates",
@@ -17,19 +18,27 @@ export default async function TemplatesPage() {
   );
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <header className="mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          📚 Templates
-        </h2>
-        <p className="text-[var(--color-muted)] text-sm leading-relaxed max-w-3xl">
-          Smart contract templates สำหรับใช้เป็น starting point — เปิดดู source
-          ในเบราว์เซอร์, กด fork ไปแก้ใน Remix, หรือ deploy as-is (เร็วๆ นี้
-          ใน Wave 3). โค้ดทั้งหมดเป็น educational ยังไม่ audit — อย่าใช้กับ
-          ของจริงที่มีมูลค่า.
-        </p>
-      </header>
+    <main>
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+          <Reveal>
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-brand)] font-semibold mb-2">
+              The Lab — Template Library
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-2">
+              📚 Templates
+            </h1>
+            <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed max-w-3xl">
+              Smart contract templates สำหรับใช้เป็น starting point — เปิดดู source
+              ในเบราว์เซอร์ · กด fork ไปแก้ใน Remix · หรือ deploy as-is (เร็วๆ นี้
+              ใน Wave 3) · โค้ดทั้งหมดเป็น educational ยังไม่ audit — อย่าใช้กับ
+              ของจริงที่มีมูลค่า.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {withSource.map(({ meta, source }) => (
           <TemplateCard key={meta.slug} meta={meta} source={source} />
@@ -51,6 +60,7 @@ export default async function TemplatesPage() {
             เปิด safe.global ↗
           </span>
         </a>
+      </div>
       </div>
     </main>
   );

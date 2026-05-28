@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SwapSimulator } from "./_swap-simulator";
 import { IlSimulator } from "./_il-simulator";
 import Link from "next/link";
+import { Reveal } from "@/app/(marketing)/_components/reveal";
 
 export const metadata: Metadata = {
   title: "Swap Sandbox — เรียนรู้ DeFi แบบไม่เสี่ยง",
@@ -11,20 +12,25 @@ export const metadata: Metadata = {
 
 export default function SwapPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <header className="mb-6">
-        <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-brand-light)] text-[var(--color-brand)] text-[11px] font-semibold uppercase tracking-wider mb-3">
-          Play — Swap & Stake Demo
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
-          Swap Sandbox — เรียนรู้ DeFi
-        </h1>
-        <p className="text-[var(--color-muted)] leading-relaxed">
-          เข้าใจ AMM (Automated Market Maker) + impermanent loss
-          แบบ interactive ก่อนแตะ DeFi จริง.
-        </p>
-      </header>
+    <main>
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+          <Reveal>
+            <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-brand-light)] text-[var(--color-brand)] text-[11px] font-semibold uppercase tracking-wider mb-3">
+              Play — Swap & Stake Demo
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-2">
+              Swap Sandbox — เรียนรู้ DeFi
+            </h1>
+            <p className="text-[var(--color-muted)] leading-relaxed max-w-2xl">
+              เข้าใจ AMM (Automated Market Maker) + impermanent loss
+              แบบ interactive ก่อนแตะ DeFi จริง.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="rounded-xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 p-4 mb-8">
         <p className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
           Teaching demo only — ไม่มีการแลกจริง
@@ -74,6 +80,7 @@ export default function SwapPage() {
           ดู Quest #8 →
         </Link>
       </section>
+      </div>
     </main>
   );
 }

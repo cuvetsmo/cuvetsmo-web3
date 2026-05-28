@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { TokenForgeForm } from "./_form";
 import { LabModeSwitcher } from "@/components/lab-mode-switcher";
 import { TOKEN_FACTORY_SOURCE } from "../_lib/contract-sources";
+import { Reveal } from "@/app/(marketing)/_components/reveal";
 
 export const metadata: Metadata = {
   title: "Token Forge",
@@ -11,18 +12,26 @@ export const metadata: Metadata = {
 
 export default function TokenForgePage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <header className="mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          🪙 Token Forge
-        </h2>
-        <p className="text-[var(--color-muted)] text-sm leading-relaxed">
-          สร้าง ERC-20 token ของคุณเอง — ใส่ชื่อ, symbol, supply, กด deploy.
-          ได้ contract address ที่ verify ได้บน BaseScan.
-          เหมาะกับชมรม, meme coin, governance token, reward point.
-        </p>
-      </header>
+    <main>
+      <section className="relative overflow-hidden cloud-bg">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+          <Reveal>
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-brand)] font-semibold mb-2">
+              The Lab — Token Forge
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-2">
+              🪙 Token Forge
+            </h1>
+            <p className="text-[var(--color-muted)] text-sm sm:text-base leading-relaxed max-w-2xl">
+              สร้าง ERC-20 token ของคุณเอง — ใส่ชื่อ · symbol · supply · กด deploy ·
+              ได้ contract address ที่ verify ได้บน BaseScan ·
+              เหมาะกับชมรม · meme coin · governance token · reward point.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <LabModeSwitcher
         sourceTitle="TokenFactory.sol"
         sourceCode={TOKEN_FACTORY_SOURCE}
@@ -44,6 +53,7 @@ export default function TokenForgePage() {
           เอาไปอ้างเป็นผลงาน Web3 — contract verify ได้ public on BaseScan
         </Tip>
       </section>
+      </div>
     </main>
   );
 }
