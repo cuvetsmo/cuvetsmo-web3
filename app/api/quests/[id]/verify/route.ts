@@ -17,7 +17,12 @@ import {
 } from "viem/account-abstraction";
 import { createPimlicoClient } from "permissionless/clients/pimlico";
 
-import { getQuestById, metadataUriForQuest } from "@/lib/quests";
+import {
+  getQuestById,
+  metadataUriForQuest,
+  questSignChallenge,
+  SIGNATURE_VERIFIED_KINDS,
+} from "@/lib/quests";
 import {
   CONTRACTS,
   BADGE_REGISTRY_ABI,
@@ -48,6 +53,9 @@ import { encodeBadge, SCHEMAS } from "@/lib/eas";
 interface VerifyBody {
   userAddress?: string;
   txHash?: string;
+  /** Wallet signature over questSignChallenge(id, userAddress) — required for
+   *  sign / vote / connect / auto kinds (no on-chain tx artifact). */
+  signature?: string;
 }
 
 const rpcUrl =
@@ -198,10 +206,60 @@ export async function POST(
         { status: 500 },
       );
     }
+  } else if (SIGNATURE_VERIFIED_KINDS.has(quest.kind)) {
+    // sign / vote / connect / auto — no on-chain tx to inspect, so the user
+    // must prove they ACTIVELY completed the quest by signing a quest-specific
+    // challenge with their wallet. The server verifies the signature recovers
+    // to userAddress (EOA via ECDSA, or smart account via ERC-1271). This
+    // closes the bug where these quests passed with zero user action.
+    const signature = body.signature?.toString().trim();
+    if (!signature || !/^0x[a-fA-F0-9]+$/.test(signature)) {
+      return NextResponse.json(
+        {
+          error:
+            "This quest requires a wallet signature. Sign the challenge in your wallet, then verify.",
+        },
+        { status: 400 },
+      );
+    }
+
+    try {
+      const pub = createPublicClient({
+        chain: baseSepolia,
+        transport: http(rpcUrl),
+      });
+      const challenge = questSignChallenge(questId, userAddress);
+      // verifyMessage handles EOA (ECDSA), smart-contract (ERC-1271), and
+      // counterfactual (ERC-6492) signatures via the universal validator.
+      const ok = await pub.verifyMessage({
+        address: userAddress as Address,
+        message: challenge,
+        signature: signature as Hex,
+      });
+      if (!ok) {
+        return NextResponse.json(
+          {
+            error:
+              "Signature does not match your wallet for this quest. Re-sign and try again.",
+          },
+          { status: 422 },
+        );
+      }
+      verified = true;
+      detail = `${quest.kind} signature verified against ${userAddress}.`;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return NextResponse.json(
+        { error: "Signature verification failed", message },
+        { status: 500 },
+      );
+    }
   } else {
-    // sign / vote / auto / connect — Day 1 trusts the client signal.
-    verified = true;
-    detail = `${quest.kind} verification stub (Day 1).`;
+    // Unknown / future kind — fail closed rather than hand out a free badge.
+    return NextResponse.json(
+      { error: `Quest kind '${quest.kind}' has no verifier` },
+      { status: 422 },
+    );
   }
 
   if (!verified) {

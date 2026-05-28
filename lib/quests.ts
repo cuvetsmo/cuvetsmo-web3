@@ -218,6 +218,34 @@ export function getQuestById(id: number): Quest | undefined {
 export const TOTAL_XP_AVAILABLE = QUESTS.reduce((sum, q) => sum + q.xp, 0);
 
 /**
+ * Quest kinds that have NO on-chain transaction artifact to verify
+ * (signing a message, casting an off-chain vote, proving wallet control,
+ * receiving an airdrop). For these, the user must produce a wallet
+ * signature over `questSignChallenge(id, address)` and the server verifies
+ * it cryptographically. Without this, the verify route blindly trusted the
+ * client and handed out XP + badge attestations for free (bug · 2026-05-27).
+ */
+export const SIGNATURE_VERIFIED_KINDS: ReadonlySet<QuestKind> = new Set<
+  QuestKind
+>(["sign", "vote", "connect", "auto"]);
+
+/**
+ * Deterministic challenge string the user signs to prove they actively
+ * completed a signature-verified quest. MUST be byte-identical on the
+ * client (personal_sign) and server (verifyMessage), so keep it pure ASCII
+ * and address-lowercased. Quest id is embedded so a signature for one quest
+ * can't be replayed to pass another.
+ */
+export function questSignChallenge(questId: number, address: string): string {
+  return [
+    "CUVETSMO Web3 — Quest Verification",
+    `Quest: #${questId}`,
+    `Wallet: ${address.toLowerCase()}`,
+    "I confirm I completed this quest myself on web3.cuvetsmo.com",
+  ].join("\n");
+}
+
+/**
  * IPFS CIDs for per-quest badge metadata JSON (pinned via Pinata).
  *
  * Each JSON follows the ERC-721 metadata standard with extras:

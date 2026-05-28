@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 // useEffect still used by the modal for ESC keybinding below.
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivy, useWallets, type ConnectedWallet } from "@privy-io/react-auth";
 
 import {
   Card,
@@ -20,6 +20,8 @@ import {
   TIER_LABEL,
   TIER_ORDER,
   TOTAL_XP_AVAILABLE,
+  SIGNATURE_VERIFIED_KINDS,
+  questSignChallenge,
   type Quest,
 } from "@/lib/quests";
 import { cn, explorerUrl } from "@/lib/utils";
@@ -131,6 +133,7 @@ export function QuestGrid() {
           authenticated={authenticated}
           login={login}
           userAddress={address}
+          wallet={embedded}
         />
       )}
     </div>
@@ -241,6 +244,7 @@ function QuestDetailModal({
   authenticated,
   login,
   userAddress,
+  wallet,
 }: {
   quest: Quest;
   onClose: () => void;
@@ -249,6 +253,7 @@ function QuestDetailModal({
   authenticated: boolean;
   login: () => void;
   userAddress: string | undefined;
+  wallet: ConnectedWallet | undefined;
 }) {
   const [txHash, setTxHash] = useState("");
   const [state, setState] = useState<VerifyState>({ phase: "idle" });
@@ -259,6 +264,9 @@ function QuestDetailModal({
     quest.kind === "approve" ||
     quest.kind === "read";
 
+  // No on-chain artifact → must prove completion with a wallet signature.
+  const needsSignature = SIGNATURE_VERIFIED_KINDS.has(quest.kind);
+
   async function verify() {
     if (!userAddress) {
       login();
@@ -266,12 +274,41 @@ function QuestDetailModal({
     }
     setState({ phase: "loading" });
     try {
+      // Signature-verified kinds (sign/vote/connect/auto) have no on-chain
+      // tx — the user must actively sign a quest-specific challenge so the
+      // server can verify wallet ownership + intent. This is the action.
+      let signature: string | undefined;
+      if (needsSignature) {
+        if (!wallet) {
+          setState({
+            phase: "error",
+            message: "Wallet not ready — reconnect and try again.",
+          });
+          return;
+        }
+        try {
+          const provider = await wallet.getEthereumProvider();
+          const challenge = questSignChallenge(quest.id, userAddress);
+          signature = (await provider.request({
+            method: "personal_sign",
+            params: [challenge, userAddress],
+          })) as string;
+        } catch {
+          setState({
+            phase: "error",
+            message: "คุณต้องเซ็นข้อความใน wallet เพื่อยืนยัน quest นี้.",
+          });
+          return;
+        }
+      }
+
       const res = await fetch(`/api/quests/${quest.id}/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userAddress,
           txHash: needsTx ? txHash : undefined,
+          signature,
         }),
       });
       const data = await res.json();
@@ -448,7 +485,11 @@ function QuestDetailModal({
               </Button>
             ) : (
               <Button onClick={verify} disabled={state.phase === "loading"}>
-                {state.phase === "loading" ? "Verifying..." : "Verify quest"}
+                {state.phase === "loading"
+                  ? "Verifying..."
+                  : needsSignature
+                    ? "เซ็น + Verify"
+                    : "Verify quest"}
               </Button>
             )}
             <Button variant="ghost" onClick={onClose}>
