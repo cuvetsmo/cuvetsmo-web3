@@ -39,7 +39,6 @@ import {
 // where the value crosses the boundary (toCoinbaseSmartAccount, createBundlerClient).
 type LocalPublicClient = ReturnType<typeof createPublicClient>;
 import { baseSepolia } from "viem/chains";
-import { toAccount } from "viem/accounts";
 import {
   toCoinbaseSmartAccount,
   createBundlerClient,
@@ -87,45 +86,48 @@ function getPublicClient(): LocalPublicClient {
 // ─────────────────────────────────────────────────────────────────────────
 
 /**
- * Build a viem `Account` that delegates signing to a Privy embedded wallet
- * via its EIP-1193 provider.
+ * Build the Coinbase Smart Account `owner` from a Privy embedded wallet.
  *
- * Used as the `owner` of the Coinbase Smart Account.
+ * ⚠️ Must expose a RAW `sign({ hash })`. viem 2.47's `toCoinbaseSmartAccount`
+ * signs UserOperations via `signUserOperation → sign({ hash, owner })` which
+ * calls `owner.sign({ hash })` directly (NOT signMessage / signTypedData).
+ * A `toAccount()` wrapper only provides signMessage/signTypedData and throws
+ * "`owner` does not support raw sign." during a gasless claim.
+ *
+ * Privy embedded wallets expose raw secp256k1 hash signing via the
+ * `secp256k1_sign` provider method. This mirrors Privy's own smart-wallet
+ * integration (`@privy-io/js-sdk-core` · smart-wallets.js · coinbase_smart_wallet
+ * branch), which builds the owner as exactly `{ type, source, address, sign }`.
+ *
+ * signMessage / signTypedData are intentionally omitted: viem's internal
+ * `signTypedData` helper falls through to `sign({ hash })` when the owner has
+ * no `signTypedData`, so the ERC-1271 replay-safe-hash path also resolves to
+ * `secp256k1_sign` over the same digest. One signing primitive, every path.
  */
-async function makeOwnerFromWallet(wallet: ConnectedWallet) {
+type CoinbaseOwner = {
+  type: "local";
+  source: string;
+  address: Address;
+  sign: (params: { hash: Hex }) => Promise<Hex>;
+};
+
+async function makeOwnerFromWallet(
+  wallet: ConnectedWallet,
+): Promise<CoinbaseOwner> {
   const provider = await wallet.getEthereumProvider();
   const ownerAddress = wallet.address as Address;
 
-  return toAccount({
+  return {
+    type: "local",
+    source: "privy",
     address: ownerAddress,
-    async signMessage({ message }) {
-      // viem passes message as `{ raw }` (hex bytes) or string. The provider
-      // expects either form; pass through as-is.
-      const payload =
-        typeof message === "string"
-          ? message
-          : (message.raw as Hex);
-      const sig = (await provider.request({
-        method: "personal_sign",
-        params: [payload, ownerAddress],
+    async sign({ hash }) {
+      return (await provider.request({
+        method: "secp256k1_sign",
+        params: [hash],
       })) as Hex;
-      return sig;
     },
-    async signTransaction() {
-      // Smart accounts never sign raw transactions through the owner —
-      // they only sign UserOp digests via signMessage / signTypedData.
-      throw new Error(
-        "signTransaction is not used for smart-account owners",
-      );
-    },
-    async signTypedData(typedData) {
-      const sig = (await provider.request({
-        method: "eth_signTypedData_v4",
-        params: [ownerAddress, JSON.stringify(typedData)],
-      })) as Hex;
-      return sig;
-    },
-  });
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -152,7 +154,11 @@ export async function getSmartAccountFor(
     // types. Cast through `any` to bridge; runtime behaviour is unaffected.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     client: getPublicClient() as any,
-    owners: [owner],
+    // `owner` is the minimal raw-sign shape Privy's own SDK uses for Coinbase
+    // Smart Wallet (type/source/address/sign). viem's owners param wants a
+    // full LocalAccount; cast — only `sign` is exercised for UserOps.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    owners: [owner as any],
     version: "1.1",
   });
   _smartAccountCache.set(wallet.address.toLowerCase(), sa);
