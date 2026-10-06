@@ -1,0 +1,11 @@
+# Reviewed Polls storage release candidate — 2026-10-06
+
+Base production/canonical main `40c748603f63fd6cf2033f24bdd8269331d20584`. Root approved exactly one runtime file from manifest `426f68c3184708bb7b66367dcb91026b3e723989c9250a1312fb130ebecf7db5`; raw runtime SHA256 `632ee8c028f01c2bf94738282826803d6d61b8f558fe52f88f8b47beeaa31c99`.
+
+Polls now validates render/update shape, retains malformed original data, keeps saved empty arrays empty and offers manual original download/retry without auto-overwrite/clear. Missing storage examples are labelled. Explicit create persists and updates the UI; failed persistence keeps the form/draft and old data. Signing domain/types/payload/account eligibility are unchanged.
+
+Existing focused check compiles released/candidate actual React with native Chromium localStorage and local SDK eligibility mocks. Twelve before/after/create/failure observations pass, including byte-exact download and read retry; no actual wallet/account/signing/RPC. Frozen result is `focused-check.json`; input identities are `frozen-source.json`. Runnable regression artifact is `work/wave2-candidate/verify-poll-storage.mjs`: after integration only input wiring changed to original `git show40c7486` and current runtime. Existing assertions/SDK boundaries are unchanged; the already-passed12-case proof is retained without rerunning the matrix. This receipt does not imply a production account or cryptographic check.
+
+Target-only TypeScript passed before integration; integrated runtime bytes exactly equal the reviewed source. QA reused installed dependencies, verified215 source files after canonical LF normalization (six raw line-ending-only differences recorded locally), and received only changed Polls. One normal full Next16.2.6 Turbopack build passed compile, TypeScript and33-route prerender; `build-receipt.json`. No repeated matrix, new framework/dependency/configuration or deletion.
+
+Publication uses exact paths and a normal guarded fast-forward from40c7486. This project has no Git auto-deploy; parent owns explicit committed-source deployment and subsequent public guest/render smoke. Existing full-repo lint diagnostics remain separate and non-green. No deploy was performed by this lane.

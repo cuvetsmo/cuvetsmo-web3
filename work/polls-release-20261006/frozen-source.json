@@ -1,0 +1,37 @@
+{
+  "approved_manifest": "426f68c3184708bb7b66367dcb91026b3e723989c9250a1312fb130ebecf7db5",
+  "source": "app/play/board/_polls.tsx",
+  "runtime_sha256": "632ee8c028f01c2bf94738282826803d6d61b8f558fe52f88f8b47beeaa31c99",
+  "runtime_lf_sha256": "6c7afbb781092cbcd02997d3a727d32fac5e9ced02723a68739cc0e1752b2629",
+  "frozen_inputs": [
+    {
+      "file": "app/play/board/_polls.tsx",
+      "bytes": 17222,
+      "sha256": "632ee8c028f01c2bf94738282826803d6d61b8f558fe52f88f8b47beeaa31c99"
+    },
+    {
+      "file": "verify-poll-storage.mjs",
+      "bytes": 8355,
+      "sha256": "d4c17765e36c7fce07d5ac4cb5c288e2b6e4bd2792c9afce9461063caaa17646"
+    },
+    {
+      "file": "poll-storage-check.json",
+      "bytes": 3922,
+      "sha256": "4d2967392604c98a437dfdfc1adc81014effc018d216f36a10db3c23550c2136"
+    },
+    {
+      "file": "tsconfig.json",
+      "bytes": 177,
+      "sha256": "02a245b3bf49d8abe3decfd5638aa3efa65adf51c1661575da18d043a7cb31d2"
+    }
+  ],
+  "target_typecheck_passed": true,
+  "runnable_check": "work/wave2-candidate/verify-poll-storage.mjs",
+  "runnable_check_sha256": "04b8777bb07b12c1ac71937216b8db13dfbf4292fd1596369ef8acdfb6d90a25",
+  "wiring_only": {
+    "before": "git show40c748603f63fd6cf2033f24bdd8269331d20584:app/play/board/_polls.tsx",
+    "after": "app/play/board/_polls.tsx",
+    "assertions_sdk_unchanged": true,
+    "proof_repeated": false
+  }
+}

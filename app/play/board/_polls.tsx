@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount, useSignTypedData } from "wagmi";
 import { baseSepolia } from "wagmi/chains";
@@ -30,6 +30,9 @@ interface Poll {
 }
 
 const STORAGE_KEY = "cuvetsmo:play:polls:v1";
+const STORAGE_EVENT = "cuvetsmo:play:polls:changed";
+const UNREADABLE_STORAGE = "\u0000";
+const STORAGE_NOTICE = "ยังอ่านข้อมูลโพลในเครื่องไม่ได้ จึงยังไม่บันทึกทับข้อมูลเดิม";
 
 const SEED_POLLS: Poll[] = [
   {
@@ -75,25 +78,36 @@ const POLL_TYPES = {
   ],
 } as const;
 
-function loadPolls(): Poll[] {
-  if (typeof window === "undefined") return SEED_POLLS;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return SEED_POLLS;
-    const parsed = JSON.parse(raw) as Poll[];
-    if (!Array.isArray(parsed) || parsed.length === 0) return SEED_POLLS;
-    return parsed;
-  } catch {
-    return SEED_POLLS;
-  }
+function readPollSnapshot(): string | null {
+  try { return window.localStorage.getItem(STORAGE_KEY); }
+  catch { return UNREADABLE_STORAGE; }
 }
 
-function savePolls(polls: Poll[]) {
-  if (typeof window === "undefined") return;
+function subscribePollSnapshot(notify: () => void) {
+  const storage = (event: StorageEvent) => { if (event.key === STORAGE_KEY || event.key === null) notify(); };
+  window.addEventListener("storage", storage);
+  window.addEventListener(STORAGE_EVENT, notify);
+  return () => { window.removeEventListener("storage", storage); window.removeEventListener(STORAGE_EVENT, notify); };
+}
+const serverPollSnapshot = () => null;
+const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
+const finite = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
+function isPoll(value: unknown): value is Poll {
+  return object(value) && typeof value.id === "string" && typeof value.question === "string" &&
+    typeof value.createdBy === "string" && finite(value.createdAt) &&
+    Array.isArray(value.options) && value.options.length > 0 && value.options.every(option =>
+      object(option) && typeof option.id === "string" && typeof option.label === "string" && finite(option.votes) && option.votes >= 0) &&
+    Array.isArray(value.votes) && value.votes.every(vote => object(vote) && typeof vote.voter === "string" &&
+      typeof vote.optionId === "string" && typeof vote.signature === "string" && finite(vote.signedAt));
+}
+function loadPolls(raw: string | null): { polls: Poll[]; readable: boolean } {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(polls));
+    if (raw === null) return { polls: SEED_POLLS, readable: true };
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed) || !parsed.every(isPoll)) throw new Error("Invalid saved polls");
+    return { polls: parsed, readable: true };
   } catch {
-    // best-effort
+    return { polls: [], readable: false };
   }
 }
 
@@ -102,22 +116,36 @@ export function Polls() {
   const { address: walletAddress } = useAccount();
   const { signTypedDataAsync } = useSignTypedData();
 
-  const [polls, setPolls] = useState<Poll[]>(() =>
-    typeof window === "undefined" ? SEED_POLLS : loadPolls(),
-  );
+  const snapshot = useSyncExternalStore(subscribePollSnapshot, readPollSnapshot, serverPollSnapshot);
+  const saved = useMemo(() => loadPolls(snapshot), [snapshot]);
+  const polls = saved.polls;
   const [showCreate, setShowCreate] = useState(false);
   const [signingId, setSigningId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setPolls(loadPolls());
-  }, []);
+  function setPolls(update: (previous: Poll[]) => Poll[]): boolean {
+    const latest = loadPolls(readPollSnapshot());
+    if (!latest.readable) { setError(STORAGE_NOTICE); return false; }
+    try {
+      const next = update(latest.polls);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new Event(STORAGE_EVENT));
+      return true;
+    } catch { setError("ยังบันทึกโพลไม่ได้ ข้อมูลเดิมยังอยู่"); return false; }
+  }
 
-  useEffect(() => {
-    savePolls(polls);
-  }, [polls]);
+  function downloadOriginal() {
+    if (snapshot === null || snapshot === UNREADABLE_STORAGE) return;
+    const url = URL.createObjectURL(new Blob([snapshot], { type: "text/plain;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "web3-polls-original.txt";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
 
   async function castVote(pollId: string, optionId: string) {
+    if (!saved.readable) { setError(STORAGE_NOTICE); return; }
     if (!walletAddress) return;
     if (!authenticated) {
       login();
@@ -176,8 +204,7 @@ export function Polls() {
   }
 
   function addPoll(poll: Poll) {
-    setPolls((prev) => [poll, ...prev]);
-    setShowCreate(false);
+    if (setPolls((prev) => [poll, ...prev])) setShowCreate(false);
   }
 
   if (!ready) {
@@ -195,6 +222,7 @@ export function Polls() {
         </p>
         <button
           type="button"
+          disabled={!saved.readable}
           onClick={() => {
             if (!authenticated) {
               login();
@@ -222,6 +250,16 @@ export function Polls() {
         </p>
       )}
 
+      {!saved.readable && <div className="space-y-2">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">{STORAGE_NOTICE}</p>
+        <div className="flex flex-wrap gap-2">
+          {snapshot !== null && snapshot !== UNREADABLE_STORAGE && <button type="button" className="btn-outline text-sm" onClick={downloadOriginal}>ดาวน์โหลดข้อมูลเดิม</button>}
+          <button type="button" className="btn-outline text-sm" onClick={() => window.dispatchEvent(new Event(STORAGE_EVENT))}>ลองอ่านใหม่</button>
+        </div>
+      </div>}
+      {snapshot === null && <p className="text-xs text-[var(--color-muted)]">โพลตัวอย่าง — ยังไม่มีข้อมูลบันทึกในเครื่องนี้</p>}
+      {saved.readable && snapshot !== null && polls.length === 0 && <p className="text-sm text-[var(--color-muted)]">ยังไม่มีโพลในเครื่องนี้</p>}
+
       <ul className="space-y-4">
         {polls.map((poll) => (
           <li key={poll.id}>
@@ -232,6 +270,7 @@ export function Polls() {
               busyKey={signingId}
               onVote={castVote}
               onLogin={login}
+              storageReadable={saved.readable}
             />
           </li>
         ))}
@@ -247,6 +286,7 @@ function PollCard({
   busyKey,
   onVote,
   onLogin,
+  storageReadable,
 }: {
   poll: Poll;
   walletAddress: Address | undefined;
@@ -254,6 +294,7 @@ function PollCard({
   busyKey: string | null;
   onVote: (pollId: string, optionId: string) => void;
   onLogin: () => void;
+  storageReadable: boolean;
 }) {
   const totalVotes = useMemo(
     () => poll.options.reduce((sum, o) => sum + o.votes, 0),
@@ -294,7 +335,7 @@ function PollCard({
                   if (!authenticated) onLogin();
                   else onVote(poll.id, option.id);
                 }}
-                disabled={busy}
+                disabled={busy || !storageReadable}
                 className={`relative w-full text-left rounded-lg border transition-colors overflow-hidden ${
                   isMine
                     ? "border-[var(--color-brand)] bg-[var(--color-brand-light)]/40"
