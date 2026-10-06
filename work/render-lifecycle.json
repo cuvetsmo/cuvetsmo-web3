@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-06T13:59:55.083Z",
+  "receipts": [
+    {
+      "candidate": "released-before",
+      "normal_resolution": true,
+      "switch_hides_old_smart_account": false,
+      "late_prior_resolution_hidden": false,
+      "resolution_failure_settles": true,
+      "disconnect_hides_resolution": true,
+      "ticker_value_updates": false,
+      "ticker_raf_started": true,
+      "ticker_cleanup": false,
+      "ssr_placeholder": true,
+      "boundary": "actual hook/ticker + native Chromium/React; SDK/address resolver mocked, no real wallet/RPC/signing"
+    },
+    {
+      "candidate": "fixed",
+      "normal_resolution": true,
+      "switch_hides_old_smart_account": true,
+      "late_prior_resolution_hidden": true,
+      "resolution_failure_settles": true,
+      "disconnect_hides_resolution": true,
+      "ticker_value_updates": true,
+      "ticker_raf_started": true,
+      "ticker_cleanup": true,
+      "ssr_placeholder": true,
+      "boundary": "actual hook/ticker + native Chromium/React; SDK/address resolver mocked, no real wallet/RPC/signing"
+    }
+  ]
+}

@@ -94,7 +94,7 @@ export function handleBadgeMinted(event: BadgeMintedEvent): void {
 
 export function handleBadgeMinterChanged(event: BadgeMinterChangedEvent): void {
   const badgeId = event.params.badgeId.toString();
-  let badge = Badge.load(badgeId);
+  const badge = Badge.load(badgeId);
   if (badge == null) {
     log.warning("BadgeMinterChanged for undefined badge {}", [badgeId]);
     return;

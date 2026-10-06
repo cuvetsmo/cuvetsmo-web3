@@ -180,7 +180,7 @@ function InspectView({
         </pre>
       </div>
       <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-        Comment ที่ขึ้นต้นด้วย <code className="font-mono">// 🇹🇭</code> คือคำอธิบายภาษาไทย
+        Comment ที่ขึ้นต้นด้วย <code className="font-mono">{"// 🇹🇭"}</code> คือคำอธิบายภาษาไทย
         เพิ่มเฉพาะใน Inspect mode เพื่อช่วยเข้าใจ. Source code จริงไม่มี comment เหล่านี้.
       </p>
     </div>

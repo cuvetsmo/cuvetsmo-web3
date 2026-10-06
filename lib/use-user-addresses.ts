@@ -42,37 +42,37 @@ export function useUserAddresses(): UserAddresses {
   const embedded = wallets.find((w) => w.walletClientType === "privy");
   const eoa = embedded?.address as Address | undefined;
 
-  const [smartAccount, setSmartAccount] = useState<Address | undefined>();
-  const [smartAccountResolved, setSmartAccountResolved] = useState(false);
+  const [resolution, setResolution] = useState<{
+    wallet: NonNullable<typeof embedded>;
+    eoa: Address | undefined;
+    smartAccount: Address | undefined;
+  }>();
+  const sponsorshipReady = !!embedded && aaSponsorshipReady();
 
   useEffect(() => {
-    if (!embedded || !aaSponsorshipReady()) {
-      setSmartAccount(undefined);
-      setSmartAccountResolved(false);
-      return;
-    }
+    if (!embedded || !sponsorshipReady) return;
     let cancelled = false;
-    setSmartAccountResolved(false);
     getSmartAccountAddressFor(embedded)
       .then((addr) => {
         if (cancelled) return;
-        setSmartAccount(addr);
-        setSmartAccountResolved(true);
+        setResolution({ wallet: embedded, eoa, smartAccount: addr });
       })
       .catch(() => {
         if (cancelled) return;
-        setSmartAccount(undefined);
-        setSmartAccountResolved(true);
+        setResolution({ wallet: embedded, eoa, smartAccount: undefined });
       });
     return () => {
       cancelled = true;
     };
-  }, [embedded]);
+  }, [embedded, eoa, sponsorshipReady]);
+
+  const currentResolution = sponsorshipReady && resolution?.wallet === embedded && resolution.eoa === eoa
+    ? resolution : undefined;
 
   return {
     eoa,
-    smartAccount,
+    smartAccount: currentResolution?.smartAccount,
     ready: !!eoa,
-    smartAccountResolved,
+    smartAccountResolved: !!currentResolution,
   };
 }

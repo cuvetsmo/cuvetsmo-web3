@@ -16,7 +16,16 @@
  *   <NumberTicker value={1850} formatter={(n) => `$${n}`} duration={2000} />
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+const readReducedMotion = () => window.matchMedia?.(REDUCED_MOTION).matches ?? false;
+const serverReducedMotion = () => false;
+function subscribeReducedMotion(notify: () => void) {
+  const media = window.matchMedia?.(REDUCED_MOTION);
+  media?.addEventListener("change", notify);
+  return () => media?.removeEventListener("change", notify);
+}
 
 export function NumberTicker({
   value,
@@ -38,47 +47,46 @@ export function NumberTicker({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(0);
-  const [done, setDone] = useState(false);
+  const reducedMotion = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, serverReducedMotion);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
-    // Respect reduce-motion · jump to final value
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setDisplay(value);
-      setDone(true);
-      return;
-    }
+    // The external media snapshot derives the static value without an effect update.
+    if (reducedMotion) return;
+
+    let started = false;
+    let cancelled = false;
+    let frame = 0;
 
     const animate = () => {
+      if (started || cancelled) return;
+      started = true;
       const start = performance.now();
       const tick = (now: number) => {
+        if (cancelled) return;
         const elapsed = now - start;
         const t = Math.min(1, elapsed / duration);
         // easeOutCubic
         const eased = 1 - Math.pow(1 - t, 3);
         setDisplay(Math.round(value * eased));
-        if (t < 1) requestAnimationFrame(tick);
+        if (t < 1) frame = window.requestAnimationFrame(tick);
         else {
           setDisplay(value);
-          setDone(true);
         }
       };
-      requestAnimationFrame(tick);
+      frame = window.requestAnimationFrame(tick);
     };
 
     if (startOnMount) {
       animate();
-      return;
+      return () => { cancelled = true; window.cancelAnimationFrame(frame); };
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !done) {
+        if (entry.isIntersecting) {
           animate();
           observer.disconnect();
         }
@@ -89,7 +97,7 @@ export function NumberTicker({
 
     // Fallback · animate after 3s regardless (same defensive pattern as Reveal)
     const fallback = window.setTimeout(() => {
-      if (!done) {
+      if (!started) {
         animate();
         observer.disconnect();
       }
@@ -98,12 +106,14 @@ export function NumberTicker({
     return () => {
       observer.disconnect();
       window.clearTimeout(fallback);
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
     };
-  }, [value, duration, startOnMount, done]);
+  }, [value, duration, startOnMount, reducedMotion]);
 
   return (
     <span ref={ref} className={className}>
-      {formatter(display)}
+      {formatter(reducedMotion ? value : display)}
     </span>
   );
 }

@@ -6,8 +6,9 @@
  * Writes to ../../lib/contracts.ts (atomic, full rewrite).
  */
 
-const fs = require("fs");
-const path = require("path");
+async function extractAbis() {
+const fs = await import("node:fs");
+const path = await import("node:path");
 
 const CONTRACTS_ROOT = path.resolve(__dirname, "..");
 const OUT_DIR = path.join(CONTRACTS_ROOT, "out");
@@ -52,10 +53,6 @@ const CONST_NAMES = {
 function toConst(name) {
   if (!CONST_NAMES[name]) throw new Error(`No CONST_NAME mapping for ${name}`);
   return CONST_NAMES[name];
-}
-
-function envName(name) {
-  return `NEXT_PUBLIC_${toConst(name)}_ADDRESS`;
 }
 
 const abis = Object.fromEntries(NAMES.map((n) => [n, readAbi(n)]));
@@ -151,3 +148,9 @@ fs.writeFileSync(TARGET_FILE, header + sections + footer, "utf8");
 console.log(`Wrote ${TARGET_FILE}`);
 console.log(`Contracts: ${NAMES.length}`);
 console.log(`Total bytes: ${(header + sections + footer).length}`);
+}
+
+extractAbis().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
