@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-10-06T17:31:14.752Z",
+  "base": "f51e1544f717705aace12f35d7bfd6a209d33467",
+  "before": {
+    "source": "released",
+    "late_history_keeps_both_live_events": false,
+    "distinct_same_transaction_events": false,
+    "duplicate_live_deduplicated": true,
+    "historical_item_preserved": true,
+    "writes": 0,
+    "read_boundary_calls": 2,
+    "event_ids": [
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:0",
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:1",
+      "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb:0"
+    ],
+    "scope": "actual React/Guestbook; delayed public history/live SDK fixtures only, no actual RPC/wallet/message"
+  },
+  "fixed": {
+    "source": "candidate",
+    "late_history_keeps_both_live_events": true,
+    "distinct_same_transaction_events": true,
+    "duplicate_live_deduplicated": true,
+    "historical_item_preserved": true,
+    "writes": 0,
+    "read_boundary_calls": 2,
+    "event_ids": [
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:0",
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:1",
+      "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb:0"
+    ],
+    "scope": "actual React/Guestbook; delayed public history/live SDK fixtures only, no actual RPC/wallet/message"
+  }
+}

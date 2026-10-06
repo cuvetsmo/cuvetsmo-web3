@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-06T17:20:39.441Z",
+  "base": "f51e1544f717705aace12f35d7bfd6a209d33467",
+  "records": [
+    {
+      "switched": true,
+      "contract": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "token_id": null,
+      "quota_A": 0,
+      "quota_B": 1,
+      "submitted_abi_sha256": "1e7c60e749d46f46a1890514cb51483470be8e22b1ff319112c623cb4582d2ff",
+      "submitted_request_unchanged": true,
+      "unexpected_network": [],
+      "actual_react": true,
+      "sdk_and_uploads": "explicit local mocks; no signing/wallet/provider/RPC/mint"
+    }
+  ]
+}

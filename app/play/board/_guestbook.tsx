@@ -21,6 +21,7 @@ interface Entry {
   message: string;
   timestamp: number;
   txHash?: string;
+  logIndex?: number;
 }
 
 const MESSAGE_MAX = 280;
@@ -31,6 +32,22 @@ const LOOKBACK_BLOCKS = BigInt(10_000);
 const MAX_RANGE_PER_CALL = BigInt(1900);
 const ZERO_BIG = BigInt(0);
 const ONE_BIG = BigInt(1);
+
+function entryId(entry: Entry): string | undefined {
+  return entry.txHash && entry.logIndex !== undefined
+    ? `${entry.txHash}:${entry.logIndex}` : undefined;
+}
+
+function mergeEntries(incoming: Entry[], previous: Entry[]): Entry[] {
+  const seen = new Set<string>();
+  return [...incoming, ...previous].filter((entry) => {
+    const id = entryId(entry);
+    if (id === undefined) return true; // Do not invent an event identity for incomplete logs.
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  }).slice(0, HISTORY_LIMIT);
+}
 
 export function Guestbook() {
   const { ready, authenticated, login } = usePrivy();
@@ -106,13 +123,14 @@ export function Guestbook() {
               message: args.message ?? "",
               timestamp: Number(args.timestamp ?? ZERO_BIG) * 1000,
               txHash: l.transactionHash,
+              logIndex: l.logIndex ?? undefined,
             };
           })
           .reverse()
           .slice(0, HISTORY_LIMIT);
 
         if (!cancelled) {
-          setEntries(list);
+          setEntries((previous) => mergeEntries(previous, list));
           setError(null);
         }
       } catch (err) {
@@ -148,21 +166,10 @@ export function Guestbook() {
           message: args.message ?? "",
           timestamp: Number(args.timestamp ?? ZERO_BIG) * 1000,
           txHash: l.transactionHash,
+          logIndex: l.logIndex ?? undefined,
         };
       });
-      setEntries((prev) => {
-        const merged = [...incoming.reverse(), ...prev];
-        // Dedupe by txHash
-        const seen = new Set<string>();
-        return merged
-          .filter((e) => {
-            const key = e.txHash || `${e.sender}-${e.timestamp}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          })
-          .slice(0, HISTORY_LIMIT);
-      });
+      setEntries((previous) => mergeEntries(incoming.reverse(), previous));
     },
   });
 
@@ -338,9 +345,9 @@ export function Guestbook() {
         </div>
       ) : (
         <ul className="space-y-3">
-          {entries.map((entry, idx) => (
+          {entries.map((entry, index) => (
             <li
-              key={`${entry.txHash || idx}-${entry.timestamp}`}
+              key={entryId(entry) ?? `unidentified-${index}`}
               className="card !p-4"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1.5 text-xs text-[var(--color-muted)]">

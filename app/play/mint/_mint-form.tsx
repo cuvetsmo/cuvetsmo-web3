@@ -8,6 +8,7 @@ import {
   useWriteContract,
 } from "wagmi";
 import type { Address, Hash } from "viem";
+import { decodeEventLog } from "viem";
 import { isAddress, shortAddress } from "@/lib/utils";
 import { DropZone } from "../_components/drop-zone";
 import { ContractPending } from "../_components/contract-pending";
@@ -48,7 +49,7 @@ export function MintForm() {
     | { kind: "idle" }
     | { kind: "uploading" }
     | { kind: "signing" }
-    | { kind: "mining"; hash: Hash }
+    | { kind: "mining"; hash: Hash; contract: Address; minter?: Address; mintType: MintType }
     | { kind: "done"; hash: Hash; contract: Address; tokenId?: string }
     | { kind: "error"; message: string }
   >({ kind: "idle" });
@@ -96,21 +97,25 @@ export function MintForm() {
     if (receipt.isSuccess && receipt.data) {
       // Look for Minted/SoulboundMinted log to extract tokenId
       let tokenId: string | undefined;
-      try {
-        const log = receipt.data.logs.find(
-          (l) => l.address.toLowerCase() === targetContract.toLowerCase(),
-        );
-        if (log && log.topics?.[2]) {
-          tokenId = BigInt(log.topics[2]).toString();
+      const abi = status.mintType === "nft" ? NFT_FACTORY_ABI : SBT_FACTORY_ABI;
+      const expectedEvent = status.mintType === "nft" ? "Minted" : "SoulboundMinted";
+      for (const log of receipt.data.logs) {
+        if (log.address.toLowerCase() !== status.contract.toLowerCase()) continue;
+        try {
+          const decoded = decodeEventLog({ abi, data: log.data, topics: log.topics, strict: true });
+          if (decoded.eventName === expectedEvent && typeof decoded.args.tokenId === "bigint") {
+            tokenId = decoded.args.tokenId.toString();
+            break;
+          }
+        } catch {
+          // Other/invalid events are not token-ID evidence.
         }
-      } catch {
-        // ignore — tokenId is best-effort decode
       }
-      if (userAddress) recordMint(userAddress);
+      if (status.minter) recordMint(status.minter);
       setStatus({
         kind: "done",
         hash: status.hash,
-        contract: targetContract,
+        contract: status.contract,
         tokenId,
       });
       setWjhOpen(true);
@@ -120,7 +125,7 @@ export function MintForm() {
         message: receipt.error?.message || "Transaction reverted",
       });
     }
-  }, [receipt.isSuccess, receipt.isError, receipt.data, receipt.error, status, targetContract, userAddress]);
+  }, [receipt.isSuccess, receipt.isError, receipt.data, receipt.error, status]);
 
   const canSubmit =
     ready &&
@@ -191,7 +196,7 @@ export function MintForm() {
         functionName: type === "nft" ? "mintTo" : "mintSoulboundTo",
         args: [recipient, metadata.ipfs],
       });
-      setStatus({ kind: "mining", hash });
+      setStatus({ kind: "mining", hash, contract: targetContract, minter: userAddress, mintType: type });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Unknown error during mint";
