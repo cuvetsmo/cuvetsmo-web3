@@ -26,6 +26,7 @@ import {
 } from "@/lib/quests";
 import { cn, explorerUrl } from "@/lib/utils";
 import { fireConfetti } from "@/lib/confetti";
+import { AtheneGuide } from '../../_components/athene-guide';
 
 const LS_KEY = "cuvetsmo:quests:completed:v1";
 
@@ -52,7 +53,7 @@ function writeCompleted(state: CompletedState) {
   window.localStorage.setItem(LS_KEY, JSON.stringify(state));
 }
 
-export function QuestGrid() {
+export function QuestGrid({ initialQuestId }: { initialQuestId?: number }) {
   const { authenticated, login } = usePrivy();
   const { wallets } = useWallets();
   const embedded = wallets.find((w) => w.walletClientType === "privy");
@@ -62,7 +63,7 @@ export function QuestGrid() {
   const [completed, setCompleted] = useState<CompletedState>(() =>
     readCompleted(),
   );
-  const [open, setOpen] = useState<Quest | null>(null);
+  const [open, setOpen] = useState<Quest | null>(() => QUESTS.find((quest) => quest.id === initialQuestId) ?? null);
 
   const markComplete = useCallback(
     (q: Quest) => {
@@ -387,6 +388,7 @@ function QuestDetailModal({
             <Section title="Task">
               <p>{quest.task}</p>
             </Section>
+            <AtheneGuide kind="quest" reference={String(quest.id)} />
             <Section title="Badge">
               <BadgePreview quest={quest} />
             </Section>

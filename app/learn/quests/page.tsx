@@ -11,7 +11,9 @@ export const metadata: Metadata = {
     "10 ภารกิจ Web3 — sign, mint, vote, transfer, approve. ทำเสร็จได้ badge SBT.",
 };
 
-export default function QuestsPage() {
+export default async function QuestsPage({ searchParams }: { searchParams: Promise<{ quest?: string }> }) {
+  const { quest } = await searchParams
+  const selected = typeof quest === 'string' && /^\d{1,2}$/.test(quest) ? QUESTS.find((row) => row.id === Number(quest)) : undefined
   return (
     <main>
       {/* Hero · cloud-bg */}
@@ -37,7 +39,7 @@ export default function QuestsPage() {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <QuestGrid />
+        <QuestGrid initialQuestId={selected?.id} />
       </div>
     </main>
   );

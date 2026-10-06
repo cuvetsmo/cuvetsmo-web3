@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ZeroToHeroFlow } from "./_components/zth-flow";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/app/(marketing)/_components/reveal";
+import { ZERO_TO_HERO_STEPS } from '@/lib/zero-to-hero';
 
 export const metadata: Metadata = {
   title: "Zero to Hero — เริ่ม Web3 จาก 0",
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
     "5 ขั้นสั้นๆ สำหรับคนที่ไม่เคยรู้จัก crypto, blockchain, หรือ web3 — เข้าใจได้ใน 3 นาที, ไม่มีปุ่มที่เสียเงิน.",
 };
 
-export default function ZeroToHeroPage() {
+export default async function ZeroToHeroPage({ searchParams }: { searchParams: Promise<{ step?: string }> }) {
+  const { step } = await searchParams
+  const selected = typeof step === 'string' && /^\d{1,2}$/.test(step) ? ZERO_TO_HERO_STEPS.findIndex((row) => row.id === Number(step)) : -1
   return (
     <main>
       {/* Hero · cloud-bg */}
@@ -37,7 +40,7 @@ export default function ZeroToHeroPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <Reveal>
-          <ZeroToHeroFlow />
+          <ZeroToHeroFlow initialStep={selected >= 0 ? selected : 0} />
         </Reveal>
 
       <section className="mt-10 grid sm:grid-cols-2 gap-3 sm:gap-4">
